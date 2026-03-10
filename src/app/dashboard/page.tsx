@@ -317,7 +317,7 @@ export default function DashboardPage() {
             supabase.from('imoveis').select('id, status'),
             supabase.from('alugueis').select('id, status, troca_titularidade_cagepa, troca_titularidade_energisa, comprovante_cagepa_url, comprovante_energisa_url, codigo_interno, clientes(nome_completo, id), imoveis(nome_identificacao)'),
             supabase.from('parcelas').select('id, status, data_vencimento, valor, transacoes(contratos(clientes(nome_completo))), historico_comunicacoes(id)'),
-            supabase.from('contratos').select('id, status, cliente_id'),
+            supabase.from('contratos').select('id, status, cliente_id, codigo_interno, codigo_contrato'),
             supabase.from('configuracoes').select('iptu_data_inicio, iptu_data_fim').order('created_at', { ascending: false }).limit(1).single()
         ]);
 
@@ -353,10 +353,13 @@ export default function DashboardPage() {
             if (missingCagepa) statusParts.push(cagepaStatus);
             if (missingEnergisa) statusParts.push(energisaStatus);
 
+            const contratoRelacionado = allContracts.find(c => c.codigo_interno === l.codigo_interno);
+            const codigoDisplay = contratoRelacionado?.codigo_contrato ? `Contrato ${contratoRelacionado.codigo_contrato}` : `Contrato ${l.codigo_interno}`;
+
             return {
                 id: l.id,
                 title: cliente?.nome_completo || 'Cliente s/nome',
-                description: `Contrato ${l.codigo_interno} - ${imovel?.nome_identificacao || 'Imóvel'}`,
+                description: `${codigoDisplay} - ${imovel?.nome_identificacao || 'Imóvel'}`,
                 metadata: statusParts.join(' & '),
                 href: `/aluguel?id=${l.id}`
             };

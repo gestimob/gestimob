@@ -357,40 +357,40 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-background/90 backdrop-blur-xl" />
                         <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="bg-panel glass-elite w-full max-w-5xl h-[650px] max-h-[90vh] rounded-[48px] shadow-2xl relative z-10 border border-panel-border flex flex-col md:flex-row overflow-hidden font-sans">
+                            className="bg-panel glass-elite w-full max-w-5xl h-[90vh] md:h-[650px] rounded-[32px] md:rounded-[48px] shadow-2xl relative z-10 border border-panel-border flex flex-col md:flex-row overflow-hidden font-sans">
 
-                            <aside className="w-72 bg-panel/30 dark:bg-white/5 backdrop-blur-md border-r border-panel-border flex flex-col shrink-0">
-                                <div className="p-10 pb-6 text-foreground italic uppercase font-bold text-2xl leading-none tracking-tighter font-serif-premium lowercase first-letter:uppercase">
-                                    {initialData ? 'Editar' : 'Novo'} <br /> Proprietário
+                            <aside className="w-full md:w-72 bg-panel/30 dark:bg-white/5 backdrop-blur-md border-b md:border-b-0 md:border-r border-panel-border flex flex-col shrink-0">
+                                <div className="p-4 md:p-10 md:pb-6 text-foreground italic uppercase font-bold text-lg md:text-2xl leading-none tracking-tighter font-serif-premium lowercase first-letter:uppercase">
+                                    {initialData ? 'Editar' : 'Novo'} <br className="hidden md:block" /> Proprietário
                                 </div>
-                                <nav className="flex-1 p-8 pt-0 space-y-3">
+                                <nav className="flex md:flex-col overflow-x-auto md:overflow-x-visible p-4 md:p-8 md:pt-0 gap-2 md:gap-3 scrollbar-hide">
                                     {navItems.map((item) => (
                                         <button key={item.id} onClick={() => setActiveTab(item.id as TabType)}
-                                            className={cn("w-full flex items-center gap-4 p-4 rounded-2xl transition-all border", activeTab === item.id ? "bg-panel border-panel-border shadow-sm scale-105 pointer-events-none" : "hover:bg-black/5 dark:hover:bg-white/5 border-transparent text-accent hover:text-foreground")}>
-                                            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-all", activeTab === item.id ? "bg-primary text-background shadow-[0_0_20px_rgba(255,255,255,0.1)]" : "bg-black/5 dark:bg-white/5 text-accent")}>
+                                            className={cn("flex-none md:w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl transition-all border", activeTab === item.id ? "bg-panel border-panel-border shadow-sm md:scale-105 pointer-events-none" : "hover:bg-black/5 dark:hover:bg-white/5 border-transparent text-accent hover:text-foreground")}>
+                                            <div className={cn("w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center transition-all shrink-0", activeTab === item.id ? "bg-primary text-background shadow-[0_0_20px_rgba(255,255,255,0.1)]" : "bg-black/5 dark:bg-white/5 text-accent")}>
                                                 <item.icon className="w-4 h-4" />
                                             </div>
-                                            <div className="text-left font-black tracking-widest text-[10px] uppercase">{item.label}</div>
+                                            <div className="text-left font-black tracking-widest text-[9px] md:text-[10px] uppercase whitespace-nowrap">{item.label}</div>
                                         </button>
                                     ))}
                                 </nav>
                             </aside>
 
                             <div className="flex-1 flex flex-col relative bg-panel">
-                                <header className="px-10 py-8 flex justify-between items-center bg-panel/30 dark:bg-white/5 backdrop-blur-md border-b border-panel-border shrink-0">
+                                <header className="px-6 md:px-10 py-4 md:py-8 flex justify-between items-center bg-panel/30 dark:bg-white/5 backdrop-blur-md border-b border-panel-border shrink-0">
                                     <div>
-                                        <div className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-1">Etapa {currentStepIndex + 1}/{navItems.length}</div>
-                                        <h3 className="text-3xl font-black text-foreground uppercase italic tracking-tighter">{navItems[currentStepIndex].label}</h3>
+                                        <div className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-1">Etapa {currentStepIndex + 1}/{navItems.length}</div>
+                                        <h3 className="text-xl md:text-3xl font-black text-foreground uppercase italic tracking-tighter">{navItems[currentStepIndex].label}</h3>
                                     </div>
-                                    <button onClick={onClose} className="w-10 h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border"><X className="w-5 h-5" /></button>
+                                    <button onClick={onClose} className="w-8 h-8 md:w-10 md:h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border"><X className="w-5 h-5" /></button>
                                 </header>
 
-                                <form onSubmit={handleSubmit} id="propModalForm" className="flex-1 overflow-y-auto p-10 custom-scrollbar relative">
+                                <form onSubmit={handleSubmit} id="propModalForm" className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar relative">
                                     <AnimatePresence mode="wait">
                                         {activeTab === 'basico' && (
-                                            <motion.div key="bas" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 gap-6">
+                                            <motion.div key="bas" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                                 <Input label="Código Interno" value={formData.codigo_interno} readOnly colSpan="col-span-1" />
-                                                <div className="col-span-1" />
+                                                <div className="hidden md:block col-span-1" />
 
                                                 <Input required label="Nome Completo" value={formData.nome_completo} onChange={(e: any) => setFormData({ ...formData, nome_completo: e.target.value })} colSpan="col-span-2" />
 
@@ -403,8 +403,8 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                         )}
 
                                         {activeTab === 'endereco' && (
-                                            <motion.div key="end" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-6 gap-6">
-                                                <div className="col-span-2 space-y-2">
+                                            <motion.div key="end" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-6 gap-4 md:gap-6">
+                                                <div className="col-span-2 md:col-span-2 space-y-2">
                                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">CEP *</label>
                                                     <div className="relative">
                                                         <input required value={formData.cep || ""} onChange={handleCepChange} placeholder="00000-000" maxLength={9}
@@ -413,16 +413,13 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                                     </div>
                                                 </div>
 
-                                                <div className="col-span-4" />
-
-                                                <Input required label="Rua / Logradouro" value={formData.logradouro} onChange={(e: any) => setFormData({ ...formData, logradouro: e.target.value })} colSpan="col-span-4" />
-                                                <Input required label="Número" value={formData.numero} onChange={(e: any) => setFormData({ ...formData, numero: e.target.value })} colSpan="col-span-2" />
-
-                                                <Input label="Complemento" value={formData.complemento} onChange={(e: any) => setFormData({ ...formData, complemento: e.target.value })} colSpan="col-span-3" />
-                                                <Input required label="Bairro" value={formData.bairro} onChange={(e: any) => setFormData({ ...formData, bairro: e.target.value })} colSpan="col-span-3" />
-
-                                                <Input required label="Cidade" value={formData.cidade} onChange={(e: any) => setFormData({ ...formData, cidade: e.target.value })} colSpan="col-span-4" />
-                                                <Input required label="UF" value={formData.estado} onChange={(e: any) => setFormData({ ...formData, estado: e.target.value })} colSpan="col-span-2" maxLength={2} />
+                                                <div className="hidden md:block col-span-4" />
+                                                <Input required label="Rua / Logradouro" value={formData.logradouro} onChange={(e: any) => setFormData({ ...formData, logradouro: e.target.value })} colSpan="col-span-2 md:col-span-4" />
+                                                <Input required label="Número" value={formData.numero} onChange={(e: any) => setFormData({ ...formData, numero: e.target.value })} colSpan="col-span-1 md:col-span-2" />
+                                                <Input label="Complemento" value={formData.complemento} onChange={(e: any) => setFormData({ ...formData, complemento: e.target.value })} colSpan="col-span-1 md:col-span-3" />
+                                                <Input required label="Bairro" value={formData.bairro} onChange={(e: any) => setFormData({ ...formData, bairro: e.target.value })} colSpan="col-span-1 md:col-span-3" />
+                                                <Input required label="Cidade" value={formData.cidade} onChange={(e: any) => setFormData({ ...formData, cidade: e.target.value })} colSpan="col-span-2 md:col-span-4" />
+                                                <Input required label="UF" value={formData.estado} onChange={(e: any) => setFormData({ ...formData, estado: e.target.value })} colSpan="col-span-1 md:col-span-2" maxLength={2} />
                                             </motion.div>
                                         )}
 
@@ -452,7 +449,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                                         </div>
                                                     ) : (
                                                         formData.dados_bancarios.map((item: any, idx: number) => (
-                                                            <div key={idx} className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-[32px] p-8 space-y-6 relative group">
+                                                            <div key={idx} className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-[32px] p-4 md:p-8 space-y-4 md:space-y-6 relative group">
                                                                 <button type="button" onClick={() => {
                                                                     const updated = formData.dados_bancarios.filter((_: any, i: number) => i !== idx);
                                                                     setFormData({ ...formData, dados_bancarios: updated });
@@ -463,30 +460,30 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                                                     <h4 className="text-[10px] font-black text-foreground uppercase tracking-[0.2em]">Dados da Conta</h4>
                                                                 </div>
 
-                                                                <div className="grid grid-cols-6 gap-6">
+                                                                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 md:gap-6">
                                                                     <Input label="Banco" value={item.banco} onChange={(e: any) => {
                                                                         const updated = [...formData.dados_bancarios];
                                                                         updated[idx].banco = e.target.value;
                                                                         setFormData({ ...formData, dados_bancarios: updated });
-                                                                    }} colSpan="col-span-3" />
+                                                                    }} colSpan="col-span-2 md:col-span-3" />
                                                                     <Input label="Número Banco" value={item.num_banco} onChange={(e: any) => {
                                                                         const updated = [...formData.dados_bancarios];
                                                                         updated[idx].num_banco = e.target.value;
                                                                         setFormData({ ...formData, dados_bancarios: updated });
-                                                                    }} colSpan="col-span-3" />
+                                                                    }} colSpan="col-span-2 md:col-span-3" />
 
                                                                     <Input label="Agência" value={item.agencia} onChange={(e: any) => {
                                                                         const updated = [...formData.dados_bancarios];
                                                                         updated[idx].agencia = e.target.value;
                                                                         setFormData({ ...formData, dados_bancarios: updated });
-                                                                    }} colSpan="col-span-2" />
+                                                                    }} colSpan="col-span-1 md:col-span-2" />
                                                                     <Input label="Conta" value={item.conta} onChange={(e: any) => {
                                                                         const updated = [...formData.dados_bancarios];
                                                                         updated[idx].conta = e.target.value;
                                                                         setFormData({ ...formData, dados_bancarios: updated });
-                                                                    }} colSpan="col-span-2" />
+                                                                    }} colSpan="col-span-1 md:col-span-2" />
 
-                                                                    <div className="col-span-2 space-y-2">
+                                                                    <div className="col-span-2 md:col-span-2 space-y-2">
                                                                         <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Tipo de Conta</label>
                                                                         <div className="flex gap-4 h-9 items-center">
                                                                             <label className="flex items-center gap-2 cursor-pointer">
@@ -522,7 +519,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                         )}
 
                                         {activeTab === 'documentos' && (
-                                            <motion.div key="doc" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 gap-8 items-start">
+                                            <motion.div key="doc" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-start pb-10">
 
                                                 {/* Upload Identidade */}
                                                 <div className="w-full p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-[32px] space-y-6 flex flex-col items-center group relative">
@@ -599,16 +596,16 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                     </AnimatePresence>
                                 </form>
 
-                                <footer className="p-10 border-t border-panel-border bg-panel/30 dark:bg-white/5 backdrop-blur-md flex items-center gap-6 shrink-0 z-10">
-                                    <button type="button" onClick={onClose} className="px-8 py-4 rounded-xl font-black text-[10px] text-accent hover:bg-panel uppercase tracking-[0.3em] transition-all border border-panel-border">Cancelar</button>
+                                <footer className="p-6 md:p-10 border-t border-panel-border bg-panel/30 dark:bg-white/5 backdrop-blur-md flex items-center gap-3 md:gap-6 shrink-0 z-10">
+                                    <button type="button" onClick={onClose} className="px-4 md:px-8 py-3 md:py-4 rounded-xl font-black text-[9px] md:text-[10px] text-accent hover:bg-panel uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all border border-panel-border">Cancelar</button>
                                     <div className="flex-1" />
                                     {currentStepIndex > 0 && (
-                                        <button type="button" onClick={() => setActiveTab(navItems[currentStepIndex - 1].id as TabType)} className="px-8 py-4 rounded-xl font-black text-[10px] text-accent hover:bg-panel uppercase tracking-[0.3em] transition-all border border-panel-border">Voltar</button>
+                                        <button type="button" onClick={() => setActiveTab(navItems[currentStepIndex - 1].id as TabType)} className="px-4 md:px-8 py-3 md:py-4 rounded-xl font-black text-[9px] md:text-[10px] text-accent hover:bg-panel uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all border border-panel-border">Voltar</button>
                                     )}
                                     {currentStepIndex < navItems.length - 1 ? (
-                                        <button type="button" onClick={(e) => { e.preventDefault(); setActiveTab(navItems[currentStepIndex + 1].id as TabType); }} className="btn-elite px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-3 transition-all hover:scale-[1.02] shadow-xl">Próximo Passo <ChevronRight className="w-4 h-4" /></button>
+                                        <button type="button" onClick={(e) => { e.preventDefault(); setActiveTab(navItems[currentStepIndex + 1].id as TabType); }} className="btn-elite px-4 md:px-10 py-3 md:py-4 rounded-xl font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] flex items-center gap-2 md:gap-3 transition-all hover:scale-[1.02] shadow-xl">Próximo <ChevronRight className="w-4 h-4" /></button>
                                     ) : (
-                                        <button form="propModalForm" type="submit" disabled={loading} className="btn-elite px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-3 transition-all hover:scale-[1.02] shadow-xl disabled:opacity-50">
+                                        <button form="propModalForm" type="submit" disabled={loading} className="btn-elite px-4 md:px-10 py-3 md:py-4 rounded-xl font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] flex items-center gap-2 md:gap-3 transition-all hover:scale-[1.02] shadow-xl disabled:opacity-50">
                                             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Finalizar <CheckCircle2 className="w-4 h-4" /></>}
                                         </button>
                                     )}

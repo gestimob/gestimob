@@ -44,7 +44,8 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
             <html>
             <head>
                 <meta charset="utf-8">
-                <title>Contrato - ${contrato.codigo_contrato || contrato.codigo_interno || ''}</title>
+                <title>Contrato - {contrato.codigo_contrato || '-----'}</title>
+
                 <style>
                     @page {
                         size: A4 portrait;
@@ -309,7 +310,8 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8 modal-outer">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 md:p-8 modal-outer">
+
                     <style dangerouslySetInnerHTML={{
                         __html: `
                              @media print {
@@ -518,47 +520,50 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                         className="absolute inset-0 bg-background/90 backdrop-blur-xl no-print" />
 
                     <motion.div initial={{ opacity: 0, scale: 0.98, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                        className="bg-panel glass-elite w-full max-w-5xl max-h-[90vh] rounded-[32px] overflow-hidden relative z-10 border border-panel-border flex flex-col font-sans print-container shadow-2xl">
+                        className="bg-panel glass-elite w-full max-w-5xl h-full sm:h-auto sm:max-h-[90vh] rounded-none sm:rounded-[32px] overflow-hidden relative z-10 border-0 sm:border border-panel-border flex flex-col font-sans print-container shadow-2xl">
+
 
                         {/* Header UI */}
-                        <div className="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20 no-print">
-                            <div className="flex items-center gap-6">
-                                <button onClick={onClose} className="px-4 py-2 bg-background border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+                        <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-panel-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20 no-print">
+                            <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto">
+                                <button onClick={onClose} className="p-2 sm:px-4 sm:py-2 bg-background border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
                                     <ArrowLeft className="w-4 h-4 text-foreground" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Voltar</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground hidden sm:inline">Voltar</span>
                                 </button>
-                                <div>
-                                    <h1 className="text-2xl font-serif-premium font-bold tracking-tight text-foreground leading-tight">
-                                        Contrato - {contrato.codigo_contrato || contrato.codigo_interno || '-----'}
+                                <div className="min-w-0">
+                                    <h1 className="text-lg sm:text-2xl font-serif-premium font-bold tracking-tight text-foreground leading-tight truncate">
+                                        Contrato - {contrato.codigo_contrato || '-----'}
                                     </h1>
-                                    <p className="text-[10px] text-accent font-black uppercase tracking-[0.3em] mt-1">
+                                    <p className="text-[8px] sm:text-[10px] text-accent font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-0.5 sm:mt-1 truncate">
                                         LOCATÁRIO: {locatarioNome}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-end">
                                 {contrato.status === 'Finalizado' && contrato.contrato_assinado_url && (
                                     <a
                                         href={contrato.contrato_assinado_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="btn-elite px-6 py-2.5 flex items-center gap-2 bg-white/10 border-white/30 text-blue-400"
+                                        className="btn-elite h-10 sm:h-auto px-3 sm:px-6 py-2 sm:py-2.5 flex items-center gap-2 bg-white/10 border-white/30 text-blue-400 text-[9px] sm:text-xs"
                                     >
-                                        <ExternalLink className="w-4 h-4" /> Ver Contrato Assinado
+                                        <ExternalLink className="w-4 h-4 shrink-0" /> <span className="hidden sm:inline">Ver Contrato Assinado</span>
                                     </a>
                                 )}
-                                <button onClick={handlePrint} className="flex items-center gap-2 bg-background border border-panel-border text-foreground hover:bg-black/5 dark:hover:bg-white/5 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
-                                    <Printer className="w-4 h-4" /> Gerar PDF
+                                <button onClick={handlePrint} className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-background border border-panel-border text-foreground hover:bg-black/5 dark:hover:bg-white/5 px-4 sm:px-6 py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
+                                    <Printer className="w-4 h-4" /> PDF
                                 </button>
-                                <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-panel-border text-accent hover:text-foreground shadow-sm">
+                                <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-panel-border text-accent hover:text-foreground shadow-sm shrink-0">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
 
+
                         {/* Content Body */}
-                        <div className="flex-1 overflow-y-auto p-10 flex flex-col items-center bg-black/5 dark:bg-white/5 custom-scrollbar content-body-wrapper">
-                            <div className="w-full max-w-[210mm] min-h-[297mm] bg-white text-black p-[20mm] shadow-md shrink-0 contract-text print-a4-surface">
+                        <div className="flex-1 overflow-y-auto p-4 sm:p-10 flex flex-col items-center bg-black/5 dark:bg-white/5 custom-scrollbar content-body-wrapper">
+                            <div className="w-full max-w-[210mm] min-h-[0 sm:min-h-[297mm]] bg-white text-black p-[10mm] sm:p-[20mm] shadow-md shrink-0 contract-text print-a4-surface">
+
 
                                 {/* Cabeçalho: Logo (Centro) + Título (Direita Absoluta) */}
                                 <div className="contract-header">

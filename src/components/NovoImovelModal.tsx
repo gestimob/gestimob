@@ -313,57 +313,57 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-background/90 backdrop-blur-xl" />
                     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="bg-panel glass-elite w-full max-w-6xl max-h-[92vh] rounded-[48px] shadow-2xl relative z-10 border border-panel-border flex flex-col md:flex-row overflow-hidden">
+                        className="bg-panel glass-elite w-full max-w-6xl h-[90vh] md:h-[650px] rounded-[32px] md:rounded-[48px] shadow-2xl relative z-10 border border-panel-border flex flex-col md:flex-row overflow-hidden">
 
                         {step === 1 && (
                             <>
-                                <aside className="w-full md:w-72 bg-panel/30 dark:bg-white/5 border-r border-panel-border flex flex-col shrink-0">
-                                    <div className="p-8 pb-4">
-                                        <div className="flex items-center gap-4 mb-8">
-                                            <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shrink-0 border border-primary/30 text-background shadow-lg shadow-primary/10"><Building className="w-6 h-6" /></div>
+                                <aside className="w-full md:w-72 bg-panel/30 dark:bg-white/5 border-b md:border-b-0 md:border-r border-panel-border flex flex-col shrink-0">
+                                    <div className="p-4 md:p-8 md:pb-4">
+                                        <div className="flex items-center gap-4 mb-2 md:mb-8">
+                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-primary flex items-center justify-center shrink-0 border border-primary/30 text-background shadow-lg shadow-primary/10"><Building className="w-5 h-5 md:w-6 md:h-6" /></div>
                                             <div>
-                                                <h2 className="text-xl font-serif-premium font-bold tracking-tight text-foreground leading-none lowercase first-letter:uppercase">{initialData ? 'Edição' : 'Cadastro'}</h2>
+                                                <h2 className="text-lg md:text-xl font-serif-premium font-bold tracking-tight text-foreground leading-none lowercase first-letter:uppercase">{initialData ? 'Edição' : 'Cadastro'}</h2>
                                                 <p className="text-xs font-bold text-accent uppercase tracking-widest mt-1">Imóvel</p>
                                             </div>
                                         </div>
                                     </div>
-                                    <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar pb-8">
+                                    <nav className="flex md:flex-col overflow-x-auto md:overflow-x-visible p-4 md:p-8 md:pt-0 gap-2 md:gap-3 scrollbar-hide">
                                         {navItems.map((item) => (
                                             <button key={item.id} onClick={() => setActiveTab(item.id as TabType)}
-                                                className={cn("w-full flex items-center gap-4 p-4 rounded-2xl transition-all group border",
-                                                    activeTab === item.id ? "bg-black/5 dark:bg-white/5 border-panel-border shadow-lg" : "hover:bg-black/[0.02] dark:hover:bg-white/[0.02] border-transparent")}>
-                                                <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center transition-all",
+                                                className={cn("flex-none md:w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl transition-all border",
+                                                    activeTab === item.id ? "bg-panel border-panel-border shadow-sm md:scale-105 pointer-events-none" : "hover:bg-black/5 dark:hover:bg-white/5 border-transparent text-accent hover:text-foreground")}>
+                                                <div className={cn("w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl flex items-center justify-center transition-all shrink-0",
                                                     activeTab === item.id ? "bg-primary text-background shadow-[0_0_15px_rgba(255,255,255,0.1)]" : "bg-black/5 dark:bg-white/5 text-accent")}>
                                                     <item.icon className="w-4 h-4" />
                                                 </div>
                                                 <div className="text-left font-black">
-                                                    <div className={cn("text-[10px] uppercase tracking-widest", activeTab === item.id ? "text-foreground" : "text-accent")}>{item.label}</div>
+                                                    <div className={cn("text-[9px] md:text-[10px] uppercase tracking-widest whitespace-nowrap", activeTab === item.id ? "text-foreground" : "text-accent")}>{item.label}</div>
                                                 </div>
                                             </button>
                                         ))}
                                     </nav>
-                                    <div className="p-8 pt-4">
-                                        <div className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl p-4 flex flex-col gap-1 items-center justify-center shadow-lg shadow-black/20">
-                                            <span className="text-[10px] font-black uppercase text-accent tracking-[0.2em]">CÓD INTERNO</span>
-                                            <span className="text-xl text-foreground font-black tracking-tighter">{formData.codigo_interno}</span>
+                                    <div className="p-4 md:p-8 pt-0 md:pt-4">
+                                        <div className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-row md:flex-col gap-2 md:gap-1 items-center justify-center shadow-lg shadow-black/20">
+                                            <span className="text-[8px] md:text-[10px] font-black uppercase text-accent tracking-[0.2em]">CÓD INTERNO</span>
+                                            <span className="text-sm md:text-xl text-foreground font-black tracking-tighter">{formData.codigo_interno}</span>
                                         </div>
                                     </div>
                                 </aside>
 
                                 <div className="flex-1 flex flex-col bg-panel/50 dark:bg-transparent min-w-0">
-                                    <header className="px-10 py-6 flex justify-between items-center bg-gradient-to-b from-black/5 dark:from-white/5 to-transparent border-b border-panel-border shrink-0">
+                                    <header className="px-6 md:px-10 py-4 md:py-6 flex justify-between items-center bg-gradient-to-b from-black/5 dark:from-white/5 to-transparent border-b border-panel-border shrink-0">
                                         <div>
-                                            <div className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-1">Passo {currentStep}/{navItems.length}</div>
-                                            <h3 className="text-2xl font-serif-premium font-bold text-foreground uppercase italic tracking-tighter lowercase first-letter:uppercase">{navItems.find(i => i.id === activeTab)?.label}</h3>
+                                            <div className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-1">Passo {currentStep}/{navItems.length}</div>
+                                            <h3 className="text-xl md:text-2xl font-serif-premium font-bold text-foreground uppercase italic tracking-tighter lowercase first-letter:uppercase">{navItems.find(i => i.id === activeTab)?.label}</h3>
                                         </div>
-                                        <button onClick={onClose} className="w-10 h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border"><X className="w-6 h-6" /></button>
+                                        <button onClick={onClose} className="w-8 h-8 md:w-10 md:h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border"><X className="w-6 h-6" /></button>
                                     </header>
 
-                                    <div className="flex-1 overflow-y-auto custom-scrollbar p-10">
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10">
                                         <AnimatePresence mode="wait">
                                             {activeTab === 'basico' && (
-                                                <motion.div key="basico" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-4 gap-6">
-                                                    <div className="col-span-4 space-y-2">
+                                                <motion.div key="basico" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                                                    <div className="col-span-2 md:col-span-4 space-y-2">
                                                         <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Proprietário Principal *</label>
                                                         <div className="flex gap-2 mb-2 bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-panel-border max-w-[200px]">
                                                             <button type="button" onClick={() => setFormData({ ...formData, tipo_proprietario_principal: "PF", proprietario_id: "", empresa_id: "" })}
@@ -372,15 +372,15 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                                                                 className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario_principal === "PJ" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PJ</button>
                                                         </div>
                                                         <select required value={formData.tipo_proprietario_principal === "PF" ? (formData.proprietario_id || "") : (formData.empresa_id || "")} onChange={(e) => setFormData(formData.tipo_proprietario_principal === "PF" ? { ...formData, proprietario_id: e.target.value } : { ...formData, empresa_id: e.target.value })}
-                                                            className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none">
-                                                            <option value="" className="bg-[#121212] text-white">Selecione um {formData.tipo_proprietario_principal === "PF" ? "proprietário" : "empresa"}...</option>
+                                                            className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-4 md:px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none">
+                                                            <option value="" className="bg-[#121212] text-white underline-none">Selecione um {formData.tipo_proprietario_principal === "PF" ? "proprietário" : "empresa"}...</option>
                                                             {(formData.tipo_proprietario_principal === "PF" ? proprietarios : empresas).map((p: any) => (
                                                                 <option key={p.id} value={p.id} className="bg-[#121212] text-white">{p.nome_completo || p.nome_fantasia}</option>
                                                             ))}
                                                         </select>
                                                     </div>
 
-                                                    <div className="col-span-4 mt-2">
+                                                    <div className="col-span-2 md:col-span-4 mt-2">
                                                         <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1 block mb-2">Proprietários Adicionais</label>
                                                         {(formData.proprietarios_secundarios || []).map((sec: any, idx: number) => (
                                                             <div key={idx} className="flex gap-4 items-end mb-4 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-panel-border">
@@ -422,46 +422,44 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                                                         </button>
                                                     </div>
 
-                                                    <Input label="Nome / Identificação do Imóvel" value={formData.nome_identificacao} onChange={(e: any) => setFormData({ ...formData, nome_identificacao: e.target.value })} colSpan="col-span-4" placeholder="Ex: Apto 101 Beira Mar, Galpão Logístico..." />
+                                                    <Input label="Nome / Identificação do Imóvel" value={formData.nome_identificacao} onChange={(e: any) => setFormData({ ...formData, nome_identificacao: e.target.value })} colSpan="col-span-2 md:col-span-4" placeholder="Ex: Apto 101 Beira Mar, Galpão Logístico..." />
+                                                    <Select label="Tipo de Imóvel" value={formData.tipo} onChange={(e: any) => setFormData({ ...formData, tipo: e.target.value })} options={[{ label: 'Apartamento', value: 'Apartamento' }, { label: 'Casa', value: 'Casa' }, { label: 'Comercial', value: 'Comercial' }, { label: 'Terreno', value: 'Terreno' }, { label: 'Galpão', value: 'Galpão' }]} colSpan="col-span-1 md:col-span-2" />
+                                                    <Select label="Status" value={formData.status} onChange={(e: any) => setFormData({ ...formData, status: e.target.value })} options={[{ label: 'Disponível', value: 'Disponível' }, { label: 'Alugado', value: 'Alugado' }, { label: 'Inativo', value: 'Inativo' }]} colSpan="col-span-1 md:col-span-1" />
+                                                    <Select label="Tipo Aluguel" value={formData.tipo_aluguel} onChange={(e: any) => setFormData({ ...formData, tipo_aluguel: e.target.value })} options={[{ label: 'Residencial', value: 'Residencial' }, { label: 'Comercial', value: 'Comercial' }]} colSpan="col-span-2 md:col-span-1" />
+                                                    <CurrencyInput label="Valor Aluguel" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-2 md:col-span-2" />
+                                                    <CurrencyInput label="Valor Condomínio" value={formData.valor_condominio} onChange={(val: number) => setFormData({ ...formData, valor_condominio: val })} colSpan="col-span-2 md:col-span-2" />
 
-                                                    <Select label="Tipo de Imóvel" value={formData.tipo} onChange={(e: any) => setFormData({ ...formData, tipo: e.target.value })} options={[{ label: 'Apartamento', value: 'Apartamento' }, { label: 'Casa', value: 'Casa' }, { label: 'Comercial', value: 'Comercial' }, { label: 'Terreno', value: 'Terreno' }, { label: 'Galpão', value: 'Galpão' }]} colSpan="col-span-2" />
-                                                    <Select label="Status" value={formData.status} onChange={(e: any) => setFormData({ ...formData, status: e.target.value })} options={[{ label: 'Disponível', value: 'Disponível' }, { label: 'Alugado', value: 'Alugado' }, { label: 'Inativo', value: 'Inativo' }]} />
-                                                    <Select label="Tipo Aluguel" value={formData.tipo_aluguel} onChange={(e: any) => setFormData({ ...formData, tipo_aluguel: e.target.value })} options={[{ label: 'Residencial', value: 'Residencial' }, { label: 'Comercial', value: 'Comercial' }]} />
-
-                                                    <CurrencyInput label="Valor Aluguel" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-2" />
-                                                    <CurrencyInput label="Valor Condomínio" value={formData.valor_condominio} onChange={(val: number) => setFormData({ ...formData, valor_condominio: val })} colSpan="col-span-2" />
-
-                                                    <div className="col-span-4 grid grid-cols-5 gap-4 mt-4 bg-black/5 dark:bg-white/5 p-6 rounded-2xl border border-panel-border">
-                                                        <Input label="Área (m²)" value={formData.area_m2} onChange={(e: any) => setFormData({ ...formData, area_m2: e.target.value })} type="number" />
-                                                        <Input label="Quartos" value={formData.quartos} onChange={(e: any) => setFormData({ ...formData, quartos: e.target.value })} type="number" />
-                                                        <Input label="Suítes" value={formData.suites} onChange={(e: any) => setFormData({ ...formData, suites: e.target.value })} type="number" />
-                                                        <Input label="Banheiros" value={formData.banheiros} onChange={(e: any) => setFormData({ ...formData, banheiros: e.target.value })} type="number" />
-                                                        <Input label="Vagas" value={formData.vagas} onChange={(e: any) => setFormData({ ...formData, vagas: e.target.value })} type="number" />
+                                                    <div className="col-span-2 md:col-span-4 grid grid-cols-3 md:grid-cols-6 gap-4 mt-4 bg-black/5 dark:bg-white/5 p-4 md:p-6 rounded-2xl border border-panel-border">
+                                                        <Input label="Área (m²)" value={formData.area_m2} onChange={(e: any) => setFormData({ ...formData, area_m2: e.target.value })} type="number" colSpan="col-span-1" />
+                                                        <Input label="Quartos" value={formData.quartos} onChange={(e: any) => setFormData({ ...formData, quartos: e.target.value })} type="number" colSpan="col-span-1" />
+                                                        <Input label="Suítes" value={formData.suites} onChange={(e: any) => setFormData({ ...formData, suites: e.target.value })} type="number" colSpan="col-span-1" />
+                                                        <Input label="Banheiros" value={formData.banheiros} onChange={(e: any) => setFormData({ ...formData, banheiros: e.target.value })} type="number" colSpan="col-span-1" />
+                                                        <Input label="Vagas" value={formData.vagas} onChange={(e: any) => setFormData({ ...formData, vagas: e.target.value })} type="number" colSpan="col-span-1" />
                                                         <Input label="Andar" value={formData.andar_imovel} onChange={(e: any) => setFormData({ ...formData, andar_imovel: e.target.value })} colSpan="col-span-1" />
                                                     </div>
                                                 </motion.div>
                                             )}
 
                                             {activeTab === 'localizacao' && (
-                                                <motion.div key="localizacao" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-4 gap-6">
+                                                <motion.div key="localizacao" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                                                     <div className="col-span-1 relative">
                                                         <Input label="CEP" value={formData.cep} onChange={handleCepChange} placeholder="00000-000" maxLength={9} />
                                                         {searchingCep && <Loader2 className="absolute right-4 top-[38px] w-4 h-4 text-primary animate-spin" />}
                                                     </div>
-                                                    <Input label="Logradouro" value={formData.logradouro} onChange={(e: any) => handleAddressFieldChange('logradouro', e.target.value)} colSpan="col-span-3" />
-                                                    <Input label="Número" value={formData.numero} onChange={(e: any) => handleAddressFieldChange('numero', e.target.value)} />
-                                                    <Input label="Complemento" value={formData.complemento} onChange={(e: any) => handleAddressFieldChange('complemento', e.target.value)} colSpan="col-span-2" />
-                                                    <Input label="Bairro" value={formData.bairro} onChange={(e: any) => handleAddressFieldChange('bairro', e.target.value)} colSpan="col-span-2" />
-                                                    <Input label="Cidade" value={formData.cidade} onChange={(e: any) => handleAddressFieldChange('cidade', e.target.value)} colSpan="col-span-3" />
-                                                    <Input label="UF" value={formData.estado} onChange={(e: any) => handleAddressFieldChange('estado', e.target.value)} maxLength={2} />
+                                                    <Input label="Logradouro" value={formData.logradouro} onChange={(e: any) => handleAddressFieldChange('logradouro', e.target.value)} colSpan="col-span-1 md:col-span-3" />
+                                                    <Input label="Número" value={formData.numero} onChange={(e: any) => handleAddressFieldChange('numero', e.target.value)} colSpan="col-span-1" />
+                                                    <Input label="Complemento" value={formData.complemento} onChange={(e: any) => handleAddressFieldChange('complemento', e.target.value)} colSpan="col-span-1 md:col-span-2" />
+                                                    <Input label="Bairro" value={formData.bairro} onChange={(e: any) => handleAddressFieldChange('bairro', e.target.value)} colSpan="col-span-1 md:col-span-2" />
+                                                    <Input label="Cidade" value={formData.cidade} onChange={(e: any) => handleAddressFieldChange('cidade', e.target.value)} colSpan="col-span-1 md:col-span-3" />
+                                                    <Input label="UF" value={formData.estado} onChange={(e: any) => handleAddressFieldChange('estado', e.target.value)} maxLength={2} colSpan="col-span-1" />
                                                 </motion.div>
                                             )}
 
                                             {activeTab === 'documentos' && (
-                                                <motion.div key="documentos" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 gap-6">
-                                                    <div className="flex gap-4">
+                                                <motion.div key="documentos" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pb-10">
+                                                    <div className="flex flex-col md:flex-row gap-4">
                                                         <Input label="Inscrição IPTU" value={formData.inscricao_iptu} onChange={(e: any) => setFormData({ ...formData, inscricao_iptu: e.target.value })} colSpan="flex-1" />
-                                                        <Input label="Vencimento" type="date" value={formData.iptu_vencimento} onChange={(e: any) => setFormData({ ...formData, iptu_vencimento: e.target.value })} colSpan="w-[160px]" />
+                                                        <Input label="Vencimento" type="date" value={formData.iptu_vencimento} onChange={(e: any) => setFormData({ ...formData, iptu_vencimento: e.target.value })} colSpan="md:w-[160px]" />
                                                     </div>
                                                     <Input label="Nº Energisa" value={formData.num_energisa} onChange={(e: any) => setFormData({ ...formData, num_energisa: e.target.value })} />
                                                     <Input label="Nº CAGEPA" value={formData.num_cagepa} onChange={(e: any) => setFormData({ ...formData, num_cagepa: e.target.value })} />
@@ -535,7 +533,7 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                                                         }
                                                     }} />
 
-                                                    <div className="grid grid-cols-3 gap-4">
+                                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                                                         {formData.fotos_urls?.map((url: string, i: number) => (
                                                             <div key={'furl' + i} className="aspect-[4/3] bg-black/5 dark:bg-white/5 rounded-xl border border-panel-border overflow-hidden relative group">
                                                                 <img src={url} alt="Foto Imóvel" className="w-full h-full object-cover" />
@@ -558,14 +556,14 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                                         </AnimatePresence>
                                     </div>
 
-                                    <footer className="p-10 border-t border-panel-border bg-panel/50 dark:bg-transparent flex items-center gap-4 shrink-0">
-                                        <button type="button" onClick={handlePrev} className="px-8 py-4 rounded-xl font-black text-[10px] text-accent hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-[0.3em] transition-all border border-panel-border">Voltar</button>
+                                    <footer className="p-6 md:p-10 border-t border-panel-border bg-panel/50 dark:bg-transparent flex items-center gap-3 md:gap-4 shrink-0">
+                                        <button type="button" onClick={handlePrev} className="px-4 md:px-8 py-3 md:py-4 rounded-xl font-black text-[9px] md:text-[10px] text-accent hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all border border-panel-border">Voltar</button>
                                         <div className="flex-1" />
                                         {currentStep < navItems.length ? (
-                                            <button type="button" onClick={handleNext} className="btn-elite px-10 py-4 flex items-center gap-4 transition-all">Próximo <ChevronRight className="w-4 h-4" /></button>
+                                            <button type="button" onClick={handleNext} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all text-[9px] md:text-sm font-black uppercase tracking-widest">Próximo <ChevronRight className="w-4 h-4" /></button>
                                         ) : (
-                                            <button type="submit" onClick={handleSubmit} disabled={loading} className="btn-elite px-10 py-4 flex items-center gap-4 transition-all disabled:opacity-50">
-                                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Finalizar Cadastro <CheckCircle2 className="w-4 h-4" /></>}
+                                            <button type="submit" onClick={handleSubmit} disabled={loading} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all disabled:opacity-50 text-[9px] md:text-sm font-black uppercase tracking-widest">
+                                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Finalizar <CheckCircle2 className="w-4 h-4" /></>}
                                             </button>
                                         )}
                                     </footer>

@@ -78,129 +78,141 @@ export function DetalhesProprietarioModal({ isOpen, proprietario, onClose }: Mod
                         className="absolute inset-0 bg-background/90 backdrop-blur-xl no-print" />
 
                     <motion.div initial={{ opacity: 0, scale: 0.98, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                        className="bg-panel glass-elite w-full max-w-5xl max-h-[90vh] rounded-[32px] overflow-hidden relative z-10 border border-panel-border flex flex-col font-sans print-container shadow-2xl">
+                        className="bg-panel glass-elite w-full max-w-5xl h-full sm:h-auto sm:max-h-[90vh] rounded-none sm:rounded-[32px] overflow-hidden relative z-10 border-0 sm:border border-panel-border flex flex-col font-sans print-container shadow-2xl">
+
 
                         {/* Header */}
-                        <div className="px-8 py-6 border-b border-panel-border flex items-center justify-between bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
-                            <div className="flex items-center gap-6">
-                                <button onClick={onClose} className="px-4 py-2 bg-background border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all no-print">
+                        <div className="px-6 sm:px-8 py-6 border-b border-panel-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
+                            <div className="flex items-center gap-4 sm:gap-6">
+                                <button onClick={onClose} className="p-2 sm:px-4 sm:py-2 bg-background border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all no-print">
                                     <ArrowLeft className="w-4 h-4 text-foreground" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Voltar</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground hidden sm:inline">Voltar</span>
                                 </button>
-                                <div>
-                                    <h1 className="text-3xl font-serif-premium font-bold tracking-tight text-foreground leading-none lowercase first-letter:uppercase">
+                                <div className="min-w-0">
+                                    <h1 className="text-xl sm:text-3xl font-serif-premium font-bold tracking-tight text-foreground leading-tight lowercase first-letter:uppercase truncate">
                                         {proprietario.nome_completo}
                                     </h1>
-                                    <p className="text-[10px] text-accent font-black uppercase tracking-[0.3em] mt-2">
+                                    <p className="text-[9px] sm:text-[10px] text-accent font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-1 sm:mt-2">
                                         Ficha do Proprietário • #{proprietario.codigo_interno || '-----'}
                                     </p>
                                 </div>
+                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-auto sm:hidden no-print">
+                                    <X className="w-6 h-6" />
+                                </button>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="flex flex-col items-center mr-4">
-                                    <span className={cn("text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full border",
+                            <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 pt-4 sm:pt-0 border-t sm:border-0 border-panel-border">
+                                <div className="flex flex-col items-start sm:items-center">
+                                    <span className={cn("text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border",
                                         proprietario.tipo === 'PF' ? 'bg-white/10 text-white border-white/30' : 'bg-orange-500/10 text-orange-500 border-orange-500/30'
                                     )}>
-                                        {proprietario.tipo === 'PF' ? 'PESSOA FÍSICA' : 'PESSOA JURÍDICA'}
+                                        {proprietario.tipo === 'PF' ? 'PF' : 'PJ'}
                                     </span>
                                 </div>
-                                <button onClick={handlePrint} className="flex items-center gap-2 bg-background border border-panel-border text-foreground hover:bg-black/5 dark:hover:bg-white/5 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all no-print shadow-sm">
-                                    <Printer className="w-4 h-4" /> Imprimir
-                                </button>
-                                <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-panel-border text-accent hover:text-foreground no-print shadow-sm">
-                                    <X className="w-5 h-5" />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={handlePrint} className="flex items-center gap-2 bg-background border border-panel-border text-foreground hover:bg-black/5 dark:hover:bg-white/5 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all no-print shadow-sm">
+                                        <Printer className="w-4 h-4" /> <span className="hidden sm:inline">Imprimir</span>
+                                    </button>
+                                    <button onClick={onClose} className="hidden sm:flex w-10 h-10 items-center justify-center rounded-xl bg-background border border-panel-border text-accent hover:text-foreground no-print shadow-sm">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
+
                         {/* Content */}
-                        <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-10">
+                        <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar space-y-6 sm:space-y-10">
+
                             <div className="grid grid-cols-12 gap-10">
 
                                 {/* Coluna 1: Documentos e Resumo */}
                                 <div className="col-span-12 flex flex-col gap-8">
                                     {/* Capa Selfie Opcional */}
                                     {proprietario.documento_selfie_url && (
-                                        <div className="aspect-[4/4] max-w-[280px] mx-auto bg-black/5 dark:bg-white/5 border border-panel-border rounded-[32px] overflow-hidden relative shadow-sm no-print">
+                                        <div className="aspect-square w-full max-w-[240px] sm:max-w-[280px] mx-auto bg-black/5 dark:bg-white/5 border border-panel-border rounded-[32px] overflow-hidden relative shadow-sm no-print mb-4 sm:mb-0">
                                             <img src={proprietario.documento_selfie_url} alt="Selfie" className="w-full h-full object-cover" />
-                                            <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-panel-border flex items-center gap-2 shadow-sm">
-                                                <User className="w-3.5 h-3.5 text-foreground" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Selfie Autenticada</span>
+                                            <div className="absolute top-4 left-4 right-4 bg-background/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-panel-border flex items-center gap-2 shadow-sm">
+                                                <User className="w-3.5 h-3.5 text-foreground shrink-0" />
+                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-foreground truncate">Selfie Autenticada</span>
                                             </div>
                                         </div>
                                     )}
 
-                                    {/* Resumo */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[32px] p-8">
-                                        <h3 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-6 flex items-center gap-3"><ShieldCheck className="w-4 h-4 text-primary" /> IDENTIFICAÇÃO OFICIAL</h3>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <div className="bg-background border border-panel-border rounded-2xl py-4 px-6 shadow-sm flex items-center justify-between">
-                                                <span className="text-[10px] font-black text-accent uppercase tracking-widest">Documento (CPF/CNPJ)</span>
-                                                <span className="text-sm font-bold text-foreground">{formatId(proprietario.documento)}</span>
+                                    {/* Resumo */}
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[24px] sm:rounded-[32px] p-6 sm:p-8">
+                                        <h3 className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-6 flex items-center gap-3"><ShieldCheck className="w-4 h-4 text-primary" /> IDENTIFICAÇÃO OFICIAL</h3>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                            <div className="bg-background border border-panel-border rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 shadow-sm flex items-center justify-between">
+                                                <span className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Documento</span>
+                                                <span className="text-xs sm:text-sm font-bold text-foreground">{formatId(proprietario.documento)}</span>
                                             </div>
-                                            <div className="bg-background border border-panel-border rounded-2xl py-4 px-6 shadow-sm flex flex-col items-start gap-1">
-                                                <span className="text-[10px] font-black text-accent uppercase tracking-widest">Email</span>
-                                                <span className="text-sm font-bold text-foreground truncate w-full">{proprietario.email || 'Não informado'}</span>
+                                            <div className="bg-background border border-panel-border rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 shadow-sm flex flex-col items-start gap-1">
+                                                <span className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Email</span>
+                                                <span className="text-xs sm:text-sm font-bold text-foreground truncate w-full">{proprietario.email || 'Não informado'}</span>
                                             </div>
-                                            <div className="bg-background border border-panel-border rounded-2xl py-4 px-6 shadow-sm flex items-center justify-between">
-                                                <span className="text-[10px] font-black text-accent uppercase tracking-widest">Contato</span>
-                                                <span className="text-sm font-bold text-accent">{proprietario.telefone ? formatPhone(proprietario.telefone) : 'Não informado'}</span>
+                                            <div className="bg-background border border-panel-border rounded-xl sm:rounded-2xl py-3 sm:py-4 px-4 sm:px-6 shadow-sm flex items-center justify-between">
+                                                <span className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Contato</span>
+                                                <span className="text-xs sm:text-sm font-bold text-accent">{proprietario.telefone ? formatPhone(proprietario.telefone) : 'Não informado'}</span>
                                             </div>
                                         </div>
                                     </div>
 
+
                                     {/* Documento Anexado */}
                                     {proprietario.documento_identidade_url && (
-                                        <div className="bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[32px] p-8 mt-auto">
-                                            <h3 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-6 flex items-center gap-3"><FileText className="w-4 h-4 text-primary" /> DOCS EM ANEXO</h3>
-                                            <a href={proprietario.documento_identidade_url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 bg-background border border-panel-border rounded-2xl hover:border-primary transition-all group no-print">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground text-primary transition-all">
+                                        <div className="bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 mt-auto">
+                                            <h3 className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-6 flex items-center gap-3"><FileText className="w-4 h-4 text-primary" /> DOCS EM ANEXO</h3>
+                                            <a href={proprietario.documento_identidade_url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 bg-background border border-panel-border rounded-xl sm:rounded-2xl hover:border-primary transition-all group no-print">
+                                                <div className="flex items-center gap-4 min-w-0">
+                                                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground text-primary transition-all shrink-0">
                                                         <FileText className="w-5 h-5" />
                                                     </div>
-                                                    <div>
-                                                        <p className="text-[13px] font-bold text-foreground">Visualizar Arquivo</p>
-                                                        <p className="text-[9px] font-black uppercase text-accent tracking-widest mt-0.5">{proprietario.tipo === 'PF' ? 'Identidade / CNH' : 'Contrato Social'}</p>
+                                                    <div className="min-w-0">
+                                                        <p className="text-[13px] font-bold text-foreground truncate">Visualizar Arquivo</p>
+                                                        <p className="text-[9px] font-black uppercase text-accent tracking-widest mt-0.5 truncate">{proprietario.tipo === 'PF' ? 'Identidade / CNH' : 'Contrato Social'}</p>
                                                     </div>
                                                 </div>
-                                                <ExternalLink className="w-4 h-4 text-accent group-hover:text-primary transition-colors" />
+                                                <ExternalLink className="w-4 h-4 text-accent group-hover:text-primary transition-colors shrink-0" />
                                             </a>
-                                            <div className="hidden print-container:block text-xs font-bold border border-gray-300 p-4 rounded-lg bg-gray-50 uppercase tracking-widest text-center">
+                                            <div className="hidden print-container:block text-[10px] font-bold border border-gray-300 p-4 rounded-lg bg-gray-50 uppercase tracking-widest text-center">
                                                 * Documento Físico Anexado Digitalmente *
                                             </div>
                                         </div>
                                     )}
+
                                 </div>
 
                                 {/* Coluna 2: Detalhamentos Endereço */}
                                 <div className="col-span-12 space-y-8">
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[32px] p-8">
-                                        <h3 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-6 flex items-center gap-3"><MapPin className="w-4 h-4 text-primary" /> ENDEREÇO / ORIGEM</h3>
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[24px] sm:rounded-[32px] p-6 sm:p-8">
+                                        <h3 className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-6 flex items-center gap-3"><MapPin className="w-4 h-4 text-primary" /> ENDEREÇO / ORIGEM</h3>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
-                                            <div className="space-y-1 col-span-2">
-                                                <p className="text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">Logradouro Completo</p>
-                                                <p className="text-[15px] font-bold text-foreground tracking-tight">{proprietario.logradouro || '-'} {proprietario.numero ? `, Nº ${proprietario.numero}` : ''} {proprietario.complemento ? `(${proprietario.complemento})` : ''}</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 sm:gap-y-8 gap-x-6 sm:gap-x-12">
+                                            <div className="space-y-1 sm:col-span-2">
+                                                <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">Logradouro Completo</p>
+                                                <p className="text-[14px] sm:text-[15px] font-bold text-foreground tracking-tight">{proprietario.logradouro || '-'} {proprietario.numero ? `, Nº ${proprietario.numero}` : ''} {proprietario.complemento ? `(${proprietario.complemento})` : ''}</p>
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">Bairro</p>
-                                                <p className="text-[13px] font-bold text-foreground">{proprietario.bairro || '-'}</p>
+                                                <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">Bairro</p>
+                                                <p className="text-xs sm:text-[13px] font-bold text-foreground">{proprietario.bairro || '-'}</p>
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">CEP</p>
-                                                <p className="text-[13px] font-bold text-foreground">{proprietario.cep || '-'}</p>
+                                                <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">CEP</p>
+                                                <p className="text-xs sm:text-[13px] font-bold text-foreground">{proprietario.cep || '-'}</p>
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">Cidade</p>
-                                                <p className="text-[13px] font-bold text-foreground">{proprietario.cidade || '-'}</p>
+                                                <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">Cidade</p>
+                                                <p className="text-xs sm:text-[13px] font-bold text-foreground">{proprietario.cidade || '-'}</p>
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">UF</p>
-                                                <p className="text-[13px] font-bold text-foreground border border-panel-border w-fit px-3 py-1 rounded bg-background inline-block">{proprietario.estado || '-'}</p>
+                                                <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest border-b border-panel-border pb-1 mb-2">UF</p>
+                                                <p className="text-xs sm:text-[13px] font-bold text-foreground border border-panel-border w-fit px-3 py-1 rounded bg-background inline-block">{proprietario.estado || '-'}</p>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
 
                             </div>

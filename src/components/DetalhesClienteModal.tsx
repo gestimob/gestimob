@@ -235,49 +235,57 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                         initial={{ opacity: 0, scale: 0.98, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                        className="bg-panel glass-elite w-full max-w-5xl max-h-[90vh] rounded-[32px] shadow-2xl overflow-hidden relative z-10 border border-panel-border flex flex-col font-sans print-container"
+                        className="bg-panel glass-elite w-full max-w-5xl h-full sm:h-auto sm:max-h-[90vh] rounded-none sm:rounded-[32px] shadow-2xl overflow-hidden relative z-10 border-0 sm:border border-panel-border flex flex-col font-sans print-container"
                     >
+
                         {/* Header */}
-                        <div className="p-8 border-b border-panel-border flex items-center justify-between bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
-                            <div className="flex items-center gap-8">
+                        <div className="p-6 sm:p-8 border-b border-panel-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
+                            <div className="flex items-center gap-4 sm:gap-8">
                                 <button
                                     onClick={onClose}
-                                    className="px-4 py-2 bg-black/5 dark:bg-white/5 border border-panel-border rounded-lg flex items-center gap-3 text-foreground hover:text-foreground transition-all group no-print"
+                                    className="p-2 sm:px-4 sm:py-2 bg-black/5 dark:bg-white/5 border border-panel-border rounded-lg flex items-center gap-3 text-foreground hover:text-foreground transition-all group no-print"
                                 >
                                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                                    <span className="text-sm font-bold uppercase tracking-widest">Voltar</span>
+                                    <span className="text-sm font-bold uppercase tracking-widest hidden sm:inline">Voltar</span>
                                 </button>
-                                <div>
-                                    <h1 className="text-2xl font-serif-premium font-bold text-foreground tracking-tight leading-none uppercase italic">
+                                <div className="min-w-0">
+                                    <h1 className="text-lg sm:text-2xl font-serif-premium font-bold text-foreground tracking-tight leading-tight uppercase italic truncate">
                                         {cliente.nome_completo || cliente.razao_social}
                                     </h1>
-                                    <p className="text-[10px] text-text-dim font-bold uppercase tracking-[0.3em] mt-2">
+                                    <p className="text-[9px] sm:text-[10px] text-text-dim font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-1 sm:mt-2">
                                         Ficha Cadastral • {isPF ? 'Pessoa Física' : 'Pessoa Jurídica'}
                                     </p>
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-6">
-                                <div className="flex flex-col items-center">
-                                    <span className="text-[10px] font-bold text-text-dim uppercase tracking-tighter mb-1">CÓDIGO</span>
-                                    <span className="text-sm font-bold text-primary px-2 py-1">
-                                        {cliente.codigo_interno}
-                                    </span>
-                                </div>
-                                <button
-                                    onClick={handlePrint}
-                                    className="flex items-center gap-2 bg-black/5 dark:bg-white/5 border border-panel-border text-foreground hover:bg-black/10 dark:hover:bg-white/10 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all no-print shadow-sm"
-                                >
-                                    <Printer className="w-4 h-4" />
-                                    Imprimir
-                                </button>
-                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-2 no-print">
+                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-auto sm:hidden no-print">
                                     <X className="w-6 h-6" />
                                 </button>
                             </div>
+                            <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 pt-4 sm:pt-0 border-t sm:border-0 border-panel-border">
+                                <div className="flex flex-col items-start sm:items-center">
+                                    <span className="text-[8px] sm:text-[10px] font-bold text-text-dim uppercase tracking-tighter mb-0.5 sm:mb-1">CÓDIGO</span>
+                                    <span className="text-xs sm:text-sm font-bold text-primary">
+                                        {cliente.codigo_interno}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={handlePrint}
+                                        className="flex items-center gap-2 bg-black/5 dark:bg-white/5 border border-panel-border text-foreground hover:bg-black/10 dark:hover:bg-white/10 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all no-print shadow-sm"
+                                    >
+                                        <Printer className="w-4 h-4" />
+                                        <span className="hidden sm:inline">Imprimir</span>
+                                    </button>
+                                    <button onClick={onClose} className="hidden sm:block p-2 text-text-dim hover:text-foreground no-print underline underline-offset-4 decoration-accent/30 text-[10px] uppercase font-black tracking-widest cursor-pointer">
+                                        <X className="w-6 h-6 text-accent" />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
+
                         {/* Content */}
-                        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
+                        <div className="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar space-y-6 sm:space-y-8">
+
                             <div className="grid grid-cols-12 gap-8">
 
                                 {/* Photo / Avatar box */}
@@ -568,8 +576,8 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                                         <Heart className="w-4 h-4 text-accent" />
                                         DADOS DO CÔNJUGE / PARCEIRO(A)
                                     </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-y-8 gap-x-10">
-                                        <div className="space-y-1 md:col-span-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-6 sm:gap-y-8 gap-x-6 sm:gap-x-10">
+                                        <div className="space-y-1 sm:col-span-2">
                                             <p className="text-[10px] font-medium text-text-dim uppercase">Nome Completo</p>
                                             <p className="text-sm font-bold text-foreground tracking-tight uppercase">{cliente.conjuge_nome || "---"}</p>
                                         </div>
@@ -606,6 +614,7 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                                             <p className="text-sm font-bold text-foreground tracking-tight">{formatPhone(cliente.conjuge_celular)}</p>
                                         </div>
                                     </div>
+
                                 </div>
                             )}
 
@@ -624,20 +633,21 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                                         { label: 'Selfie / Foto', url: cliente.selfie_url }
                                     ].filter(doc => doc.url).map((doc, idx) => (
                                         <div key={idx} className="bg-panel border border-panel-border p-4 rounded-xl flex items-center justify-between group hover:border-white/30 transition-all">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20">
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20 shrink-0">
                                                     <ClipboardCheck className="w-5 h-5 text-primary" />
                                                 </div>
-                                                <div>
-                                                    <p className="text-xs font-bold text-foreground">{doc.label}</p>
+                                                <div className="min-w-0">
+                                                    <p className="text-xs font-bold text-foreground truncate">{doc.label}</p>
                                                     <p className="text-[9px] text-text-dim uppercase tracking-widest">Digitalizado</p>
                                                 </div>
                                             </div>
-                                            <a href={doc.url} target="_blank" rel="noopener noreferrer" className="p-2 bg-black/5 dark:bg-white/5 rounded-lg text-accent hover:text-foreground transition-all no-print">
+                                            <a href={doc.url} target="_blank" rel="noopener noreferrer" className="p-2 bg-black/5 dark:bg-white/5 rounded-lg text-accent hover:text-foreground transition-all no-print shrink-0">
                                                 <Share2 className="w-4 h-4" />
                                             </a>
                                         </div>
                                     ))}
+
                                     {[
                                         { label: 'Documento Identidade', url: cliente.documento_identidade_url },
                                         { label: 'Comprovante Residência', url: cliente.comprovante_residencia_url },
@@ -652,14 +662,14 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                         </div>
 
                         {/* Footer */}
-                        <div className="p-8 border-t border-panel-border flex justify-between items-center bg-panel/10 backdrop-blur-sm">
-                            <div className="flex items-center gap-10">
+                        <div className="p-6 sm:p-8 border-t border-panel-border flex flex-col sm:flex-row gap-6 sm:gap-10 sm:justify-between items-stretch sm:items-center bg-panel/10 backdrop-blur-sm">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-10">
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] text-text-dim font-bold uppercase tracking-widest mb-1">CADASTRADO POR</span>
-                                    <span className="text-xs font-bold text-foreground uppercase italic italic">{cliente.cadastrado_por || "Sistema"}</span>
+                                    <span className="text-[9px] sm:text-[10px] text-text-dim font-bold uppercase tracking-widest mb-1">CADASTRADO POR</span>
+                                    <span className="text-xs font-bold text-foreground uppercase italic">{cliente.cadastrado_por || "Sistema"}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] text-text-dim font-bold uppercase tracking-widest mb-1">REGISTRO EM</span>
+                                    <span className="text-[9px] sm:text-[10px] text-text-dim font-bold uppercase tracking-widest mb-1">REGISTRO EM</span>
                                     <span className="text-xs font-bold text-foreground underline underline-offset-4 decoration-blue-500/50">
                                         {new Date(cliente.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
                                     </span>
@@ -667,11 +677,12 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                             </div>
                             <button
                                 onClick={onClose}
-                                className="btn-elite px-12 py-4 flex items-center gap-2 no-print"
+                                className="w-full sm:w-auto px-10 py-4 bg-[#EAEAEA] text-[#0B0B0C] rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] flex items-center justify-center gap-3 transition-all hover:scale-[1.02] shadow-xl no-print"
                             >
                                 Fechar Ficha <X className="w-4 h-4" />
                             </button>
                         </div>
+
                     </motion.div>
                 </div>
             )}

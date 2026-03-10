@@ -524,22 +524,22 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-background/90 backdrop-blur-xl" />
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-panel glass-elite w-full max-w-5xl h-[700px] rounded-[40px] shadow-2xl overflow-hidden relative z-10 border border-panel-border flex">
+                            className="bg-panel glass-elite w-full max-w-5xl h-[90vh] md:h-[700px] rounded-[32px] md:rounded-[40px] shadow-2xl overflow-hidden relative z-10 border border-panel-border flex flex-col md:flex-row">
 
-                            <aside className="w-80 bg-panel/30 dark:bg-white/5 backdrop-blur-md border-r border-panel-border p-10 flex flex-col justify-between">
-                                <div className="space-y-12">
-                                    <div className="space-y-2">
-                                        <h2 className="text-3xl font-serif-premium text-foreground leading-tight font-bold italic lowercase first-letter:uppercase">Gestão de <br />Empresas</h2>
+                            <aside className="w-full md:w-80 bg-panel/30 dark:bg-white/5 backdrop-blur-md border-b md:border-b-0 md:border-r border-panel-border p-4 md:p-10 flex flex-col justify-between shrink-0">
+                                <div className="space-y-4 md:space-y-12">
+                                    <div className="space-y-1 md:space-y-2">
+                                        <h2 className="text-xl md:text-3xl font-serif-premium text-foreground leading-tight font-bold italic lowercase first-letter:uppercase">Gestão de <br className="hidden md:block" />Empresas</h2>
                                     </div>
-                                    <nav className="space-y-4">
+                                    <nav className="flex md:flex-col overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 gap-2 md:gap-4 scrollbar-hide">
                                         {navItems.map((item) => (
                                             <button key={item.id} type="button" onClick={() => setActiveTab(item.id as TabType)}
-                                                className={cn("w-full flex items-center gap-5 p-4 rounded-3xl transition-all", activeTab === item.id ? "bg-white/5 border border-panel-border" : "hover:bg-white/[0.02]")}>
-                                                <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-all", activeTab === item.id ? "bg-primary text-[#0B0B0C] shadow-[0_0_20px_rgba(255,255,255,0.1)]" : "bg-white/5 text-text-dim")}>
-                                                    <item.icon className="w-5 h-5" />
+                                                className={cn("flex-none md:w-full flex items-center gap-3 md:gap-5 p-2 md:p-4 rounded-2xl md:rounded-3xl transition-all", activeTab === item.id ? "bg-white/5 border border-panel-border" : "hover:bg-white/[0.02]")}>
+                                                <div className={cn("w-8 h-8 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-all shrink-0", activeTab === item.id ? "bg-primary text-[#0B0B0C] shadow-[0_0_20px_rgba(255,255,255,0.1)]" : "bg-white/5 text-text-dim")}>
+                                                    <item.icon className="w-4 h-4 md:w-5 md:h-5" />
                                                 </div>
                                                 <div className="text-left">
-                                                    <div className={cn("text-xs font-bold uppercase tracking-widest", activeTab === item.id ? "text-foreground" : "text-text-dim")}>{item.label}</div>
+                                                    <div className={cn("text-[10px] md:text-xs font-bold uppercase tracking-widest whitespace-nowrap", activeTab === item.id ? "text-foreground" : "text-text-dim")}>{item.label}</div>
                                                 </div>
                                             </button>
                                         ))}
@@ -548,14 +548,14 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                             </aside>
 
                             <div className="flex-1 flex flex-col bg-background">
-                                <header className="p-10 pb-4 flex justify-between items-center">
-                                    <div className="flex items-center gap-3">
+                                <header className="p-6 md:p-10 pb-2 md:pb-4 flex justify-between items-center shrink-0">
+                                    <div className="flex items-center gap-2 md:gap-3">
                                         {[1, 2, 3, 4, 5].map((step) => (
-                                            <div key={step} className={cn("w-10 h-10 rounded-full flex items-center justify-center font-black text-sm", currentStep >= step ? "bg-primary/20 text-primary border border-white/30" : "bg-white/5 text-accent")}>{step}</div>
+                                            <div key={step} className={cn("w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-black text-xs md:text-sm", currentStep >= step ? "bg-primary/20 text-primary border border-white/30" : "bg-white/5 text-accent")}>{step}</div>
                                         ))}
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <button onClick={onClose} className="w-12 h-12 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-all text-text-dim"><X className="w-6 h-6" /></button>
+                                        <button onClick={onClose} className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-white/5 rounded-2xl transition-all text-text-dim"><X className="w-6 h-6" /></button>
                                     </div>
                                 </header>
 
@@ -579,7 +579,7 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                             }
                                         }
                                     }}
-                                    className="flex-1 flex flex-col p-10 pt-4 overflow-hidden"
+                                    className="flex-1 flex flex-col p-6 md:p-10 pt-2 md:pt-4 overflow-hidden"
                                 >
                                     <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
                                         {activeTab === 'basico' && (
@@ -588,8 +588,8 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                     <h3 className="text-xl font-bold text-foreground uppercase tracking-tighter">Identificação Corporativa</h3>
                                                 </div>
 
-                                                <div className="grid grid-cols-2 gap-8">
-                                                    <div className="flex gap-4 col-span-1">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                                                    <div className="flex gap-4 col-span-1 md:col-span-1">
                                                         <Input label="CÓDIGO" value={formData.codigo} readOnly colSpan="w-1/3" />
                                                         <div className="space-y-3 flex-1">
                                                             <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">STATUS</label>
@@ -603,9 +603,9 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <Input label="Nome Fantasia" value={formData.nome_fantasia} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nome_fantasia: e.target.value })} placeholder="Ex: Minha Imobiliária" required />
-                                                    <Input label="Razão Social" value={formData.razao_social} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, razao_social: e.target.value })} placeholder="Ex: Gestão Imob Ltda" required />
-                                                    <div className="space-y-3">
+                                                    <Input label="Nome Fantasia" value={formData.nome_fantasia} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nome_fantasia: e.target.value })} placeholder="Ex: Minha Imobiliária" required colSpan="col-span-1" />
+                                                    <Input label="Razão Social" value={formData.razao_social} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, razao_social: e.target.value })} placeholder="Ex: Gestão Imob Ltda" required colSpan="col-span-1" />
+                                                    <div className="space-y-3 col-span-1">
                                                         <label className="text-[10px] font-black text-text-dim uppercase tracking-[0.2em]">CNPJ Oficial</label>
                                                         <input
                                                             required
@@ -636,22 +636,20 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
 
                                         {activeTab === 'endereco' && (
                                             <motion.div key="endereco" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
-                                                <div className="grid grid-cols-6 gap-8">
-                                                    <div className="col-span-2 space-y-3">
+                                                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 md:gap-8">
+                                                    <div className="col-span-2 md:col-span-2 space-y-3">
                                                         <label className="text-[10px] font-black text-text-dim uppercase tracking-[0.2em]">CEP</label>
                                                         <div className="relative">
                                                             <input required value={formData.cep} onChange={handleCepChange} className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-4 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium" />
                                                             {searchingCep && <Loader2 className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-primary animate-spin" />}
                                                         </div>
                                                     </div>
-                                                    <Input label="Logradouro" value={formData.logradouro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, logradouro: e.target.value })} colSpan="col-span-4" required />
-
-                                                    <Input label="Número" value={formData.numero} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, numero: e.target.value })} colSpan="col-span-2" required />
-                                                    <Input label="Bairro" value={formData.bairro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, bairro: e.target.value })} colSpan="col-span-2" required />
-                                                    <Input label="Complemento" value={formData.complemento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, complemento: e.target.value })} colSpan="col-span-2" placeholder="Ex: Sala 202, Bloco A" />
-
-                                                    <Input label="Cidade" value={formData.cidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cidade: e.target.value })} colSpan="col-span-4" required />
-                                                    <Input label="Estado" value={formData.estado} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, estado: e.target.value })} colSpan="col-span-2" required />
+                                                    <Input label="Logradouro" value={formData.logradouro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, logradouro: e.target.value })} colSpan="col-span-2 md:col-span-4" required />
+                                                    <Input label="Número" value={formData.numero} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, numero: e.target.value })} colSpan="col-span-1 md:col-span-2" required />
+                                                    <Input label="Bairro" value={formData.bairro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, bairro: e.target.value })} colSpan="col-span-1 md:col-span-2" required />
+                                                    <Input label="Complemento" value={formData.complemento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, complemento: e.target.value })} colSpan="col-span-2 md:col-span-2" placeholder="Ex: Sala 202, Bloco A" />
+                                                    <Input label="Cidade" value={formData.cidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cidade: e.target.value })} colSpan="col-span-2 md:col-span-4" required />
+                                                    <Input label="Estado" value={formData.estado} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, estado: e.target.value })} colSpan="col-span-2 md:col-span-2" required />
                                                 </div>
                                             </motion.div>
                                         )}
@@ -665,7 +663,7 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
 
                                                 <div className="space-y-10">
                                                     {responsaveis.map((resp, index) => (
-                                                        <div key={resp.id} className="bg-white/5 border border-panel-border rounded-[32px] p-8 space-y-8 relative group">
+                                                        <div key={resp.id} className="bg-white/5 border border-panel-border rounded-2xl md:rounded-[32px] p-4 md:p-8 space-y-6 md:space-y-8 relative group">
                                                             {index > 0 && (
                                                                 <button
                                                                     type="button"
@@ -682,39 +680,34 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                 <h4 className="text-[12px] font-black text-foreground uppercase tracking-widest">{index === 0 ? "Responsável Principal" : `Responsável Adicional`}</h4>
                                                             </div>
 
-                                                            <div className="grid grid-cols-6 gap-6">
+                                                            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 md:gap-6">
                                                                 <Input label="Nome Completo" value={resp.nome} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].nome = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-6" required />
-
+                                                                }} colSpan="col-span-2 md:col-span-6" required />
                                                                 <Input label="CPF" value={resp.cpf ? resp.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : ''} onChange={(e: any) => {
                                                                     const val = e.target.value.replace(/\D/g, "").slice(0, 11);
                                                                     const updated = [...responsaveis];
                                                                     updated[index].cpf = val;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-2" placeholder="000.000.000-00" />
-
+                                                                }} colSpan="col-span-2 md:col-span-2" placeholder="000.000.000-00" />
                                                                 <Input label="RG" value={resp.rg || ''} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].rg = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-2" />
-
+                                                                }} colSpan="col-span-1 md:col-span-2" />
                                                                 <Input label="Órgão Emissor" value={resp.orgao_emissor || ''} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].orgao_emissor = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-2" placeholder="Ex: SSP/SP" />
-
+                                                                }} colSpan="col-span-1 md:col-span-2" placeholder="Ex: SSP/SP" />
                                                                 <Input label="Nacionalidade" value={resp.nacionalidade || ''} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].nacionalidade = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-3" placeholder="Ex: Brasileiro(a)" />
-
-                                                                <div className="col-span-3 space-y-3">
+                                                                }} colSpan="col-span-2 md:col-span-3" placeholder="Ex: Brasileiro(a)" />
+                                                                <div className="col-span-2 md:col-span-3 space-y-3">
                                                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">Estado Civil</label>
                                                                     <select
                                                                         value={resp.estado_civil || ""}
@@ -738,7 +731,7 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                     <h5 className="text-[10px] font-black text-primary uppercase tracking-widest absolute -top-2 bg-background pr-2">Endereço Residencial</h5>
                                                                 </div>
 
-                                                                <div className="col-span-2 space-y-3">
+                                                                <div className="col-span-2 md:col-span-2 space-y-3">
                                                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-[0.2em]">CEP</label>
                                                                     <div className="relative">
                                                                         <input value={resp.cep ? resp.cep.replace(/^(\d{5})(\d{3})$/, "$1-$2") : ''} onChange={async (e) => {
@@ -746,7 +739,6 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                             const updated = [...responsaveis];
                                                                             updated[index].cep = currentCep;
                                                                             setResponsaveis(updated);
-
                                                                             if (currentCep.length === 8) {
                                                                                 setSearchingCep(true);
                                                                                 try {
@@ -770,34 +762,32 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                     const updated = [...responsaveis];
                                                                     updated[index].logradouro = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-4" />
-
+                                                                }} colSpan="col-span-2 md:col-span-4" />
                                                                 <Input label="Número" value={resp.numero || ''} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].numero = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-2" />
+                                                                }} colSpan="col-span-1 md:col-span-2" />
                                                                 <Input label="Bairro" value={resp.bairro || ''} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].bairro = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-2" />
+                                                                }} colSpan="col-span-1 md:col-span-2" />
                                                                 <Input label="Complemento" value={resp.complemento || ''} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].complemento = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-2" />
-
+                                                                }} colSpan="col-span-2 md:col-span-2" />
                                                                 <Input label="Cidade" value={resp.cidade || ''} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].cidade = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-4" />
+                                                                }} colSpan="col-span-2 md:col-span-4" />
                                                                 <Input label="Estado" value={resp.estado || ''} onChange={(e: any) => {
                                                                     const updated = [...responsaveis];
                                                                     updated[index].estado = e.target.value;
                                                                     setResponsaveis(updated);
-                                                                }} colSpan="col-span-2" />
+                                                                }} colSpan="col-span-2 md:col-span-2" />
                                                             </div>
                                                         </div>
                                                     ))}

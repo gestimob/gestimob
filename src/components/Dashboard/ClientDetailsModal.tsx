@@ -142,9 +142,10 @@ export function ClientDetailsModal({ isOpen, onClose, client }: ClientDetailsMod
                                         <span className="text-[10px] font-black uppercase tracking-widest text-accent">Contrato / Aluguel</span>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-foreground font-bold">Contrato: {client.activeLease?.contratos?.codigo_contrato || '---'}</p>
-                                        <p className="text-sm text-text-dim">Lease: {client.activeLease?.codigo_interno || '---'}</p>
+                                        <p className="text-foreground font-bold">Contrato: {client.activeLease?.contratos?.[0]?.codigo_contrato || 'Aguardando'}</p>
+                                        <p className="text-sm text-text-dim">Cód. Interno (Aluguel): {client.activeLease?.codigo_interno || '---'}</p>
                                     </div>
+
                                 </div>
 
                                 <div className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl p-5 group hover:border-white/20 transition-all">

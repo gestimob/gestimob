@@ -1003,24 +1003,24 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Overview Boxes */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <div className="bg-background border border-panel-border rounded-2xl p-6 shadow-sm flex items-start gap-4">
-                                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                                                <User className="w-5 h-5 text-primary" />
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                                        <div className="bg-background border border-panel-border rounded-2xl p-4 md:p-6 shadow-sm flex items-start gap-3 md:gap-4">
+                                            <div className="w-8 h-8 md:w-10 md:h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                                                <User className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                                             </div>
                                             <div className="overflow-hidden">
-                                                <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1">Locatário (Cliente)</p>
-                                                <p className="text-[13px] font-bold text-foreground truncate">{selectedData.clientes?.nome_completo || 'N/A'}</p>
+                                                <p className="text-[8px] md:text-[9px] font-black text-accent uppercase tracking-widest mb-1">Locatário (Cliente)</p>
+                                                <p className="text-[12px] md:text-[13px] font-bold text-foreground truncate">{selectedData.clientes?.nome_completo || 'N/A'}</p>
                                             </div>
                                         </div>
 
-                                        <div className="bg-background border border-panel-border rounded-2xl p-6 shadow-sm flex items-start gap-4">
-                                            <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center shrink-0">
-                                                <User className="w-5 h-5 text-accent" />
+                                        <div className="bg-background border border-panel-border rounded-2xl p-4 md:p-6 shadow-sm flex items-start gap-3 md:gap-4">
+                                            <div className="w-8 h-8 md:w-10 md:h-10 bg-accent/10 rounded-xl flex items-center justify-center shrink-0">
+                                                <User className="w-4 h-4 md:w-5 md:h-5 text-accent" />
                                             </div>
                                             <div className="overflow-hidden">
-                                                <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1">Locador (Proprietário)</p>
-                                                <p className="text-[13px] font-bold text-foreground truncate">
+                                                <p className="text-[8px] md:text-[9px] font-black text-accent uppercase tracking-widest mb-1">Locador (Proprietário)</p>
+                                                <p className="text-[12px] md:text-[13px] font-bold text-foreground truncate">
                                                     {(() => {
                                                         const target = initialData || selectedData;
                                                         const imovelObj = Array.isArray(target.imoveis) ? target.imoveis[0] : (target.imoveis || {});
@@ -1039,16 +1039,17 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                             </div>
                                         </div>
 
-                                        <div className="bg-background border border-panel-border rounded-2xl p-6 shadow-sm flex items-start gap-4">
-                                            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
-                                                <Building2 className="w-5 h-5 text-white" />
+                                        <div className="bg-background border border-panel-border rounded-2xl p-4 md:p-6 shadow-sm flex items-start gap-3 md:gap-4 sm:col-span-2 md:col-span-1">
+                                            <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                                                <Building2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
                                             </div>
                                             <div className="overflow-hidden">
-                                                <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1">Finalidade</p>
-                                                <p className="text-[13px] font-bold text-foreground uppercase truncate">{selectedData.finalidade_aluguel || 'Residencial'}</p>
+                                                <p className="text-[8px] md:text-[9px] font-black text-accent uppercase tracking-widest mb-1">Finalidade</p>
+                                                <p className="text-[12px] md:text-[13px] font-bold text-foreground uppercase truncate">{selectedData.finalidade_aluguel || 'Residencial'}</p>
                                             </div>
                                         </div>
                                     </div>
+
 
                                     {/* Upload Contrato Assinado */}
                                     <div className="bg-black/[0.02] dark:bg-white/[0.02] p-6 rounded-[32px] border border-panel-border space-y-4">
@@ -1057,12 +1058,12 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                         </h4>
                                         <p className="text-xs text-text-dim">Anexe o contrato assinado (PDF ou imagem). Ao salvar com o arquivo, o status será alterado para Vigente.</p>
 
-                                        <div className="flex items-start gap-4">
-                                            <div className="flex-1">
+                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-4">
+                                            <div className="flex-1 min-w-0">
                                                 {!arquivoContrato && !existingContratoUrl ? (
                                                     <div onClick={() => !isReadOnly && fileInputRef.current?.click()}
                                                         className={cn(
-                                                            "h-24 bg-black/[0.02] dark:bg-white/[0.02] border-2 border-dashed border-panel-border rounded-2xl flex flex-col items-center justify-center gap-2 transition-all group",
+                                                            "h-24 bg-black/[0.02] dark:bg-white/[0.02] border-2 border-dashed border-panel-border rounded-2xl flex flex-col items-center justify-center gap-2 transition-all group px-4 text-center",
                                                             !isReadOnly ? "cursor-pointer hover:border-primary" : "cursor-not-allowed"
                                                         )}>
                                                         <UploadCloud className="w-6 h-6 text-accent group-hover:text-primary transition-colors" />
@@ -1071,17 +1072,17 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                                         </span>
                                                     </div>
                                                 ) : (
-                                                    <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-between">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-primary" /></div>
-                                                            <div>
-                                                                <div className="text-sm font-bold text-foreground truncate max-w-[300px]">{arquivoContrato?.name || "Contrato Assinado Anexado"}</div>
-                                                                <div className="text-[10px] text-accent uppercase font-black">{arquivoContrato ? 'Pronto para Upload' : 'Documento Salvo na Nuvem'}</div>
+                                                    <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-between gap-3">
+                                                        <div className="flex items-center gap-3 overflow-hidden">
+                                                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0"><CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-primary" /></div>
+                                                            <div className="overflow-hidden">
+                                                                <div className="text-xs md:text-sm font-bold text-foreground truncate">{arquivoContrato?.name || "Contrato Assinado Anexado"}</div>
+                                                                <div className="text-[9px] md:text-[10px] text-accent uppercase font-black">{arquivoContrato ? 'Pronto para Upload' : 'Documento Salvo na Nuvem'}</div>
                                                             </div>
                                                         </div>
                                                         {!isReadOnly && (
                                                             <button type="button" onClick={() => { setArquivoContrato(null); setExistingContratoUrl(null); setShowSaveAlert(false); }}
-                                                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all">
+                                                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shrink-0">
                                                                 <Trash2 className="w-4 h-4" />
                                                             </button>
                                                         )}
@@ -1097,13 +1098,14 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                                             {/* Finalizar Contrato - só aparece se tem arquivo */}
                                             {(arquivoContrato || existingContratoUrl) && (
-                                                <label className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 cursor-pointer hover:bg-amber-500/20 transition-all shrink-0">
+                                                <label className="flex items-center justify-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 cursor-pointer hover:bg-amber-500/20 transition-all sm:shrink-0 h-24 sm:h-auto">
                                                     <input type="checkbox" checked={finalizarContrato} onChange={(e) => handleToggleFinalizar(e.target.checked)}
                                                         className="w-4 h-4 rounded accent-amber-500" />
-                                                    <span className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider">Finalizar Contrato</span>
+                                                    <span className="text-[10px] md:text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider">Finalizar Contrato</span>
                                                 </label>
                                             )}
                                         </div>
+
 
                                         {/* Painel de confirmação para finalizar */}
                                         {showFinalizarConfirm && (
@@ -1116,25 +1118,28 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                                         <p className="text-xs font-bold text-rose-600 dark:text-rose-400 mt-2">Para confirmar, digite o número do contrato: <span className="font-black">{nextContractCode || initialData?.codigo_contrato}</span></p>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex flex-col sm:flex-row items-center gap-2">
                                                     <input
                                                         type="text"
                                                         value={confirmCodigoInput}
                                                         onChange={(e) => setConfirmCodigoInput(e.target.value)}
                                                         placeholder={`Digite ${nextContractCode || initialData?.codigo_contrato}`}
-                                                        className="flex-1 h-10 px-4 bg-background border border-rose-500/40 rounded-xl text-sm font-bold text-foreground outline-none focus:border-rose-500 transition-all"
+                                                        className="w-full sm:flex-1 h-12 sm:h-10 px-4 bg-background border border-rose-500/40 rounded-xl text-sm font-bold text-foreground outline-none focus:border-rose-500 transition-all"
                                                         onKeyDown={(e) => e.key === 'Enter' && handleConfirmarFinalizar()}
                                                         autoFocus
                                                     />
-                                                    <button type="button" onClick={handleConfirmarFinalizar}
-                                                        className="h-10 px-4 bg-rose-500 text-white text-xs font-black uppercase rounded-xl hover:bg-rose-600 transition-all">
-                                                        Confirmar
-                                                    </button>
-                                                    <button type="button" onClick={() => { setShowFinalizarConfirm(false); setConfirmCodigoInput(""); }}
-                                                        className="h-10 px-4 bg-black/5 dark:bg-white/5 text-accent text-xs font-black uppercase rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-all">
-                                                        Cancelar
-                                                    </button>
+                                                    <div className="flex w-full sm:w-auto gap-2">
+                                                        <button type="button" onClick={handleConfirmarFinalizar}
+                                                            className="flex-1 sm:flex-none h-12 sm:h-10 px-4 bg-rose-500 text-white text-[10px] font-black uppercase rounded-xl hover:bg-rose-600 transition-all">
+                                                            Confirmar
+                                                        </button>
+                                                        <button type="button" onClick={() => { setShowFinalizarConfirm(false); setConfirmCodigoInput(""); }}
+                                                            className="flex-1 sm:flex-none h-12 sm:h-10 px-4 bg-black/5 dark:bg-white/5 text-accent text-[10px] font-black uppercase rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-all">
+                                                            Cancelar
+                                                        </button>
+                                                    </div>
                                                 </div>
+
                                             </div>
                                         )}
 
@@ -1147,7 +1152,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Text Content Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 2. Cabeçalho do Contrato
                                         </h4>
@@ -1162,7 +1168,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Partes Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 3. Identificação das Partes
                                         </h4>
@@ -1177,7 +1184,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Negócio Jurídico Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 4. Negócio Jurídico
                                         </h4>
@@ -1192,7 +1200,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Objeto da Locação Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 5. Objeto da Locação
                                         </h4>
@@ -1207,7 +1216,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Objetivo e Finalidade Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 6. Objetivo e Finalidade da Locação
                                         </h4>
@@ -1222,7 +1232,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Prazo da Locação Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 7. Prazo da Locação
                                         </h4>
@@ -1237,7 +1248,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Preço da Locação Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 8. Preço da Locação
                                         </h4>
@@ -1252,7 +1264,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Cláusulas Gerais Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 9. Obrigações e Cláusulas Gerais
                                         </h4>
@@ -1267,7 +1280,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Página de Assinaturas Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 10. Página de Assinaturas
                                         </h4>
@@ -1282,7 +1296,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                     </div>
 
                                     {/* Rodapé do Contrato Editor */}
-                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-8 rounded-[32px] border border-panel-border space-y-6">
+                                    <div className="bg-black/[0.02] dark:bg-white/[0.02] p-4 md:p-8 rounded-[32px] border border-panel-border space-y-4 md:space-y-6">
+
                                         <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                             <FileText className="w-4 h-4 text-primary" /> 11. Rodapé do Contrato
                                         </h4>
@@ -1301,19 +1316,20 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                         </form>
 
-                        <footer className="p-10 border-t border-panel-border bg-panel/30 dark:bg-white/5 backdrop-blur-md flex items-center gap-4 shrink-0">
-                            <div className="flex-1" />
+                        <footer className="p-6 md:p-10 border-t border-panel-border bg-panel/30 dark:bg-white/5 backdrop-blur-md flex flex-col sm:flex-row items-stretch sm:items-center gap-4 shrink-0">
+                            <div className="flex-1 hidden sm:block" />
                             {!isReadOnly ? (
-                                <button type="submit" form="contrato-form" disabled={loading} className="bg-[#EAEAEA] text-[#0B0B0C] px-12 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-4 transition-all hover:scale-[1.05] shadow-xl">
+                                <button type="submit" form="contrato-form" disabled={loading} className="bg-[#EAEAEA] text-[#0B0B0C] px-6 sm:px-12 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] flex items-center justify-center gap-3 sm:gap-4 transition-all hover:scale-[1.02] sm:hover:scale-[1.05] shadow-xl">
                                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                                     <Save className="w-4 h-4" /> Finalizar Documento
                                 </button>
                             ) : (
-                                <button type="button" onClick={onClose} className="bg-panel border border-panel-border text-foreground px-12 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-4 transition-all hover:scale-[1.05] shadow-xl">
+                                <button type="button" onClick={onClose} className="bg-panel border border-panel-border text-foreground px-6 sm:px-12 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] flex items-center justify-center gap-3 sm:gap-4 transition-all hover:scale-[1.02] sm:hover:scale-[1.05] shadow-xl">
                                     Fechar Visualização
                                 </button>
                             )}
                         </footer>
+
 
                     </motion.div>
                 </div>

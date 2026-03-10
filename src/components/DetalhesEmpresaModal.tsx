@@ -265,44 +265,52 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                         initial={{ opacity: 0, scale: 0.98, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                        className="bg-panel glass-elite w-full max-w-4xl max-h-[90vh] rounded-[32px] shadow-2xl overflow-hidden relative z-10 border border-panel-border flex flex-col font-sans print-container"
+                        className="bg-panel glass-elite w-full max-w-4xl h-full sm:h-auto sm:max-h-[90vh] rounded-none sm:rounded-[32px] shadow-2xl overflow-hidden relative z-10 border-0 sm:border border-panel-border flex flex-col font-sans print-container"
                     >
+
                         {/* Static Header (Always Visible) */}
-                        <div className="p-8 border-b border-panel-border flex items-center justify-between bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
-                            <div className="flex items-center gap-8">
+                        <div className="p-6 sm:p-8 border-b border-panel-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
+                            <div className="flex items-center gap-4 sm:gap-8">
                                 <button
                                     onClick={onClose}
-                                    className="px-4 py-2 bg-panel border border-panel-border rounded-lg flex items-center gap-3 text-foreground hover:text-foreground transition-all group no-print"
+                                    className="p-2 sm:px-4 sm:py-2 bg-panel border border-panel-border rounded-lg flex items-center gap-3 text-foreground hover:text-foreground transition-all group no-print"
                                 >
                                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                                    <span className="text-sm font-bold uppercase tracking-widest">Voltar</span>
+                                    <span className="text-sm font-bold uppercase tracking-widest hidden sm:inline">Voltar</span>
                                 </button>
-                                <div>
-                                    <h1 className="text-2xl font-serif-premium font-bold text-foreground tracking-tight leading-none lowercase first-letter:uppercase">{empresa.nome_fantasia}</h1>
+                                <div className="min-w-0">
+                                    <h1 className="text-lg sm:text-2xl font-serif-premium font-bold text-foreground tracking-tight leading-tight lowercase first-letter:uppercase truncate">{empresa.nome_fantasia}</h1>
                                 </div>
+                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-auto sm:hidden no-print">
+                                    <X className="w-6 h-6" />
+                                </button>
                             </div>
-                            <div className="flex items-center gap-6">
-                                <div className="flex flex-col items-center">
-                                    <span className="text-[10px] font-bold text-text-dim uppercase tracking-tighter mb-1">STATUS</span>
+                            <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 pt-4 sm:pt-0 border-t sm:border-0 border-panel-border">
+                                <div className="flex flex-col items-start sm:items-center">
+                                    <span className="text-[8px] sm:text-[10px] font-bold text-text-dim uppercase tracking-tighter mb-0.5 sm:mb-1">STATUS</span>
                                     <span className={cn(
-                                        "text-[11px] font-bold px-6 py-1.5 rounded-full shadow-sm",
+                                        "text-[10px] sm:text-[11px] font-bold px-4 sm:px-6 py-1 sm:py-1.5 rounded-full shadow-sm",
                                         (empresa.status || 'Ativo') === 'Ativo' ? "bg-badge-bg text-badge-text" : "bg-rose-500/10 text-rose-500"
                                     )}>
                                         {empresa.status || 'Ativo'}
                                     </span>
                                 </div>
-                                <button onClick={handlePrint} className="flex items-center gap-2 bg-panel border border-panel-border text-foreground hover:text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold transition-all no-print">
-                                    <Printer className="w-4 h-4" />
-                                    Imprimir
-                                </button>
-                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-2 no-print">
-                                    <X className="w-6 h-6" />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={handlePrint} className="flex items-center gap-2 bg-panel border border-panel-border text-foreground hover:text-foreground px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all no-print shadow-sm">
+                                        <Printer className="w-4 h-4" />
+                                        <span className="hidden sm:inline">Imprimir</span>
+                                    </button>
+                                    <button onClick={onClose} className="hidden sm:block p-2 text-text-dim hover:text-foreground no-print">
+                                        <X className="w-6 h-6" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
+
                         {/* Scrollable Content Area */}
-                        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
+                        <div className="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar space-y-6 sm:space-y-8">
+
 
                             {/* Content Grid Area */}
                             <div className="grid grid-cols-12 gap-8">
@@ -314,7 +322,7 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                                         DADOS JURÍDICOS
                                     </h3>
 
-                                    <div className="grid grid-cols-2 gap-y-10 gap-x-12">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 sm:gap-y-10 gap-x-6 sm:gap-x-12">
                                         <div className="space-y-1">
                                             <p className="text-xs font-medium text-text-dim">Razão Social</p>
                                             <div className="flex items-center gap-3">
@@ -322,6 +330,7 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                                                 <p className="text-sm font-bold text-foreground tracking-tight">{empresa.razao_social}</p>
                                             </div>
                                         </div>
+
                                         <div className="space-y-4">
                                             <p className="text-xs font-medium text-text-dim">Responsáveis Registrados</p>
                                             <div className="flex flex-col gap-3">
@@ -347,20 +356,20 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                                                 <MapPinned className="w-4 h-4 text-primary" />
                                                 <span className="text-xs font-bold text-accent uppercase tracking-widest">Endereço de Operação</span>
                                             </div>
-                                            <div className="grid grid-cols-6 gap-6">
-                                                <div className="col-span-4 space-y-1">
+                                            <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 sm:gap-6">
+                                                <div className="col-span-2 sm:col-span-4 space-y-1">
                                                     <p className="text-xs font-medium text-text-dim">Logradouro</p>
                                                     <p className="text-sm font-bold text-foreground tracking-tight">{empresa.logradouro}</p>
                                                 </div>
-                                                <div className="col-span-2 space-y-1">
+                                                <div className="col-span-1 sm:col-span-2 space-y-1">
                                                     <p className="text-xs font-medium text-text-dim">Número</p>
                                                     <p className="text-sm font-bold text-foreground tracking-tight">{empresa.numero}</p>
                                                 </div>
-                                                <div className="col-span-2 space-y-1">
+                                                <div className="col-span-1 sm:col-span-2 space-y-1">
                                                     <p className="text-xs font-medium text-text-dim">Bairro</p>
                                                     <p className="text-sm font-bold text-foreground tracking-tight">{empresa.bairro}</p>
                                                 </div>
-                                                <div className="col-span-3 space-y-1">
+                                                <div className="col-span-1 sm:col-span-3 space-y-1">
                                                     <p className="text-xs font-medium text-text-dim">Cidade</p>
                                                     <p className="text-sm font-bold text-foreground tracking-tight">{empresa.cidade}/{empresa.estado}</p>
                                                 </div>
@@ -369,6 +378,7 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                                                     <p className="text-sm font-bold text-foreground tracking-tight">{empresa.cep}</p>
                                                 </div>
                                             </div>
+
                                         </div>
 
                                         <div className="space-y-1">
@@ -417,15 +427,15 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                                 </h3>
 
                                 <div className="space-y-4">
-                                    <div className="bg-panel border border-panel-border rounded-xl p-6 flex items-center justify-between">
-                                        <div className="flex items-center gap-6">
-                                            <div className="w-12 h-12 bg-[#4392F1]/10 rounded-xl flex items-center justify-center border border-[#4392F1]/20">
+                                    <div className="bg-panel border border-panel-border rounded-xl p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-6">
+                                        <div className="flex items-center gap-4 sm:gap-6">
+                                            <div className="w-12 h-12 bg-[#4392F1]/10 rounded-xl flex items-center justify-center border border-[#4392F1]/20 shrink-0">
                                                 <ClipboardCheck className="w-6 h-6 text-[#4392F1]" />
                                             </div>
-                                            <div>
-                                                <p className="text-foreground font-bold tracking-tight">Contrato Social</p>
+                                            <div className="min-w-0">
+                                                <p className="text-foreground font-bold tracking-tight truncate">Contrato Social</p>
                                                 <p className="text-xs text-text-dim font-medium mt-1">
-                                                    {empresa.contrato_social_url ? "Documento digital verificado e disponível" : "Nenhum contrato social anexado"}
+                                                    {empresa.contrato_social_url ? "Documento verificado" : "Nenhum anexo"}
                                                 </p>
                                             </div>
                                         </div>
@@ -434,12 +444,13 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                                                 href={empresa.contrato_social_url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="bg-panel border border-panel-border text-foreground px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#2D3D4D] transition-all flex items-center gap-2"
+                                                className="bg-panel border border-panel-border text-foreground px-6 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#2D3D4D] transition-all flex items-center justify-center gap-2 shadow-sm"
                                             >
                                                 Visualizar
                                             </a>
                                         )}
                                     </div>
+
 
                                     {responsaveis.length > 0 && (
                                         <div className="pt-4 space-y-4">
@@ -520,14 +531,15 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                         </div>
 
                         {/* Footer Section */}
-                        <div className="p-8 border-t border-panel-border flex justify-end bg-panel/30 dark:bg-white/5 backdrop-blur-md">
+                        <div className="p-6 sm:p-8 border-t border-panel-border flex flex-col sm:flex-row justify-end bg-panel/30 dark:bg-white/5 backdrop-blur-md">
                             <button
                                 onClick={onClose}
-                                className="bg-[#EAEAEA] text-[#0B0B0C] px-12 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl"
+                                className="w-full sm:w-auto bg-[#EAEAEA] text-[#0B0B0C] px-12 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl"
                             >
                                 Fechar Janela
                             </button>
                         </div>
+
                     </motion.div>
                 </div>
             )}

@@ -211,25 +211,16 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            role: 'operador'
+          }
+        }
       });
 
       if (authError) throw authError;
 
       if (authData.user) {
-        // Criar perfil com role operador (removido campo 'nome' inexistente)
-        const { error: profileError } = await supabase
-          .from('profile')
-          .insert({
-            id: authData.user.id,
-            email: email,
-            role: 'operador'
-          });
-
-        if (profileError) {
-          console.error("Erro ao criar perfil:", profileError);
-          throw new Error(`Auth OK, mas Perfil falhou: ${profileError.message}`);
-        }
-
         alert("Usuário registrado com sucesso!");
         onSuccess();
       }

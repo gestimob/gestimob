@@ -1,13 +1,17 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
   ArrowRight,
   Crown,
   MousePointer2,
   Building2,
-  Loader2
+  Loader2,
+  X,
+  Mail,
+  Lock,
+  UserPlus
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -17,6 +21,11 @@ export default function LandingPage() {
   const [bgDesktop, setBgDesktop] = useState('https://jkgkwzyxtmqmhaypobba.supabase.co/storage/v1/object/public/configuracoes/fundo_desktop_rr.jpeg');
   const [bgMobile, setBgMobile] = useState('https://jkgkwzyxtmqmhaypobba.supabase.co/storage/v1/object/public/configuracoes/fundo_mobile_rr.jpeg');
   const [loading, setLoading] = useState(true);
+
+  // Easter Egg States
+  const [clickCount, setClickCount] = useState(0);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
+  const [usageCount, setUsageCount] = useState(0);
 
   useEffect(() => {
     async function fetchHeroSettings() {
@@ -39,7 +48,28 @@ export default function LandingPage() {
       }
     }
     fetchHeroSettings();
+
+    // Load usage count from localStorage
+    const count = localStorage.getItem('gestimob_ee_usage');
+    if (count) setUsageCount(parseInt(count));
   }, []);
+
+  const handleLogoClick = () => {
+    if (usageCount >= 2) return;
+
+    const nextCount = clickCount + 1;
+    setClickCount(nextCount);
+
+    if (nextCount === 5) {
+      setShowEasterEgg(true);
+      setClickCount(0);
+    }
+
+    // Reset counter if no clicks for 5 seconds
+    setTimeout(() => {
+      setClickCount(0);
+    }, 5000);
+  };
 
   return (
     <main className="min-h-screen relative overflow-hidden bg-[#0B0B0C] text-foreground font-sans">
@@ -68,8 +98,6 @@ export default function LandingPage() {
       <div className="absolute top-[20%] right-[-5%] w-[600px] h-[600px] bg-blue-600/5 blur-[150px] rounded-full" />
       <div className="absolute bottom-[20%] left-[-5%] w-[400px] h-[400px] bg-indigo-600/5 blur-[120px] rounded-full" />
 
-      {/* Floating Elements removed for maximum focus on the container */}
-
       {/* Hero Content - Central Glassmorphism Container */}
       <section className="relative z-10 px-8 min-h-screen flex flex-col items-center justify-center text-center">
         <motion.div
@@ -88,11 +116,12 @@ export default function LandingPage() {
               <img
                 src={logoUrl}
                 alt="Logo"
-                className="h-16 md:h-24 w-auto object-contain transition-all duration-700 transform group-hover:scale-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] group-hover:drop-shadow-[0_0_50px_rgba(255,255,255,0.4)]"
+                onClick={handleLogoClick}
+                className="h-16 md:h-24 w-auto object-contain transition-all duration-700 transform group-hover:scale-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] group-hover:drop-shadow-[0_0_50px_rgba(255,255,255,0.4)] cursor-pointer"
                 title="RR Imobiliária"
               />
             ) : (
-              <div className="h-20 w-20 glass rounded-[24px] flex items-center justify-center glow-border">
+              <div className="h-20 w-20 glass rounded-[24px] flex items-center justify-center glow-border cursor-pointer" onClick={handleLogoClick}>
                 <Building2 className="w-10 h-10 text-white/40" />
               </div>
             )
@@ -116,6 +145,141 @@ export default function LandingPage() {
           </Link>
         </motion.div>
       </section>
+
+      {/* Easter Egg Modal */}
+      <AnimatePresence>
+        {showEasterEgg && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowEasterEgg(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-[#1A1A1B] border border-white/10 p-8 rounded-[32px] w-full max-w-md relative z-10 shadow-2xl"
+            >
+              <button
+                onClick={() => setShowEasterEgg(false)}
+                className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex flex-col items-center gap-4 mb-8">
+                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10">
+                  <UserPlus className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-xl font-serif-premium text-white italic">Novo Acesso</h2>
+                <p className="text-[10px] uppercase font-black tracking-widest text-white/40">
+                  Uso restante: {2 - usageCount}
+                </p>
+              </div>
+
+              <RegisterForm
+                onSuccess={() => {
+                  const nextUsage = usageCount + 1;
+                  setUsageCount(nextUsage);
+                  localStorage.setItem('gestimob_ee_usage', nextUsage.toString());
+                  setShowEasterEgg(false);
+                }}
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </main>
+  );
+}
+
+function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      if (authData.user) {
+        // Criar perfil com role operador
+        const { error: profileError } = await supabase
+          .from('profile')
+          .insert({
+            id: authData.user.id,
+            email: email,
+            nome: 'Operador',
+            role: 'operador'
+          });
+
+        if (profileError) throw profileError;
+
+        alert("Usuário registrado com sucesso!");
+        onSuccess();
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleRegister} className="space-y-6">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-[10px] uppercase font-black tracking-widest text-white/40 ml-1">E-mail</label>
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-sm text-white focus:outline-none focus:border-white/20 transition-all font-medium"
+              placeholder="exemplo@email.com"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-[10px] uppercase font-black tracking-widest text-white/40 ml-1">Senha</label>
+          <div className="relative">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-sm text-white focus:outline-none focus:border-white/20 transition-all font-medium"
+              placeholder="••••••••"
+            />
+          </div>
+        </div>
+      </div>
+
+      {error && <p className="text-rose-500 text-[10px] font-black uppercase text-center">{error}</p>}
+
+      <button
+        disabled={loading}
+        className="w-full h-12 bg-white text-black rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
+      >
+        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Criar Operador"}
+      </button>
+    </form>
   );
 }

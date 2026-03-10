@@ -557,7 +557,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
 
                                             <nav className="flex md:flex-col overflow-x-auto md:overflow-x-visible p-4 md:p-8 md:pt-0 gap-2 md:gap-3 scrollbar-hide">
                                                 {navItems.map((item) => (
-                                                    <button key={item.id} onClick={() => setActiveTab(item.id as TabType)}
+                                                    <button key={item.id} type="button" onClick={() => setActiveTab(item.id as TabType)}
                                                         className={cn("flex-none md:w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl transition-all border",
                                                             activeTab === item.id ? "bg-panel border-panel-border shadow-sm md:scale-105 pointer-events-none" : "hover:bg-black/5 dark:hover:bg-white/5 border-transparent text-text-dim hover:text-foreground")}>
                                                         <div className={cn("w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl flex items-center justify-center transition-all shrink-0",
@@ -582,7 +582,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                     <div className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-1">Etapa {currentStep}/{navItems.length}</div>
                                                     <h3 className="text-xl md:text-2xl font-serif-premium font-bold text-foreground uppercase italic tracking-tighter lowercase first-letter:uppercase">{navItems.find(i => i.id === activeTab)?.label}</h3>
                                                 </div>
-                                                <button onClick={onClose} className="w-8 h-8 md:w-10 md:h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border"><X className="w-6 h-6" /></button>
+                                                <button type="button" onClick={onClose} className="w-8 h-8 md:w-10 md:h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border"><X className="w-6 h-6" /></button>
                                             </header>
 
                                             <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10">
@@ -659,7 +659,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                                 <option value="Sócio">Sócio</option><option value="Procurador">Procurador</option><option value="Diretor">Diretor</option>
                                                                             </select>
                                                                         </div>
-                                                                        {representantes.length > 1 && <button onClick={() => setRepresentantes(representantes.filter(r => r.id !== rep.id))} className="absolute -top-3 -right-3 w-8 h-8 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all border border-rose-500/20"><Trash2 className="w-4 h-4" /></button>}
+                                                                        {representantes.length > 1 && <button type="button" onClick={() => setRepresentantes(representantes.filter(r => r.id !== rep.id))} className="absolute -top-3 -right-3 w-8 h-8 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all border border-rose-500/20"><Trash2 className="w-4 h-4" /></button>}
                                                                     </div>
                                                                 ))}
                                                             </div>
@@ -810,7 +810,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                 )}
 
                                                                 {docIdentidade && (
-                                                                    <button onClick={() => handleOCR(docIdentidade)} disabled={ocrLoading}
+                                                                    <button type="button" onClick={() => handleOCR(docIdentidade)} disabled={ocrLoading}
                                                                         className="absolute -bottom-4 bg-primary text-background px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
                                                                         {ocrLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Scan className="w-3 h-3" />}
                                                                         {ocrLoading ? "Lendo..." : "Escanear Documento"}
@@ -841,7 +841,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                     )}
 
                                                                     {docConjuge && (
-                                                                        <button onClick={() => handleOCR(docConjuge)} disabled={ocrLoading}
+                                                                        <button type="button" onClick={() => handleOCR(docConjuge)} disabled={ocrLoading}
                                                                             className="absolute -bottom-4 bg-primary text-background px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
                                                                             {ocrLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Scan className="w-3 h-3" />}
                                                                             {ocrLoading ? "Lendo..." : "Escanear Documento"}
@@ -915,8 +915,8 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                 {ocrResult.extractedData.rg && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">RG</span><span className="text-xs font-bold text-foreground">{ocrResult.extractedData.rg}</span></div>}
                                                             </div>
                                                             <div className="flex gap-3">
-                                                                <button onClick={() => setOcrResult(null)} className="px-6 py-3 rounded-xl text-[10px] font-black text-foreground uppercase tracking-widest hover:bg-black/10 dark:hover:bg-white/10 transition-all">Descartar</button>
-                                                                <button onClick={applyOCR} className="bg-white text-blue-600 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center gap-2"><Wand2 className="w-4 h-4" /> Preencher Ficha</button>
+                                                                <button type="button" onClick={() => setOcrResult(null)} className="px-6 py-3 rounded-xl text-[10px] font-black text-foreground uppercase tracking-widest hover:bg-black/10 dark:hover:bg-white/10 transition-all">Descartar</button>
+                                                                <button type="button" onClick={applyOCR} className="bg-white text-blue-600 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center gap-2"><Wand2 className="w-4 h-4" /> Preencher Ficha</button>
                                                             </div>
                                                         </motion.div>
                                                     )}

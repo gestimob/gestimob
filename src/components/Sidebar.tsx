@@ -278,7 +278,7 @@ export function Sidebar() {
     return (
         <>
             {/* Mobile Nav Top */}
-            <div className="md:hidden fixed top-0 left-0 right-0 h-20 bg-panel glass-elite border-b border-panel-border z-[100] flex items-center justify-between px-4 sm:px-6">
+            <div className="md:hidden fixed top-0 left-0 right-0 h-20 bg-panel border-b border-panel-border z-[100] flex items-center justify-between px-4 sm:px-6">
                 <Link href="/dashboard" className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     <div className="flex flex-col min-w-0">
                         {/* Nome removido conforme solicitado */}
@@ -300,7 +300,7 @@ export function Sidebar() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="md:hidden fixed inset-0 top-20 bg-background/95 backdrop-blur-xl z-[90] overflow-y-auto p-6"
+                        className="md:hidden fixed inset-0 top-20 bg-panel z-[90] overflow-y-auto p-6"
                     >
                         <nav className="space-y-2">
                             {sidebarItems.map(item =>

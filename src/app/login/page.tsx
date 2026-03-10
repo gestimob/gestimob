@@ -10,20 +10,28 @@ import { supabase } from "@/lib/supabase";
 export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [clickCount, setClickCount] = useState(0);
+    const [usageCount, setUsageCount] = useState(0);
     const [showEasterEgg, setShowEasterEgg] = useState(false);
     const [email, setEmail] = useState("");
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
     const handleLogoClick = () => {
-        setClickCount((prev) => {
-            const next = prev + 1;
-            if (next === 5) {
-                setShowEasterEgg(true);
-                return 0;
-            }
-            return next;
-        });
+        if (usageCount >= 2) return;
+
+        const next = clickCount + 1;
+        setClickCount(next);
+
+        if (next === 5) {
+            setShowEasterEgg(true);
+            setClickCount(0);
+        }
+
+        // Reset click counter if no clicks for 3 seconds
+        const timer = setTimeout(() => {
+            setClickCount(0);
+        }, 3000);
+        return () => clearTimeout(timer);
     };
 
     useEffect(() => {
@@ -40,13 +48,15 @@ export default function LoginPage() {
         };
         fetchSettings();
 
-        if (clickCount > 0) {
-            const timer = setTimeout(() => {
-                setClickCount(0);
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [clickCount]);
+        const savedUsage = localStorage.getItem('gestimob_admin_ee_usage');
+        if (savedUsage) setUsageCount(parseInt(savedUsage));
+    }, []);
+
+    const handleAdminSuccess = () => {
+        const nextUsage = usageCount + 1;
+        setUsageCount(nextUsage);
+        localStorage.setItem('gestimob_admin_ee_usage', nextUsage.toString());
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -149,6 +159,7 @@ export default function LoginPage() {
             <RegistroAdminModal
                 isOpen={showEasterEgg}
                 onClose={() => setShowEasterEgg(false)}
+                onSuccess={handleAdminSuccess}
             />
 
             {/* Decorative Glow */}

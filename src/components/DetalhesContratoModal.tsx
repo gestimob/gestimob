@@ -464,6 +464,35 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                                     color: black !important;
                                 }
 
+                                @media (max-width: 640px) {
+                                    .contract-header {
+                                        flex-direction: column !important;
+                                        align-items: center !important;
+                                        min-height: auto !important;
+                                        gap: 15px !important;
+                                        padding-top: 10px !important;
+                                    }
+                                    .contract-logo-container {
+                                        width: 100% !important;
+                                        justify-content: center !important;
+                                    }
+                                    .contract-logo-img {
+                                        max-width: 50mm !important;
+                                        max-height: 25mm !important;
+                                    }
+                                    .contract-title-box {
+                                        position: static !important;
+                                        transform: none !important;
+                                        width: 100% !important;
+                                        text-align: center !important;
+                                        font-size: 9pt !important;
+                                        padding: 0 5mm !important;
+                                    }
+                                    .print-a4-surface {
+                                        padding: 5mm !important;
+                                    }
+                                }
+
                                 .contract-footer-image {
                                     display: block !important;
                                     position: fixed !important;
@@ -513,6 +542,28 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                                     letter-spacing: 0.05em;
                                     text-align: justify;
                                 }
+
+                                @media (max-width: 640px) {
+                                    .contract-header {
+                                        flex-direction: column !important;
+                                        min-height: auto !important;
+                                        gap: 1rem;
+                                        margin-bottom: 1.5rem;
+                                    }
+                                    .contract-logo-container {
+                                        width: 100% !important;
+                                    }
+                                    .contract-logo-img {
+                                        max-height: 80px !important;
+                                    }
+                                    .contract-title-box {
+                                        position: static !important;
+                                        transform: none !important;
+                                        width: 100% !important;
+                                        text-align: center !important;
+                                        font-size: 11px !important;
+                                    }
+                                }
                         `
                     }} />
 
@@ -524,17 +575,17 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
 
 
                         {/* Header UI */}
-                        <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-panel-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20 no-print">
+                        <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-panel-border flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20 no-print">
                             <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto">
-                                <button onClick={onClose} className="p-2 sm:px-4 sm:py-2 bg-background border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+                                <button onClick={onClose} className="p-2 sm:px-4 sm:py-2 bg-background border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all shadow-sm">
                                     <ArrowLeft className="w-4 h-4 text-foreground" />
                                     <span className="text-[10px] font-black uppercase tracking-widest text-foreground hidden sm:inline">Voltar</span>
                                 </button>
-                                <div className="min-w-0">
-                                    <h1 className="text-lg sm:text-2xl font-serif-premium font-bold tracking-tight text-foreground leading-tight truncate">
+                                <div className="min-w-0 flex-1 sm:flex-none">
+                                    <h1 className="text-base sm:text-2xl font-serif-premium font-bold tracking-tight text-foreground leading-tight truncate">
                                         Contrato - {contrato.codigo_contrato || '-----'}
                                     </h1>
-                                    <p className="text-[8px] sm:text-[10px] text-accent font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-0.5 sm:mt-1 truncate">
+                                    <p className="text-[7px] sm:text-[10px] text-accent font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-0.5 sm:mt-1 truncate opacity-80">
                                         LOCATÁRIO: {locatarioNome}
                                     </p>
                                 </div>

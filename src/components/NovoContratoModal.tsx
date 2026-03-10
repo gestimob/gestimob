@@ -312,7 +312,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
         }
 
         const totalMeses = selected.duracao_meses || 0;
-        const diaPagamento = selected.data_inicio ? new Date(selected.data_inicio + 'T12:00:00').getDate() : 1;
+        const diaPagamento = selected.data_vencimento ? new Date(selected.data_vencimento + 'T12:00:00').getDate() : (selected.data_inicio ? new Date(selected.data_inicio + 'T12:00:00').getDate() : 1);
         const diaExtenso = numeroPorExtenso(diaPagamento);
 
         const rawImovel = selected.imoveis;
@@ -546,7 +546,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                 }
 
                 const totalMeses = selected.duracao_meses || 0;
-                const diaPagamento = selected.data_inicio ? new Date(selected.data_inicio + 'T12:00:00').getDate() : 1;
+                const diaPagamento = selected.data_vencimento ? new Date(selected.data_vencimento + 'T12:00:00').getDate() : (selected.data_inicio ? new Date(selected.data_inicio + 'T12:00:00').getDate() : 1);
                 const diaExtenso = numeroPorExtenso(diaPagamento);
 
                 const rawImovel = selected.imoveis;

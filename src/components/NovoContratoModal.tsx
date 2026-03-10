@@ -865,16 +865,27 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                         // Se for reajuste Fixo, verifica os períodos
                         if (baseData.tipo_reajuste === 'Fixo') {
-                            const p1_inicio = baseData.rf_p1_inicio ? new Date(baseData.rf_p1_inicio + 'T00:00:00') : null;
-                            const p1_final = baseData.rf_p1_final ? new Date(baseData.rf_p1_final + 'T00:00:00') : null;
-                            const p2_inicio = baseData.rf_p2_inicio ? new Date(baseData.rf_p2_inicio + 'T00:00:00') : null;
-                            const p2_final = baseData.rf_p2_final ? new Date(baseData.rf_p2_final + 'T00:00:00') : null;
-                            const p3_inicio = baseData.rf_p3_inicio ? new Date(baseData.rf_p3_inicio + 'T00:00:00') : null;
-                            const p3_final = baseData.rf_p3_final ? new Date(baseData.rf_p3_final + 'T00:00:00') : null;
+                            if (baseData.reajustes_fixos && Array.isArray(baseData.reajustes_fixos) && baseData.reajustes_fixos.length > 0) {
+                                for (const p of baseData.reajustes_fixos) {
+                                    const pInicio = p.inicio ? new Date(p.inicio + 'T00:00:00') : null;
+                                    const pFinal = p.final ? new Date(p.final + 'T00:00:00') : null;
+                                    if (pInicio && pFinal && vencimento >= pInicio && vencimento <= pFinal) {
+                                        valorParcela = p.valor;
+                                        break;
+                                    }
+                                }
+                            } else {
+                                const p1_inicio = baseData.rf_p1_inicio ? new Date(baseData.rf_p1_inicio + 'T00:00:00') : null;
+                                const p1_final = baseData.rf_p1_final ? new Date(baseData.rf_p1_final + 'T00:00:00') : null;
+                                const p2_inicio = baseData.rf_p2_inicio ? new Date(baseData.rf_p2_inicio + 'T00:00:00') : null;
+                                const p2_final = baseData.rf_p2_final ? new Date(baseData.rf_p2_final + 'T00:00:00') : null;
+                                const p3_inicio = baseData.rf_p3_inicio ? new Date(baseData.rf_p3_inicio + 'T00:00:00') : null;
+                                const p3_final = baseData.rf_p3_final ? new Date(baseData.rf_p3_final + 'T00:00:00') : null;
 
-                            if (p1_inicio && p1_final && vencimento >= p1_inicio && vencimento <= p1_final) valorParcela = baseData.rf_p1_valor;
-                            else if (p2_inicio && p2_final && vencimento >= p2_inicio && vencimento <= p2_final) valorParcela = baseData.rf_p2_valor;
-                            else if (p3_inicio && p3_final && vencimento >= p3_inicio && vencimento <= p3_final) valorParcela = baseData.rf_p3_valor;
+                                if (p1_inicio && p1_final && vencimento >= p1_inicio && vencimento <= p1_final) valorParcela = baseData.rf_p1_valor;
+                                else if (p2_inicio && p2_final && vencimento >= p2_inicio && vencimento <= p2_final) valorParcela = baseData.rf_p2_valor;
+                                else if (p3_inicio && p3_final && vencimento >= p3_inicio && vencimento <= p3_final) valorParcela = baseData.rf_p3_valor;
+                            }
                         }
 
                         parcelasToInsert.push({

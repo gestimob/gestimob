@@ -43,52 +43,78 @@ export function DetalhesTransacaoModal({ isOpen, onClose, transacao, onSaveSucce
     const [tipoBoleto, setTipoBoleto] = useState<"unico" | "mensal">("unico");
 
     const [uploadItems, setUploadItems] = useState<any[]>([]);
+    const [tempoReajuste, setTempoReajuste] = useState<number>(12);
 
     useEffect(() => {
         if (isOpen && transacao) {
-            fetchParcelas();
+            fetchData();
         } else {
             setParcelas([]);
             setUploadItems([]);
         }
     }, [isOpen, transacao]);
 
-    async function fetchParcelas() {
+    async function fetchData() {
         setLoadingParcelas(true);
-        const { data } = await supabase
+
+        // Fetch tempo_reajuste_fixo do contrato ou aluguel
+        let period = 12;
+        if (transacao.contrato_id) {
+            const { data } = await supabase.from('contratos').select('tempo_reajuste_fixo').eq('id', transacao.contrato_id).single();
+            if (data?.tempo_reajuste_fixo) period = data.tempo_reajuste_fixo;
+        } else if (transacao.aluguel_codigo) {
+            const { data } = await supabase.from('alugueis').select('tempo_reajuste_fixo').eq('codigo_interno', transacao.aluguel_codigo).single();
+            if (data?.tempo_reajuste_fixo) period = data.tempo_reajuste_fixo;
+        }
+        setTempoReajuste(period);
+
+        const { data: ps } = await supabase
             .from('parcelas')
             .select('*')
             .eq('transacao_id', transacao.id)
             .order('numero_parcela', { ascending: true });
 
-        if (data) {
-            setParcelas(data);
-            setupUploadItems(data, tipoBoleto);
+        if (ps) {
+            setParcelas(ps);
+            setupUploadItems(ps, tipoBoleto, period);
         }
         setLoadingParcelas(false);
     }
 
     function handleTipoChange(tipo: "unico" | "mensal") {
         setTipoBoleto(tipo);
-        setupUploadItems(parcelas, tipo);
+        setupUploadItems(parcelas, tipo, tempoReajuste);
     }
 
-    function setupUploadItems(ps: any[], tipo: "unico" | "mensal") {
+    function setupUploadItems(ps: any[], tipo: "unico" | "mensal", period: number) {
         if (ps.length === 0) return setUploadItems([]);
 
-        // Verifica se a primeira já tem um boleto que parece ser único (replicado para todos)
-        // ou só inicializa normalmente
         if (tipo === "unico") {
-            const total = ps.reduce((acc, current) => acc + (current.valor || 0), 0);
-            setUploadItems([{
-                id: 'unico',
-                parcela_id: ps[0].id,
-                file: null,
-                existingUrl: ps[0].boleto_url,
-                vencimento: formatDateToInput(ps[0].data_vencimento),
-                valor: formatNumber(total),
-                label: "Boleto Único"
-            }]);
+            // Dividir em períodos (ex: 24 parcelas com reajuste de 12 meses = 2 períodos)
+            const numPeriods = Math.ceil(ps.length / period);
+            const items = [];
+
+            for (let i = 0; i < numPeriods; i++) {
+                const startIdx = i * period;
+                const endIdx = Math.min((i + 1) * period, ps.length);
+                const periodParcelas = ps.slice(startIdx, endIdx);
+                const totalPeriod = periodParcelas.reduce((acc, curr) => acc + (curr.valor || 0), 0);
+
+                // Identificar se as parcelas deste período já têm boleto
+                // Assume que se a primeira do período tem, todas têm o mesmo
+                const firstP = periodParcelas[0];
+
+                items.push({
+                    id: `unico_periodo_${i + 1}`,
+                    parcela_ids: periodParcelas.map(p => p.id),
+                    file: null,
+                    existingUrl: firstP.boleto_url,
+                    vencimento: formatDateToInput(firstP.data_vencimento),
+                    valor: formatNumber(totalPeriod),
+                    label: numPeriods > 1 ? `Boleto Único - Período ${i + 1} (${startIdx + 1} a ${endIdx})` : "Boleto Único"
+                });
+            }
+            setUploadItems(items);
         } else {
             setUploadItems(ps.map((p, i) => ({
                 id: `mensal_${p.id}`,
@@ -112,61 +138,60 @@ export function DetalhesTransacaoModal({ isOpen, onClose, transacao, onSaveSucce
         setIsSaving(true);
         try {
             if (tipoBoleto === "unico") {
-                const item = uploadItems[0];
-                let finalUrl = item.existingUrl; // keeps existing if not removed
+                const uploadPromises = uploadItems.map(async (item) => {
+                    let finalUrl = item.existingUrl; // keeps existing if not removed
 
-                // If they removed existing and didn't add new
-                if (!item.file && !item.existingUrl) {
-                    finalUrl = null;
-                }
-
-                if (item.file) {
-                    let finalFile: File | Blob = item.file;
-                    const safeName = item.file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9.\-_]/g, "_");
-                    let fileName = `${Date.now()}_${safeName}`;
-                    const ext = item.file.name.split('.').pop()?.toLowerCase();
-                    let contentType: string | undefined = item.file.type;
-
-                    if (ext === 'pdf') {
-                        const pdfResult = await processPDF(item.file);
-                        finalFile = pdfResult.blob as File;
-                        fileName = fileName.replace(/\.[^/.]+$/, ".pdf");
-                        contentType = 'application/pdf';
-                    } else if (['png', 'jpg', 'jpeg'].includes(ext || '')) {
-                        finalFile = await convertToWebP(item.file);
-                        fileName = fileName.replace(/\.[^/.]+$/, ".webp");
-                        contentType = 'image/webp';
-                    } else {
-                        fileName = fileName.replace(/\.[^/.]+$/, `.${ext}`);
-                        contentType = item.file.type;
+                    // If they removed existing and didn't add new
+                    if (!item.file && !item.existingUrl) {
+                        finalUrl = null;
                     }
 
-                    const filePath = `transacoes/${transacao.id}/${fileName}`;
-                    const { error: uploadError } = await supabaseStorage.storage.from('documentos')
-                        .upload(filePath, finalFile, { contentType: contentType, upsert: true });
+                    if (item.file) {
+                        let finalFile: File | Blob = item.file;
+                        const safeName = item.file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9.\-_]/g, "_");
+                        let fileName = `${Date.now()}_${safeName}`;
+                        const ext = item.file.name.split('.').pop()?.toLowerCase();
+                        let contentType: string | undefined = item.file.type;
 
-                    if (uploadError) {
-                        console.error("Erro upload", uploadError);
-                        throw uploadError;
+                        if (ext === 'pdf') {
+                            const pdfResult = await processPDF(item.file);
+                            finalFile = pdfResult.blob as File;
+                            fileName = fileName.replace(/\.[^/.]+$/, ".pdf");
+                            contentType = 'application/pdf';
+                        } else if (['png', 'jpg', 'jpeg'].includes(ext || '')) {
+                            finalFile = await convertToWebP(item.file);
+                            fileName = fileName.replace(/\.[^/.]+$/, ".webp");
+                            contentType = 'image/webp';
+                        } else {
+                            fileName = fileName.replace(/\.[^/.]+$/, `.${ext}`);
+                            contentType = item.file.type;
+                        }
+
+                        const filePath = `transacoes/${transacao.id}/${fileName}`;
+                        const { error: uploadError } = await supabaseStorage.storage.from('documentos')
+                            .upload(filePath, finalFile, { contentType: contentType, upsert: true });
+
+                        if (uploadError) {
+                            console.error("Erro upload", uploadError);
+                            throw uploadError;
+                        }
+
+                        const { data: { publicUrl } } = supabaseStorage.storage.from('documentos').getPublicUrl(filePath);
+
+                        finalUrl = publicUrl;
                     }
 
-                    const { data: { publicUrl } } = supabaseStorage.storage.from('documentos').getPublicUrl(filePath);
+                    // Retorna a URL final e a lista de parcelas que devem usá-la
+                    return { finalUrl, parcelaIds: item.parcela_ids };
+                });
 
-                    finalUrl = publicUrl;
-                }
+                const results = await Promise.all(uploadPromises);
 
-                // Atualiza todas as parcelas
-                const updates = parcelas.map(p => {
-                    const up: any = { boleto_url: finalUrl };
-
-                    // Somente atualiza a data e o valor da primeira parcela (ou seja, não replica o valor total pra todas)
-                    if (p.id === item.parcela_id) {
-                        up.data_vencimento = item.vencimento;
-                        const valClean = parseFloat(item.valor.replace(/[^\d,-]/g, '').replace('.', '').replace(',', '.'));
-                        if (!isNaN(valClean)) up.valor = valClean;
-                    }
-
-                    return supabase.from('parcelas').update(up).eq('id', p.id);
+                // Executa os updates para cada período
+                const updates = results.flatMap(res => {
+                    return res.parcelaIds.map((pid: string) => {
+                        return supabase.from('parcelas').update({ boleto_url: res.finalUrl }).eq('id', pid);
+                    });
                 });
 
                 await Promise.all(updates);
@@ -230,7 +255,7 @@ export function DetalhesTransacaoModal({ isOpen, onClose, transacao, onSaveSucce
             alert("Erro ao salvar: " + err.message);
         } finally {
             setIsSaving(false);
-            fetchParcelas();
+            fetchData();
             if (onSaveSuccess) onSaveSuccess();
         }
     };
@@ -286,7 +311,7 @@ export function DetalhesTransacaoModal({ isOpen, onClose, transacao, onSaveSucce
                                             <DollarSign className="w-3.5 h-3.5 text-accent" />
                                             <span className="text-[9px] sm:text-[10px] font-black text-text-dim uppercase tracking-widest">Valor da Parcela</span>
                                         </div>
-                                        <p className="text-xs sm:text-[13px] font-black text-white">{formatBRL(transacao.valor_parcela)}</p>
+                                        <p className="text-xs sm:text-[13px] font-black text-foreground">{formatBRL(transacao.valor_parcela)}</p>
                                     </div>
 
                                     <div className="bg-white/[0.02] border border-panel-border rounded-xl sm:rounded-2xl p-4">
@@ -444,7 +469,7 @@ export function DetalhesTransacaoModal({ isOpen, onClose, transacao, onSaveSucce
                                                                     const raw = e.target.value.replace(/[^0-9,]/g, '');
                                                                     handleUpdateItem(index, 'valor', raw);
                                                                 }}
-                                                                className="w-full h-[36px] bg-white/5 border border-panel-border rounded-xl pl-8 sm:pl-9 pr-3 sm:pr-4 text-[10px] font-bold text-white focus:outline-none focus:border-primary transition-all"
+                                                                className="w-full h-[36px] bg-white/5 border border-panel-border rounded-xl pl-8 sm:pl-9 pr-3 sm:pr-4 text-[10px] font-bold text-foreground focus:outline-none focus:border-primary transition-all"
                                                             />
                                                         </div>
                                                     </div>

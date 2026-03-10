@@ -1,0 +1,114 @@
+[2026-03-07T19:56:01.078Z] --- Starting send-reminders check ---
+[2026-03-07T19:56:01.081Z] Checking for dates between 2026-03-07 and 2026-03-12
+[2026-03-07T19:56:01.082Z] 1. Processing IPTU Reminders...
+[2026-03-07T19:56:01.534Z] Found 1 IPTU properties near expiration.
+[2026-03-07T19:56:01.919Z] Sending IPTU email to: paulojose@jose.com (Paulo Jose de Araujo)
+[2026-03-07T19:56:02.746Z] Brevo Status: 201 Data: {"messageId":"<202603071956.66391337491@smtp-relay.mailin.fr>"}
+[2026-03-07T19:56:02.762Z] Brevo Response: {"messageId":"<202603071956.66391337491@smtp-relay.mailin.fr>"}
+[2026-03-07T19:56:02.991Z] 2. Processing Rent Reminders...
+[2026-03-07T19:56:03.313Z] Found 1 parcelas near expiration.
+[2026-03-07T19:56:03.551Z] Sending Rent email to: MEUARC@GMAIL.COM (LUCAS MIRANDA SOUZA)
+[2026-03-07T19:56:03.907Z] Brevo Status: 201 Data: {"messageId":"<202603071956.89992103309@smtp-relay.mailin.fr>"}
+[2026-03-07T19:56:03.921Z] Brevo Response: {"messageId":"<202603071956.89992103309@smtp-relay.mailin.fr>"}
+[2026-03-07T19:56:04.150Z] --- send-reminders finished. Success: {"iptu":["paulojose@jose.com"],"rent":["MEUARC@GMAIL.COM"]} ---
+[2026-03-07T20:28:12.757Z] --- Starting send-reminders check ---
+[2026-03-07T20:28:12.759Z] Checking for dates between 2026-03-07 and 2026-03-12
+[2026-03-07T20:28:12.759Z] 1. Processing IPTU Reminders...
+[2026-03-07T20:28:13.084Z] Found 1 IPTU properties near expiration.
+[2026-03-07T20:28:13.337Z] Skipping IPTU for imovel 7cf397a7-9cd3-47c7-9429-018004ad58a9 - already sent.
+[2026-03-07T20:28:13.337Z] 2. Processing Rent Reminders...
+[2026-03-07T20:28:13.640Z] Found 1 parcelas near expiration.
+[2026-03-07T20:28:13.832Z] Skipping Rent for parcela ce97ca0f-468b-480f-9e06-c4cfbb85964a - already sent.
+[2026-03-07T20:28:13.833Z] --- send-reminders finished. Success: {"iptu":[],"rent":[]} ---
+[2026-03-07T20:29:56.096Z] --- Starting send-reminders check ---
+[2026-03-07T20:29:56.097Z] Checking for dates between 2026-03-07 and 2026-03-12
+[2026-03-07T20:29:56.097Z] 1. Processing IPTU Reminders...
+[2026-03-07T20:29:56.402Z] Found 1 IPTU properties near expiration.
+[2026-03-07T20:29:56.614Z] Sending IPTU email to: paulojose@jose.com (Paulo Jose de Araujo)
+[2026-03-07T20:30:01.377Z] Gmail SMTP Success: <fe3a2ebf-caf2-35f7-eb9b-d178564d1611@gmail.com>
+[2026-03-07T20:30:01.378Z] Brevo Response: {"messageId":"<fe3a2ebf-caf2-35f7-eb9b-d178564d1611@gmail.com>"}
+[2026-03-07T20:30:01.673Z] 2. Processing Rent Reminders...
+[2026-03-07T20:30:01.944Z] Found 1 parcelas near expiration.
+[2026-03-07T20:30:02.149Z] Sending Rent email to: MEUARC@GMAIL.COM (LUCAS MIRANDA SOUZA)
+[2026-03-07T20:30:06.771Z] Gmail SMTP Success: <c9690be5-a62c-730e-9452-53377a03c2f5@gmail.com>
+[2026-03-07T20:30:06.772Z] Brevo Response: {"messageId":"<c9690be5-a62c-730e-9452-53377a03c2f5@gmail.com>"}
+[2026-03-07T20:30:07.057Z] --- send-reminders finished. Success: {"iptu":["paulojose@jose.com"],"rent":["MEUARC@GMAIL.COM"]} ---
+[2026-03-07T20:36:09.703Z] --- Starting send-reminders check ---
+[2026-03-07T20:36:10.125Z] Checking for dates between 2026-03-07 and 2026-03-12
+[2026-03-07T20:36:10.126Z] 1. Processing IPTU Reminders...
+[2026-03-07T20:36:10.373Z] Found 1 IPTU properties near expiration.
+[2026-03-07T20:36:10.581Z] Sending IPTU email to: paulojose@jose.com (Paulo Jose de Araujo)
+[2026-03-07T20:36:13.917Z] Gmail SMTP Success: <b46c99e3-2b6e-0a02-9ef9-8ee3cbf71586@gmail.com>
+[2026-03-07T20:36:13.918Z] Brevo Response: {"messageId":"<b46c99e3-2b6e-0a02-9ef9-8ee3cbf71586@gmail.com>"}
+[2026-03-07T20:36:14.156Z] 2. Processing Rent Reminders...
+[2026-03-07T20:36:14.490Z] Found 1 parcelas near expiration.
+[2026-03-07T20:36:14.687Z] Sending Rent email to: MEUARC@GMAIL.COM (LUCAS MIRANDA SOUZA)
+[2026-03-07T20:36:17.856Z] Gmail SMTP Success: <2fbeae84-e6a1-524f-ac21-8aa31b0f182d@gmail.com>
+[2026-03-07T20:36:17.857Z] Brevo Response: {"messageId":"<2fbeae84-e6a1-524f-ac21-8aa31b0f182d@gmail.com>"}
+[2026-03-07T20:36:18.097Z] --- send-reminders finished. Success: {"iptu":["paulojose@jose.com"],"rent":["MEUARC@GMAIL.COM"]} ---
+[2026-03-07T20:44:08.806Z] --- Starting send-reminders check ---
+[2026-03-07T20:44:09.142Z] Checking for dates between 2026-03-07 and 2026-03-12
+[2026-03-07T20:44:09.143Z] 1. Processing IPTU Reminders...
+[2026-03-07T20:44:09.381Z] Found 1 IPTU properties near expiration.
+[2026-03-07T20:44:09.593Z] Sending IPTU email to: paulojose@jose.com (Paulo Jose de Araujo)
+[2026-03-07T20:44:14.583Z] Gmail SMTP Success: <57c50a39-85fa-d0db-db28-ec9c71db1db0@gmail.com>
+[2026-03-07T20:44:14.584Z] Brevo Response: {"messageId":"<57c50a39-85fa-d0db-db28-ec9c71db1db0@gmail.com>"}
+[2026-03-07T20:44:14.873Z] 2. Processing Rent Reminders...
+[2026-03-07T20:44:15.210Z] Found 1 parcelas near expiration.
+[2026-03-07T20:44:15.419Z] Sending Rent email to: MEUARC@GMAIL.COM (LUCAS MIRANDA SOUZA)
+[2026-03-07T20:44:20.019Z] Gmail SMTP Success: <96ade67f-c32c-4544-5479-fa2822cb07e2@gmail.com>
+[2026-03-07T20:44:20.020Z] Brevo Response: {"messageId":"<96ade67f-c32c-4544-5479-fa2822cb07e2@gmail.com>"}
+[2026-03-07T20:44:20.297Z] --- send-reminders finished. Success: {"iptu":["paulojose@jose.com"],"rent":["MEUARC@GMAIL.COM"]} ---
+[2026-03-07T20:45:16.115Z] --- Starting send-reminders check ---
+[2026-03-07T20:45:16.458Z] Checking for dates between 2026-03-07 and 2026-03-12
+[2026-03-07T20:45:16.459Z] 1. Processing IPTU Reminders...
+[2026-03-07T20:45:16.735Z] Found 1 IPTU properties near expiration.
+[2026-03-07T20:45:16.946Z] Skipping IPTU for imovel 7cf397a7-9cd3-47c7-9429-018004ad58a9 - already sent.
+[2026-03-07T20:45:16.947Z] 2. Processing Rent Reminders...
+[2026-03-07T20:45:17.220Z] Found 1 parcelas near expiration.
+[2026-03-07T20:45:17.430Z] Skipping Rent for parcela ce97ca0f-468b-480f-9e06-c4cfbb85964a - already sent.
+[2026-03-07T20:45:17.431Z] --- send-reminders finished. Success: {"iptu":[],"rent":[]} ---
+[2026-03-07T20:49:52.911Z] --- Starting send-reminders check ---
+[2026-03-07T20:49:53.268Z] Checking for dates between 2026-03-07 and 2026-03-12
+[2026-03-07T20:49:53.269Z] 1. Processing Rent Reminders...
+[2026-03-07T20:49:53.517Z] Found 1 parcelas near expiration.
+[2026-03-07T20:49:53.730Z] Sending Rent email to: MEUARC@GMAIL.COM (LUCAS MIRANDA SOUZA)
+[2026-03-07T20:49:57.696Z] Gmail SMTP Success: <c817f657-6f39-8aa8-2680-edc55e1265bf@gmail.com>
+[2026-03-07T20:49:57.697Z] Brevo Response: {"messageId":"<c817f657-6f39-8aa8-2680-edc55e1265bf@gmail.com>"}
+[2026-03-07T20:49:57.905Z] --- send-reminders finished. Success: {"aluguel":["MEUARC@GMAIL.COM"]} ---
+[2026-03-07T20:52:15.713Z] --- Starting send-reminders check ---
+[2026-03-07T20:52:16.018Z] Checking for dates between 2026-03-07 and 2026-03-12
+[2026-03-07T20:52:16.019Z] 1. Processing Rent Reminders...
+[2026-03-07T20:52:16.263Z] Found 1 parcelas near expiration.
+[2026-03-07T20:52:16.497Z] Sending Rent email to: MEUARC@GMAIL.COM (LUCAS MIRANDA SOUZA)
+[2026-03-07T20:52:20.129Z] Gmail SMTP Success: <e40b2275-297a-62c6-2187-dfb95c317cb0@gmail.com>
+[2026-03-07T20:52:20.130Z] Brevo Response: {"messageId":"<e40b2275-297a-62c6-2187-dfb95c317cb0@gmail.com>"}
+[2026-03-07T20:52:20.417Z] --- send-reminders finished. Success: {"aluguel":["MEUARC@GMAIL.COM"]} ---
+[2026-03-08T01:40:29.615Z] --- Starting send-reminders check ---
+[2026-03-08T01:40:31.455Z] Checking for dates between 2026-03-08 and 2026-03-13
+[2026-03-08T01:40:31.455Z] 1. Processing Rent Reminders...
+[2026-03-08T01:40:31.833Z] Found 1 parcelas near expiration.
+[2026-03-08T01:40:32.083Z] Skipping Rent for parcela ce97ca0f-468b-480f-9e06-c4cfbb85964a - already sent.
+[2026-03-08T01:40:32.084Z] --- send-reminders finished. Success: {"aluguel":[]} ---
+[2026-03-08T19:49:11.106Z] --- Starting send-reminders check ---
+[2026-03-08T19:49:12.161Z] Checking for dates between 2026-03-08 and 2026-03-13
+[2026-03-08T19:49:12.161Z] 1. Processing Rent Reminders...
+[2026-03-08T19:49:12.426Z] Found 1 parcelas near expiration.
+[2026-03-08T19:49:12.714Z] Skipping Rent for parcela ce97ca0f-468b-480f-9e06-c4cfbb85964a - already sent.
+[2026-03-08T19:49:12.714Z] --- send-reminders finished. Success: {"aluguel":[]} ---
+[2026-03-08T19:55:32.476Z] --- Starting send-reminders check ---
+[2026-03-08T19:55:32.981Z] Checking for dates between 2026-03-08 and 2026-03-13
+[2026-03-08T19:55:32.982Z] 1. Processing Rent Reminders...
+[2026-03-08T19:55:33.328Z] Found 1 parcelas near expiration.
+[2026-03-08T19:55:33.639Z] Sending Rent email to: MEUARC@GMAIL.COM (LUCAS MIRANDA SOUZA)
+[2026-03-08T19:55:38.873Z] Gmail SMTP Success: <4f027a11-2d46-8ed8-e96a-f88ba50ab210@gmail.com>
+[2026-03-08T19:55:38.873Z] Brevo Response: {"messageId":"<4f027a11-2d46-8ed8-e96a-f88ba50ab210@gmail.com>"}
+[2026-03-08T19:55:39.218Z] --- send-reminders finished. Success: {"aluguel":["MEUARC@GMAIL.COM"]} ---
+[2026-03-08T21:35:22.289Z] --- Starting send-reminders check ---
+[2026-03-08T21:35:22.959Z] Checking for dates between 2026-03-08 and 2026-03-13
+[2026-03-08T21:35:22.960Z] 1. Processing Rent Reminders...
+[2026-03-08T21:35:23.192Z] Found 1 parcelas near expiration.
+[2026-03-08T21:35:23.527Z] Sending Rent email to: MEUARC@GMAIL.COM (LUCAS MIRANDA SOUZA)
+[2026-03-08T21:35:28.875Z] Gmail SMTP Success: <c16e3762-c89d-e72a-7076-7bd2181ae8c1@gmail.com>
+[2026-03-08T21:35:28.875Z] Brevo Response: {"messageId":"<c16e3762-c89d-e72a-7076-7bd2181ae8c1@gmail.com>"}
+[2026-03-08T21:35:29.265Z] --- send-reminders finished. Success: {"aluguel":["MEUARC@GMAIL.COM"]} ---

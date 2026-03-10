@@ -289,7 +289,7 @@ export default function ContratosPage() {
                             onClick={handleExportPDF}
                             className="h-9 px-3 flex items-center gap-2 rounded-lg border border-panel-border bg-transparent text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all shrink-0"
                         >
-                            <FileText className="w-3.5 h-3.5 text-accent" /> Gerar PDF
+                            <FileText className="w-3.5 h-3.5 text-accent" /> Imprimir
                         </button>
                         <button
                             onClick={handleExportExcel}
@@ -420,7 +420,7 @@ export default function ContratosPage() {
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); handleView(contrato); }}
                                                             className="w-7 h-7 flex items-center justify-center rounded-lg text-accent hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all"
-                                                            title="Gerar PDF / Imprimir"
+                                                            title="Imprimir"
                                                         >
                                                             <Printer className="w-3.5 h-3.5" />
                                                         </button>

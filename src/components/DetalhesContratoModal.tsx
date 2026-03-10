@@ -308,9 +308,16 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
     const introTexto = getIntroTexto();
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 md:p-8 modal-outer">
+                <motion.div
+                    key="modal-overlay-wrapper"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 md:p-8 modal-outer"
+                >
 
                     <style dangerouslySetInnerHTML={{
                         __html: `
@@ -591,7 +598,7 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-end">
-                                {contrato.status === 'Finalizado' && contrato.contrato_assinado_url && (
+                                {(contrato.status === 'Finalizado' || contrato.status === 'Em Vigência') && contrato.contrato_assinado_url && (
                                     <a
                                         href={contrato.contrato_assinado_url}
                                         target="_blank"
@@ -602,7 +609,7 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                                     </a>
                                 )}
                                 <button onClick={handlePrint} className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-background border border-panel-border text-foreground hover:bg-black/5 dark:hover:bg-white/5 px-4 sm:px-6 py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
-                                    <Printer className="w-4 h-4" /> PDF
+                                    <Printer className="w-4 h-4" /> Imprimir
                                 </button>
                                 <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-panel-border text-accent hover:text-foreground shadow-sm shrink-0">
                                     <X className="w-5 h-5" />
@@ -684,7 +691,7 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                             </div>
                         </div>
                     </motion.div>
-                </div>
+                </motion.div>
             )}
         </AnimatePresence>
     );

@@ -922,13 +922,31 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
     };
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             {isOpen && (
-                <div key="modal-overlay" className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-background/90 backdrop-blur-xl" />
+                <motion.div
+                    key="modal-overlay-wrapper"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                >
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="absolute inset-0 bg-background/90 backdrop-blur-xl"
+                    />
 
-                    <motion.div key="modal-content" initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="bg-panel glass-elite w-full max-w-5xl h-[650px] max-h-[90vh] rounded-[48px] shadow-2xl relative z-10 border border-panel-border flex flex-col overflow-hidden font-sans">
+                    <motion.div
+                        key="modal-content"
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        className="bg-panel glass-elite w-full max-w-5xl h-[650px] max-h-[90vh] rounded-[48px] shadow-2xl relative z-10 border border-panel-border flex flex-col overflow-hidden font-sans"
+                    >
 
                         <header className="px-10 py-8 flex justify-between items-center bg-gradient-to-b from-black/5 dark:from-white/5 to-transparent border-b border-panel-border shrink-0">
                             <div className="flex items-end gap-4">
@@ -1330,13 +1348,18 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                             )}
                         </footer>
 
-
                     </motion.div>
-                </div>
+                </motion.div>
             )}
 
             {isBankModalOpen && (
-                <div key="bank-modal-overlay" className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                <motion.div
+                    key="bank-modal-overlay"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-[110] flex items-center justify-center p-4"
+                >
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsBankModalOpen(false)} className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
                     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="bg-panel w-full max-w-md rounded-[32px] shadow-2xl relative z-[120] border border-panel-border overflow-hidden p-8 space-y-6">
@@ -1371,7 +1394,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                         <button onClick={() => setIsBankModalOpen(false)} className="w-full py-4 rounded-xl font-black text-[10px] text-accent hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-[0.3em] transition-all border border-panel-border">Fechar</button>
                     </motion.div>
-                </div>
+                </motion.div>
             )}
         </AnimatePresence>
     );

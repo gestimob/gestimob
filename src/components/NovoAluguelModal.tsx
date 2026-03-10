@@ -257,7 +257,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
             if (pathMatch && pathMatch[1]) {
                 await supabaseStorage.storage.from('documentos').remove([pathMatch[1]]);
             }
-            setFormData({ ...formData, [key]: null });
+            setFormData({ ...formData, [key]: "" });
             if (key === 'comprovante_cagepa_url') setCagepaFile(null);
             if (key === 'comprovante_energisa_url') setEnergisaFile(null);
         } catch (e) {
@@ -369,8 +369,8 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
 
                             {/* Troca de Titularidades — só aparece quando Em Vigência */}
                             {formData.status === 'Em Vigência' && (
-                                <div className="bg-white/5 border border-white/20 rounded-2xl p-5 space-y-4">
-                                    <label className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">Troca de Titularidades</label>
+                                <div className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl p-5 space-y-4">
+                                    <label className="text-[10px] font-black text-primary dark:text-blue-400 uppercase tracking-widest">Troca de Titularidades</label>
                                     <div className="flex items-center gap-6">
                                         <label className="flex items-center gap-2 cursor-pointer group">
                                             <input type="checkbox" checked={formData.troca_titularidade_cagepa}
@@ -389,8 +389,8 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                     </div>
 
                                     {(formData.troca_titularidade_cagepa || formData.troca_titularidade_energisa) && (
-                                        <div className="pt-2 border-t border-white/20 space-y-4">
-                                            <div className="bg-white/10 text-blue-600 dark:text-blue-400 text-xs font-bold p-3 rounded-xl flex items-center gap-2">
+                                        <div className="pt-2 border-t border-panel-border space-y-4">
+                                            <div className="bg-primary/10 text-primary dark:text-blue-400 text-xs font-bold p-3 rounded-xl flex items-center gap-2">
                                                 <FileCheck className="w-4 h-4" />
                                                 Faça o upload do comprovante de solicitação da transferência para continuar.
                                             </div>
@@ -411,7 +411,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                                                     </p>
                                                                     <div className="flex gap-3 mt-1 text-xs">
                                                                         {formData.comprovante_cagepa_url && !cagepaFile && (
-                                                                            <a href={formData.comprovante_cagepa_url} target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-600 font-bold flex items-center gap-1 transition-colors">
+                                                                            <a href={formData.comprovante_cagepa_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-blue-600 font-bold flex items-center gap-1 transition-colors">
                                                                                 Visualizar
                                                                             </a>
                                                                         )}
@@ -424,10 +424,10 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-white/30 rounded-xl cursor-pointer bg-white/5 hover:bg-white/10 transition-colors relative overflow-hidden group">
+                                                            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-panel-border rounded-xl cursor-pointer bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors relative overflow-hidden group">
                                                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                                    <Upload className="w-6 h-6 text-white mb-2 group-hover:scale-110 transition-transform" />
-                                                                    <p className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest">Anexar CAGEPA</p>
+                                                                    <Upload className="w-6 h-6 text-accent mb-2 group-hover:scale-110 transition-transform" />
+                                                                    <p className="text-xs text-primary dark:text-blue-400 font-bold uppercase tracking-widest">Anexar CAGEPA</p>
                                                                 </div>
                                                                 <input type="file" className="hidden" accept="image/*,application/pdf"
                                                                     disabled={isReadOnly}
@@ -456,7 +456,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                                                     </p>
                                                                     <div className="flex gap-3 mt-1 text-xs">
                                                                         {formData.comprovante_energisa_url && !energisaFile && (
-                                                                            <a href={formData.comprovante_energisa_url} target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-600 font-bold flex items-center gap-1 transition-colors">
+                                                                            <a href={formData.comprovante_energisa_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-blue-600 font-bold flex items-center gap-1 transition-colors">
                                                                                 Visualizar
                                                                             </a>
                                                                         )}
@@ -469,10 +469,10 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-white/30 rounded-xl cursor-pointer bg-white/5 hover:bg-white/10 transition-colors relative overflow-hidden group">
+                                                            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-panel-border rounded-xl cursor-pointer bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors relative overflow-hidden group">
                                                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                                    <Upload className="w-6 h-6 text-white mb-2 group-hover:scale-110 transition-transform" />
-                                                                    <p className="text-xs text-background font-bold uppercase tracking-widest">Anexar ENERGISA</p>
+                                                                    <Upload className="w-6 h-6 text-accent mb-2 group-hover:scale-110 transition-transform" />
+                                                                    <p className="text-xs text-primary dark:text-blue-400 font-bold uppercase tracking-widest">Anexar ENERGISA</p>
                                                                 </div>
                                                                 <input type="file" className="hidden" accept="image/*,application/pdf"
                                                                     disabled={isReadOnly}

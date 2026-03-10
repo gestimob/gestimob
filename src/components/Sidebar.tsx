@@ -280,7 +280,6 @@ export function Sidebar() {
             {/* Mobile Nav Top */}
             <div className="md:hidden fixed top-0 left-0 right-0 h-20 bg-panel glass-elite border-b border-panel-border z-[100] flex items-center justify-between px-4 sm:px-6">
                 <Link href="/dashboard" className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                    {logoUrl && <img src={logoUrl} alt="Logo" className="h-12 w-auto object-contain shrink-0" />}
                     <div className="flex flex-col min-w-0">
                         {/* Nome removido conforme solicitado */}
                         <span className="text-[8px] text-accent uppercase tracking-[0.2em] sm:tracking-[0.3em] truncate">Elite Edition</span>

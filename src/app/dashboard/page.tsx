@@ -378,12 +378,12 @@ export default function DashboardPage() {
 
         const threeDaysLater = new Date(today);
         threeDaysLater.setDate(today.getDate() + 3);
+        threeDaysLater.setHours(23, 59, 59, 999);
 
         const upcoming = (pr.data || []).filter(p =>
             (p.status === 'Pendente' || p.status === 'A Vencer') &&
             new Date(p.data_vencimento + 'T12:00:00') <= threeDaysLater &&
-            new Date(p.data_vencimento + 'T12:00:00') >= today &&
-            (!p.historico_comunicacoes || (Array.isArray(p.historico_comunicacoes) && p.historico_comunicacoes.length === 0))
+            new Date(p.data_vencimento + 'T12:00:00') >= today
         ).map(p => {
             const transacao = extract(p.transacoes);
             const contrato = extract(transacao?.contratos);
@@ -397,7 +397,14 @@ export default function DashboardPage() {
             };
         });
 
-        const overdue = (pr.data || []).filter(p => p.status === 'Em Atraso').map(p => {
+        const overdue = (pr.data || []).filter(p => {
+            if (p.status === 'Pago' || p.status === 'Pago e Juros') return false;
+            if (p.status === 'Em Atraso' || p.status === 'Vencido') return true;
+
+            // Fallback: check date manually if status is still 'Pendente' or 'A Vencer' but date is in the past
+            const vencDate = new Date(p.data_vencimento + 'T00:00:00');
+            return vencDate < today;
+        }).map(p => {
             const transacao = extract(p.transacoes);
             const contrato = extract(transacao?.contratos);
             const cliente = extract(contrato?.clientes);

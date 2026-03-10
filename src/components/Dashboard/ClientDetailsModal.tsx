@@ -215,7 +215,7 @@ export function ClientDetailsModal({ isOpen, onClose, client }: ClientDetailsMod
                         <div className="p-8 border-t border-panel-border bg-panel/30 dark:bg-white/5">
                             <button
                                 onClick={onClose}
-                                className="w-full bg-[#EAEAEA] text-[#0B0B0C] py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xl"
+                                className="w-full bg-[#EAEAEA] dark:bg-primary text-[#0B0B0C] dark:text-background py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xl"
                             >
                                 Fechar Detalhes
                             </button>

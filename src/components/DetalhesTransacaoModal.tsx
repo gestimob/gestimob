@@ -482,7 +482,7 @@ export function DetalhesTransacaoModal({ isOpen, onClose, transacao, onSaveSucce
                                             <button
                                                 onClick={handleSaveAnexos}
                                                 disabled={isSaving}
-                                                className="h-12 w-full sm:w-auto px-8 bg-[#EAEAEA] text-[#0B0B0C] hover:scale-[1.02] active:scale-95 disabled:opacity-50 rounded-xl font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-3 shadow-lg shadow-black/20">
+                                                className="h-12 w-full sm:w-auto px-8 btn-elite hover:scale-[1.02] active:scale-95 disabled:opacity-50 rounded-xl font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-3 shadow-lg">
                                                 {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                                                 {isSaving ? "Salvando..." : "Salvar Boletos"}
                                             </button>

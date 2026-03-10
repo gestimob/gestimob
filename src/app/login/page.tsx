@@ -145,7 +145,7 @@ export default function LoginPage() {
                             className="btn-elite w-full py-4 transition-all shadow-xl flex items-center justify-center gap-2 text-base"
                         >
                             {loading ? (
-                                <Loader2 className="w-6 h-6 animate-spin text-[#0B0B0C]" />
+                                <Loader2 className="w-6 h-6 animate-spin text-inherit" />
                             ) : (
                                 "Entrar no Sistema"
                             )}

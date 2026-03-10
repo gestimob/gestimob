@@ -537,7 +537,7 @@ export function DetalhesEmpresaModal({ isOpen, onClose, empresa }: DetailsModalP
                         <div className="p-6 sm:p-8 border-t border-panel-border flex flex-col sm:flex-row justify-end bg-panel/30 dark:bg-white/5 backdrop-blur-md">
                             <button
                                 onClick={onClose}
-                                className="w-full sm:w-auto bg-[#EAEAEA] text-[#0B0B0C] px-12 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl"
+                                className="w-full sm:w-auto bg-[#EAEAEA] dark:bg-primary text-[#0B0B0C] dark:text-background px-12 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl"
                             >
                                 Fechar Janela
                             </button>

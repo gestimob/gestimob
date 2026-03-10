@@ -472,7 +472,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                                             <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-white/30 rounded-xl cursor-pointer bg-white/5 hover:bg-white/10 transition-colors relative overflow-hidden group">
                                                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                                                     <Upload className="w-6 h-6 text-white mb-2 group-hover:scale-110 transition-transform" />
-                                                                    <p className="text-xs text-[#0B0B0C] font-bold uppercase tracking-widest">Anexar ENERGISA</p>
+                                                                    <p className="text-xs text-background font-bold uppercase tracking-widest">Anexar ENERGISA</p>
                                                                 </div>
                                                                 <input type="file" className="hidden" accept="image/*,application/pdf"
                                                                     disabled={isReadOnly}
@@ -520,9 +520,9 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Proprietário Responsável *</label>
                                     <div className="flex gap-2 mb-2 bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-panel-border">
                                         <button type="button" disabled={isReadOnly} onClick={() => setFormData({ ...formData, tipo_proprietario: "PF", proprietario_id: "" })}
-                                            className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario === "PF" ? "bg-primary shadow-lg text-[#0B0B0C]" : "text-accent hover:text-foreground")}>PF</button>
+                                            className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario === "PF" ? "bg-primary shadow-lg text-background" : "text-accent hover:text-foreground")}>PF</button>
                                         <button type="button" disabled={isReadOnly} onClick={() => setFormData({ ...formData, tipo_proprietario: "PJ", proprietario_id: "" })}
-                                            className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario === "PJ" ? "bg-primary shadow-lg text-[#0B0B0C]" : "text-accent hover:text-foreground")}>PJ</button>
+                                            className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario === "PJ" ? "bg-primary shadow-lg text-background" : "text-accent hover:text-foreground")}>PJ</button>
                                     </div>
                                     <select required disabled={isReadOnly || true} value={formData.proprietario_id || ""} onChange={(e) => setFormData({ ...formData, proprietario_id: e.target.value })}
                                         className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none block">

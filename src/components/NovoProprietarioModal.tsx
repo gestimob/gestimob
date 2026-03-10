@@ -523,7 +523,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
 
                                                 {/* Upload Identidade */}
                                                 <div className="w-full p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-[32px] space-y-6 flex flex-col items-center group relative">
-                                                    <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center group-hover:bg-primary transition-all shadow-lg shadow-primary/20"><Upload className="w-8 h-8 text-[#0B0B0C]" /></div>
+                                                    <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center group-hover:bg-primary transition-all shadow-lg shadow-primary/20"><Upload className="w-8 h-8 text-background" /></div>
                                                     <div className="text-center space-y-1">
                                                         <h4 className="text-[13px] font-black text-foreground uppercase italic tracking-widest">{isPF ? "RG / CNH" : "Contrato Social"}</h4>
                                                         <p className="text-[10px] text-text-dim font-black uppercase tracking-widest">PDF ou Imagens</p>
@@ -543,7 +543,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                                     )}
                                                     {docIdentidade && (
                                                         <button type="button" onClick={() => handleOCR(docIdentidade)} disabled={ocrLoading}
-                                                            className="absolute -bottom-5 bg-primary text-[#0B0B0C] px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
+                                                            className="absolute -bottom-5 bg-primary text-background px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
                                                             {ocrLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
                                                             {ocrLoading ? "Processando..." : "Escanear Doc"}
                                                         </button>
@@ -552,7 +552,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
 
                                                 {/* Upload Selfie */}
                                                 <div className="w-full p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-[32px] space-y-6 flex flex-col items-center group relative">
-                                                    <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white group-hover:text-[#0B0B0C] transition-all shadow-lg"><User className="w-8 h-8 text-white group-hover:text-[#0B0B0C]" /></div>
+                                                    <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white dark:group-hover:bg-primary group-hover:text-[#0B0B0C] dark:group-hover:text-background transition-all shadow-lg"><User className="w-8 h-8 text-white group-hover:text-[#0B0B0C] dark:group-hover:text-background" /></div>
                                                     <div className="text-center space-y-1">
                                                         <h4 className="text-[13px] font-black text-foreground uppercase italic tracking-widest">Selfie</h4>
                                                         <p className="text-[10px] text-text-dim font-black uppercase tracking-widest">Apenas Imagens</p>

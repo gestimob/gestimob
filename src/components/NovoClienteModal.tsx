@@ -479,7 +479,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                             {step === 0 ? (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center p-8 md:p-12 space-y-6">
                                     <div className="text-center space-y-3">
-                                        <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-blue-600/30"><Fingerprint className="text-[#0B0B0C] w-6 h-6" /></div>
+                                        <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-blue-600/30"><Fingerprint className="text-background w-6 h-6" /></div>
                                         <h2 className="text-2xl font-serif-premium font-bold text-foreground italic tracking-tighter uppercase lowercase first-letter:uppercase">Identificação</h2>
                                         <p className="text-text-dim font-bold uppercase tracking-[0.2em] text-[8px]">CPF / CNPJ do Novo Cliente</p>
                                     </div>
@@ -533,7 +533,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                         <input autoFocus value={formData.documento} onChange={handleIdInput} placeholder="000.000.000-00"
                                             className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl py-4 px-6 text-xl font-bold text-center text-foreground focus:outline-none focus:border-primary transition-all placeholder:text-text-dim" />
                                         <button type="submit" disabled={formData.documento.replace(/\D/g, "").length < 11 || loading}
-                                            className="w-full bg-primary text-[#0B0B0C] py-4 rounded-2xl font-black text-[9px] uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-10 shadow-2xl flex items-center justify-center gap-2">
+                                            className="w-full bg-primary text-background py-4 rounded-2xl font-black text-[9px] uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-10 shadow-2xl flex items-center justify-center gap-2">
                                             {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Verificando...</> : 'Continuar para Ficha'}
                                         </button>
                                     </form>
@@ -543,7 +543,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                     <aside className="w-full md:w-64 bg-panel/30 dark:bg-white/5 border-b md:border-b-0 md:border-r border-panel-border flex flex-col shrink-0 overflow-hidden">
                                         <div className="p-4 md:p-8 md:pb-4">
                                             <div className="flex items-center gap-4 mb-2 md:mb-4">
-                                                <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 shadow-xl shadow-blue-600/30"><User className="text-[#0B0B0C] w-5 h-5 md:w-6 md:h-6" /></div>
+                                                <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 shadow-xl shadow-blue-600/30"><User className="text-background w-5 h-5 md:w-6 md:h-6" /></div>
                                                 <div>
                                                     <h2 className="text-lg md:text-xl font-serif-premium font-bold text-foreground italic tracking-tighter uppercase leading-none lowercase first-letter:uppercase">Ficha</h2>
                                                     <h2 className="text-lg md:text-xl font-serif-premium font-bold text-foreground italic tracking-tighter uppercase leading-none lowercase first-letter:uppercase">Cadastral</h2>
@@ -560,7 +560,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                     className={cn("flex-none md:w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl transition-all border",
                                                         activeTab === item.id ? "bg-panel border-panel-border shadow-sm md:scale-105 pointer-events-none" : "hover:bg-black/5 dark:hover:bg-white/5 border-transparent text-text-dim hover:text-foreground")}>
                                                     <div className={cn("w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl flex items-center justify-center transition-all shrink-0",
-                                                        activeTab === item.id ? "bg-primary text-[#0B0B0C]" : "bg-black/5 dark:bg-white/5 text-text-dim")}>
+                                                        activeTab === item.id ? "bg-primary text-background" : "bg-black/5 dark:bg-white/5 text-text-dim")}>
                                                         <item.icon className="w-4 h-4" />
                                                     </div>
                                                     <div className="text-left font-black">
@@ -810,7 +810,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
 
                                                             {docIdentidade && (
                                                                 <button onClick={() => handleOCR(docIdentidade)} disabled={ocrLoading}
-                                                                    className="absolute -bottom-4 bg-primary text-[#0B0B0C] px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
+                                                                    className="absolute -bottom-4 bg-primary text-background px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
                                                                     {ocrLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Scan className="w-3 h-3" />}
                                                                     {ocrLoading ? "Lendo..." : "Escanear Documento"}
                                                                 </button>
@@ -841,7 +841,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
 
                                                                 {docConjuge && (
                                                                     <button onClick={() => handleOCR(docConjuge)} disabled={ocrLoading}
-                                                                        className="absolute -bottom-4 bg-primary text-[#0B0B0C] px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
+                                                                        className="absolute -bottom-4 bg-primary text-background px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
                                                                         {ocrLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Scan className="w-3 h-3" />}
                                                                         {ocrLoading ? "Lendo..." : "Escanear Documento"}
                                                                     </button>

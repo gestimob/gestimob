@@ -1319,7 +1319,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                         <footer className="p-6 md:p-10 border-t border-panel-border bg-panel/30 dark:bg-white/5 backdrop-blur-md flex flex-col sm:flex-row items-stretch sm:items-center gap-4 shrink-0">
                             <div className="flex-1 hidden sm:block" />
                             {!isReadOnly ? (
-                                <button type="submit" form="contrato-form" disabled={loading} className="bg-[#EAEAEA] text-[#0B0B0C] px-6 sm:px-12 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] flex items-center justify-center gap-3 sm:gap-4 transition-all hover:scale-[1.02] sm:hover:scale-[1.05] shadow-xl">
+                                <button type="submit" form="contrato-form" disabled={loading} className="bg-[#EAEAEA] dark:bg-primary text-[#0B0B0C] dark:text-background px-6 sm:px-12 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.4em] flex items-center justify-center gap-3 sm:gap-4 transition-all hover:scale-[1.02] sm:hover:scale-[1.05] shadow-xl">
                                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                                     <Save className="w-4 h-4" /> Finalizar Documento
                                 </button>

@@ -535,7 +535,7 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                         {navItems.map((item) => (
                                             <button key={item.id} type="button" onClick={() => setActiveTab(item.id as TabType)}
                                                 className={cn("flex-none md:w-full flex items-center gap-3 md:gap-5 p-2 md:p-4 rounded-2xl md:rounded-3xl transition-all", activeTab === item.id ? "bg-white/5 border border-panel-border" : "hover:bg-white/[0.02]")}>
-                                                <div className={cn("w-8 h-8 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-all shrink-0", activeTab === item.id ? "bg-primary text-[#0B0B0C] shadow-[0_0_20px_rgba(255,255,255,0.1)]" : "bg-white/5 text-text-dim")}>
+                                                <div className={cn("w-8 h-8 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-all shrink-0", activeTab === item.id ? "bg-primary text-background shadow-[0_0_20px_rgba(255,255,255,0.1)]" : "bg-white/5 text-text-dim")}>
                                                     <item.icon className="w-4 h-4 md:w-5 md:h-5" />
                                                 </div>
                                                 <div className="text-left">
@@ -676,7 +676,7 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                             )}
 
                                                             <div className="flex items-center gap-3 mb-2">
-                                                                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-[#0B0B0C] text-[10px] font-black shadow-lg shadow-primary/10">{index + 1}</div>
+                                                                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-background text-[10px] font-black shadow-lg shadow-primary/10">{index + 1}</div>
                                                                 <h4 className="text-[12px] font-black text-foreground uppercase tracking-widest">{index === 0 ? "Responsável Principal" : `Responsável Adicional`}</h4>
                                                             </div>
 
@@ -1149,9 +1149,9 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                     <footer className="pt-10 flex gap-6 mt-auto">
                                         <button type="button" onClick={onClose} className="px-10 py-5 rounded-2xl font-black text-[10px] text-accent hover:bg-white/5 uppercase tracking-[0.3em] transition-all border border-panel-border">Cancelar</button>
                                         {activeTab !== 'documentos' ? (
-                                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); const tabs: TabType[] = ['basico', 'endereco', 'responsaveis', 'bancario', 'documentos']; const nextIdx = tabs.indexOf(activeTab) + 1; if (nextIdx < tabs.length) setActiveTab(tabs[nextIdx]); }} className="flex-1 bg-[#EAEAEA] text-[#0B0B0C] px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all">Próximo Passo <ChevronRight className="w-4 h-4" /></button>
+                                            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); const tabs: TabType[] = ['basico', 'endereco', 'responsaveis', 'bancario', 'documentos']; const nextIdx = tabs.indexOf(activeTab) + 1; if (nextIdx < tabs.length) setActiveTab(tabs[nextIdx]); }} className="flex-1 bg-[#EAEAEA] dark:bg-primary text-[#0B0B0C] dark:text-background px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all">Próximo Passo <ChevronRight className="w-4 h-4" /></button>
                                         ) : (
-                                            <button type="submit" disabled={loading} className="flex-1 bg-[#EAEAEA] text-[#0B0B0C] px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Finalizar e Salvar <CheckCircle2 className="w-4 h-4" /></>}</button>
+                                            <button type="submit" disabled={loading} className="flex-1 bg-[#EAEAEA] dark:bg-primary text-[#0B0B0C] dark:text-background px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Finalizar e Salvar <CheckCircle2 className="w-4 h-4" /></>}</button>
                                         )}
                                     </footer>
                                 </form>

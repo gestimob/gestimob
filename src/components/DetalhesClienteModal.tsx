@@ -677,7 +677,7 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                             </div>
                             <button
                                 onClick={onClose}
-                                className="w-full sm:w-auto px-10 py-4 bg-[#EAEAEA] text-[#0B0B0C] rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] flex items-center justify-center gap-3 transition-all hover:scale-[1.02] shadow-xl no-print"
+                                className="w-full sm:w-auto px-10 py-4 bg-[#EAEAEA] dark:bg-primary text-[#0B0B0C] dark:text-background rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] flex items-center justify-center gap-3 transition-all hover:scale-[1.02] shadow-xl no-print"
                             >
                                 Fechar Ficha <X className="w-4 h-4" />
                             </button>

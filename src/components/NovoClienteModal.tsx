@@ -945,6 +945,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                     )}
                                                 </div>
                                             </footer>
+                                        </div>
                                     </form>
                                 </>
                             )}

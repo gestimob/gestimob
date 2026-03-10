@@ -368,8 +368,8 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
         setActiveTab('basico');
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (e?: React.FormEvent | React.MouseEvent) => {
+        e?.preventDefault();
 
         if (activeTab !== 'documentos') {
             return;
@@ -540,7 +540,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                 </motion.div>
                             ) : (
                                 <>
-                                    <form onSubmit={handleSubmit} className="flex-1 flex flex-col md:flex-row overflow-hidden">
+                                    <form onSubmit={(e) => e.preventDefault()} className="flex-1 flex flex-col md:flex-row overflow-hidden">
                                         <aside className="w-full md:w-64 bg-panel/30 dark:bg-white/5 border-b md:border-b-0 md:border-r border-panel-border flex flex-col shrink-0 overflow-hidden">
                                             <div className="p-4 md:p-8 md:pb-4">
                                                 <div className="flex items-center gap-4 mb-2 md:mb-4">
@@ -934,12 +934,12 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                 <div className="flex-1" />
                                                 <div className="flex gap-3 md:gap-4">
                                                     {activeTab !== navItems[navItems.length - 1].id ? (
-                                                        <button type="button" onClick={() => {
+                                                        <button key="btn-proximo" type="button" onClick={() => {
                                                             const next = navItems[navItems.findIndex(i => i.id === activeTab) + 1];
                                                             if (next) setActiveTab(next.id as TabType);
                                                         }} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all text-[9px] md:text-sm font-black uppercase tracking-widest group">Próximo <ChevronRight className="w-4 h-4" /></button>
                                                     ) : (
-                                                        <button type="submit" disabled={loading} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all disabled:opacity-50 text-[9px] md:text-sm font-black uppercase tracking-widest group">
+                                                        <button key="btn-finalizar" type="button" onClick={handleSubmit} disabled={loading} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all disabled:opacity-50 text-[9px] md:text-sm font-black uppercase tracking-widest group">
                                                             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Finalizar <CheckCircle2 className="w-4 h-4" /></>}
                                                         </button>
                                                     )}

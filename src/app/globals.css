@@ -49,6 +49,17 @@
     --glass-bg: rgba(255, 255, 255, 0.04);
     --glass-border: rgba(255, 255, 255, 0.1);
     --elite-satin: #EAEAEA;
+    color-scheme: dark;
+  }
+
+  /* Global Select Styling for Dark Mode visibility */
+  select {
+    color-scheme: light dark;
+  }
+
+  .dark select option {
+    background-color: #1A1A1C;
+    color: #EAEAEA;
   }
 }
 

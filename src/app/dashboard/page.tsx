@@ -126,10 +126,13 @@ export default function DashboardPage() {
 
             // Para parcelas, se for numérico, buscamos de forma mais ampla (A Vencer ou Recentes)
             let parcelQuery = supabase.from('parcelas')
-                .select('id, transacao_id, data_vencimento, valor, transacoes(locatario_nome, codigo_transacao)');
+                .select('id, transacao_id, data_vencimento, valor, status, transacoes(locatario_nome, codigo_transacao)');
 
             if (digitsOnly.length > 0) {
                 parcelQuery = parcelQuery.or(`status.neq.Pago,data_vencimento.ilike.%${digitsOnly}%`).limit(200);
+            } else if (query.length >= 3) {
+                // Se for texto (ex: "Pago", "Atraso"), buscamos no status também
+                parcelQuery = parcelQuery.or(`status.ilike.%${query}%,transacoes.locatario_nome.ilike.%${query}%`).limit(100);
             } else {
                 parcelQuery = parcelQuery.limit(100);
             }
@@ -171,19 +174,23 @@ export default function DashboardPage() {
                 const dateBRShort = `${d}${m}`; // DDMM
                 const dateBRFull = `${d}${m}${y}`; // DDMMYYYY
 
-                // Match Conditions
-                const matchesValue = (digitsOnly && (valClean.includes(digitsOnly) || valSimple === digitsOnly)) || valFormatted.includes(query) || valRaw.includes(query);
-                const matchesDate = (digitsOnly && (dateBRShort.includes(digitsOnly) || dateBRFull.includes(digitsOnly))) || dateRaw.includes(query) || dateBR.includes(query);
-                const matchesText = p.transacoes?.locatario_nome?.toLowerCase().includes(query.toLowerCase()) ||
-                    p.transacoes?.codigo_transacao?.toLowerCase().includes(query.toLowerCase());
+                const status = String(p.status || '').toLowerCase();
+                const searchLower = query.toLowerCase();
 
-                if (matchesValue || matchesDate || matchesText) {
+                // Match Conditions
+                const matchesValue = (digitsOnly && (valClean.includes(digitsOnly) || valSimple === digitsOnly || valSimple.includes(digitsOnly))) || valFormatted.includes(query) || valRaw.includes(query);
+                const matchesDate = (digitsOnly && (dateBRShort.includes(digitsOnly) || dateBRFull.includes(digitsOnly))) || dateRaw.includes(query) || dateBR.includes(query);
+                const matchesStatus = status.includes(searchLower);
+                const matchesText = p.transacoes?.locatario_nome?.toLowerCase().includes(searchLower) ||
+                    p.transacoes?.codigo_transacao?.toLowerCase().includes(searchLower);
+
+                if (matchesValue || matchesDate || matchesText || matchesStatus) {
                     processedParcelIds.add(p.id);
                     results.push({
                         id: p.id,
                         type: 'Parcela',
                         title: `Parcela - ${p.transacoes?.locatario_nome || 'Financeiro'}`,
-                        subtitle: `Venc: ${dateBR || '---'} | Valor: R$ ${valFormatted}`,
+                        subtitle: `Venc: ${dateBR || '---'} | Valor: R$ ${valFormatted} | Status: ${p.status || '---'}`,
                         href: `/financeiro?id=${p.id}`,
                         icon: DollarSign
                     });

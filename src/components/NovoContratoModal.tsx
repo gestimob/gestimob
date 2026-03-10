@@ -815,6 +815,15 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                 const duracao = baseData.duracao_meses || 1;
                 let valorBase = baseData.valor_aluguel || 0;
 
+                // Tentar recuperar reajustes_fixos do aluguel caso não esteja no baseData
+                let reajustesArr = baseData.reajustes_fixos;
+                if ((!reajustesArr || reajustesArr.length === 0) && baseData.codigo_interno) {
+                    const { data: aluguelData } = await supabase.from('alugueis').select('reajustes_fixos').eq('codigo_interno', baseData.codigo_interno).single();
+                    if (aluguelData && aluguelData.reajustes_fixos) {
+                        reajustesArr = aluguelData.reajustes_fixos;
+                    }
+                }
+
                 // Se o pagamento do condomínio for unificado, o valor da parcela financeira deve ser a soma
                 if (baseData.tipo_pagamento_condominio === 'Único') {
                     valorBase = baseData.valor_total_aluguel_condominio || (valorBase + (baseData.valor_condominio || 0));
@@ -865,8 +874,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                         // Se for reajuste Fixo, verifica os períodos
                         if (baseData.tipo_reajuste === 'Fixo') {
-                            if (baseData.reajustes_fixos && Array.isArray(baseData.reajustes_fixos) && baseData.reajustes_fixos.length > 0) {
-                                for (const p of baseData.reajustes_fixos) {
+                            if (reajustesArr && Array.isArray(reajustesArr) && reajustesArr.length > 0) {
+                                for (const p of reajustesArr) {
                                     const pInicio = p.inicio ? new Date(p.inicio + 'T00:00:00') : null;
                                     const pFinal = p.final ? new Date(p.final + 'T00:00:00') : null;
                                     if (pInicio && pFinal && vencimento >= pInicio && vencimento <= pFinal) {

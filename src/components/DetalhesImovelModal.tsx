@@ -67,21 +67,21 @@ export function DetalhesImovelModal({ isOpen, imovel, onClose }: ModalProps) {
 
 
                         {/* Header */}
-                        <div className="px-6 sm:px-8 py-6 border-b border-panel-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
-                            <div className="flex items-center gap-4 sm:gap-6">
-                                <button onClick={onClose} className="p-2 sm:px-4 sm:py-2 bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all no-print">
+                        <div className="px-5 sm:px-8 py-5 sm:py-6 border-b border-panel-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
+                            <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+                                <button onClick={onClose} className="p-2 sm:px-4 sm:py-2 bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all no-print shrink-0">
                                     <ArrowLeft className="w-4 h-4 text-foreground" />
                                     <span className="text-[10px] font-black uppercase tracking-widest text-foreground hidden sm:inline">Voltar</span>
                                 </button>
-                                <div className="min-w-0">
-                                    <h1 className="text-xl sm:text-3xl font-serif-premium font-bold tracking-tight text-foreground leading-tight lowercase first-letter:uppercase truncate">
+                                <div className="min-w-0 flex-1">
+                                    <h1 className="text-lg sm:text-3xl font-serif-premium font-bold tracking-tight text-foreground leading-tight lowercase first-letter:uppercase truncate">
                                         {imovel.nome_identificacao || imovel.tipo}
                                     </h1>
-                                    <p className="text-[9px] sm:text-[10px] text-accent font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-1 sm:mt-2">
+                                    <p className="text-[8px] sm:text-[10px] text-accent font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] mt-0.5 sm:mt-2">
                                         Ficha Cadastral Física • {imovel.codigo_interno || '-----'} {imovel.nome_identificacao && `• ${imovel.tipo}`}
                                     </p>
                                 </div>
-                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-auto sm:hidden no-print">
+                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-2 sm:hidden no-print shrink-0">
                                     <X className="w-6 h-6" />
                                 </button>
                             </div>

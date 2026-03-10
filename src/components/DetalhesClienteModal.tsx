@@ -239,24 +239,24 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                     >
 
                         {/* Header */}
-                        <div className="p-6 sm:p-8 border-b border-panel-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
-                            <div className="flex items-center gap-4 sm:gap-8">
+                        <div className="p-5 sm:p-8 border-b border-panel-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20">
+                            <div className="flex items-center gap-3 sm:gap-8 min-w-0">
                                 <button
                                     onClick={onClose}
-                                    className="p-2 sm:px-4 sm:py-2 bg-black/5 dark:bg-white/5 border border-panel-border rounded-lg flex items-center gap-3 text-foreground hover:text-foreground transition-all group no-print"
+                                    className="p-2 sm:px-4 sm:py-2 bg-black/5 dark:bg-white/5 border border-panel-border rounded-lg flex items-center gap-3 text-foreground hover:text-foreground transition-all group no-print shrink-0"
                                 >
                                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                                     <span className="text-sm font-bold uppercase tracking-widest hidden sm:inline">Voltar</span>
                                 </button>
-                                <div className="min-w-0">
-                                    <h1 className="text-lg sm:text-2xl font-serif-premium font-bold text-foreground tracking-tight leading-tight uppercase italic truncate">
+                                <div className="min-w-0 flex-1">
+                                    <h1 className="text-base sm:text-2xl font-serif-premium font-bold text-foreground tracking-tight leading-tight uppercase italic truncate">
                                         {cliente.nome_completo || cliente.razao_social}
                                     </h1>
-                                    <p className="text-[9px] sm:text-[10px] text-text-dim font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-1 sm:mt-2">
+                                    <p className="text-[8px] sm:text-[10px] text-text-dim font-bold uppercase tracking-[0.15em] sm:tracking-[0.3em] mt-0.5 sm:mt-2">
                                         Ficha Cadastral • {isPF ? 'Pessoa Física' : 'Pessoa Jurídica'}
                                     </p>
                                 </div>
-                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-auto sm:hidden no-print">
+                                <button onClick={onClose} className="p-2 text-text-dim hover:text-foreground ml-2 sm:hidden no-print shrink-0">
                                     <X className="w-6 h-6" />
                                 </button>
                             </div>

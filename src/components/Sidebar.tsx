@@ -278,15 +278,15 @@ export function Sidebar() {
     return (
         <>
             {/* Mobile Nav Top */}
-            <div className="md:hidden fixed top-0 left-0 right-0 h-20 bg-panel glass-elite border-b border-panel-border z-[100] flex items-center justify-between px-6">
-                <Link href="/dashboard" className="flex items-center gap-3">
-                    {logoUrl && <img src={logoUrl} alt="Logo" className="h-10 w-auto object-contain" />}
-                    <div className="flex flex-col">
+            <div className="md:hidden fixed top-0 left-0 right-0 h-20 bg-panel glass-elite border-b border-panel-border z-[100] flex items-center justify-between px-4 sm:px-6">
+                <Link href="/dashboard" className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                    {logoUrl && <img src={logoUrl} alt="Logo" className="h-12 w-auto object-contain shrink-0" />}
+                    <div className="flex flex-col min-w-0">
                         {/* Nome removido conforme solicitado */}
-                        <span className="text-[8px] text-accent uppercase tracking-[0.3em]">Elite Edition</span>
+                        <span className="text-[8px] text-accent uppercase tracking-[0.2em] sm:tracking-[0.3em] truncate">Elite Edition</span>
                     </div>
                 </Link>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4 shrink-0">
                     <ThemeToggle />
                     <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 bg-black/5 dark:bg-white/5 rounded-xl border border-panel-border">
                         {isMobileMenuOpen ? <CloseIcon className="w-6 h-6 text-foreground" /> : <Menu className="w-6 h-6 text-foreground" />}

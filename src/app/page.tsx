@@ -56,7 +56,7 @@ export default function LandingPage() {
   }, []);
 
   const handleLogoClick = () => {
-    if (usageCount >= 2) return;
+    if (usageCount >= 3) return;
 
     const nextCount = clickCount + 1;
     setClickCount(nextCount);
@@ -177,7 +177,7 @@ export default function LandingPage() {
                 </div>
                 <h2 className="text-xl font-serif-premium text-white italic">Novo Acesso</h2>
                 <p className="text-[10px] uppercase font-black tracking-widest text-white/40">
-                  Uso restante: {2 - usageCount}
+                  Uso restante: {3 - usageCount}
                 </p>
               </div>
 

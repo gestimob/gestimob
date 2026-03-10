@@ -540,411 +540,412 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                 </motion.div>
                             ) : (
                                 <>
-                                    <aside className="w-full md:w-64 bg-panel/30 dark:bg-white/5 border-b md:border-b-0 md:border-r border-panel-border flex flex-col shrink-0 overflow-hidden">
-                                        <div className="p-4 md:p-8 md:pb-4">
-                                            <div className="flex items-center gap-4 mb-2 md:mb-4">
-                                                <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 shadow-xl shadow-blue-600/30"><User className="text-background w-5 h-5 md:w-6 md:h-6" /></div>
-                                                <div>
-                                                    <h2 className="text-lg md:text-xl font-serif-premium font-bold text-foreground italic tracking-tighter uppercase leading-none lowercase first-letter:uppercase">Ficha</h2>
-                                                    <h2 className="text-lg md:text-xl font-serif-premium font-bold text-foreground italic tracking-tighter uppercase leading-none lowercase first-letter:uppercase">Cadastral</h2>
+                                    <form onSubmit={handleSubmit} className="flex-1 flex flex-col md:flex-row overflow-hidden">
+                                        <aside className="w-full md:w-64 bg-panel/30 dark:bg-white/5 border-b md:border-b-0 md:border-r border-panel-border flex flex-col shrink-0 overflow-hidden">
+                                            <div className="p-4 md:p-8 md:pb-4">
+                                                <div className="flex items-center gap-4 mb-2 md:mb-4">
+                                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 shadow-xl shadow-blue-600/30"><User className="text-background w-5 h-5 md:w-6 md:h-6" /></div>
+                                                    <div>
+                                                        <h2 className="text-lg md:text-xl font-serif-premium font-bold text-foreground italic tracking-tighter uppercase leading-none lowercase first-letter:uppercase">Ficha</h2>
+                                                        <h2 className="text-lg md:text-xl font-serif-premium font-bold text-foreground italic tracking-tighter uppercase leading-none lowercase first-letter:uppercase">Cadastral</h2>
+                                                    </div>
+                                                </div>
+                                                <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg inline-block">
+                                                    <span className="text-[8px] md:text-[10px] font-black text-primary uppercase tracking-widest">{isPF ? 'Pessoa Física' : 'Pessoa Jurídica'}</span>
                                                 </div>
                                             </div>
-                                            <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg inline-block">
-                                                <span className="text-[8px] md:text-[10px] font-black text-primary uppercase tracking-widest">{isPF ? 'Pessoa Física' : 'Pessoa Jurídica'}</span>
+
+                                            <nav className="flex md:flex-col overflow-x-auto md:overflow-x-visible p-4 md:p-8 md:pt-0 gap-2 md:gap-3 scrollbar-hide">
+                                                {navItems.map((item) => (
+                                                    <button key={item.id} onClick={() => setActiveTab(item.id as TabType)}
+                                                        className={cn("flex-none md:w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl transition-all border",
+                                                            activeTab === item.id ? "bg-panel border-panel-border shadow-sm md:scale-105 pointer-events-none" : "hover:bg-black/5 dark:hover:bg-white/5 border-transparent text-text-dim hover:text-foreground")}>
+                                                        <div className={cn("w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl flex items-center justify-center transition-all shrink-0",
+                                                            activeTab === item.id ? "bg-primary text-background" : "bg-black/5 dark:bg-white/5 text-text-dim")}>
+                                                            <item.icon className="w-4 h-4" />
+                                                        </div>
+                                                        <div className="text-left font-black">
+                                                            <div className={cn("text-[9px] md:text-[10px] uppercase tracking-widest whitespace-nowrap", activeTab === item.id ? "text-foreground" : "text-text-dim")}>{item.label}</div>
+                                                        </div>
+                                                    </button>
+                                                ))}
+                                            </nav>
+
+                                            <div className="p-8 pt-4">
+                                                {/* Removed Matrícula Interna from here */}
                                             </div>
-                                        </div>
+                                        </aside>
 
-                                        <nav className="flex md:flex-col overflow-x-auto md:overflow-x-visible p-4 md:p-8 md:pt-0 gap-2 md:gap-3 scrollbar-hide">
-                                            {navItems.map((item) => (
-                                                <button key={item.id} onClick={() => setActiveTab(item.id as TabType)}
-                                                    className={cn("flex-none md:w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl transition-all border",
-                                                        activeTab === item.id ? "bg-panel border-panel-border shadow-sm md:scale-105 pointer-events-none" : "hover:bg-black/5 dark:hover:bg-white/5 border-transparent text-text-dim hover:text-foreground")}>
-                                                    <div className={cn("w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl flex items-center justify-center transition-all shrink-0",
-                                                        activeTab === item.id ? "bg-primary text-background" : "bg-black/5 dark:bg-white/5 text-text-dim")}>
-                                                        <item.icon className="w-4 h-4" />
-                                                    </div>
-                                                    <div className="text-left font-black">
-                                                        <div className={cn("text-[9px] md:text-[10px] uppercase tracking-widest whitespace-nowrap", activeTab === item.id ? "text-foreground" : "text-text-dim")}>{item.label}</div>
-                                                    </div>
-                                                </button>
-                                            ))}
-                                        </nav>
+                                        <div className="flex-1 flex flex-col bg-panel/50 dark:bg-transparent min-w-0">
+                                            <header className="px-6 md:px-10 py-4 md:py-6 flex justify-between items-center bg-gradient-to-b from-black/5 dark:from-white/5 to-transparent border-b border-panel-border shrink-0">
+                                                <div>
+                                                    <div className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-1">Etapa {currentStep}/{navItems.length}</div>
+                                                    <h3 className="text-xl md:text-2xl font-serif-premium font-bold text-foreground uppercase italic tracking-tighter lowercase first-letter:uppercase">{navItems.find(i => i.id === activeTab)?.label}</h3>
+                                                </div>
+                                                <button onClick={onClose} className="w-8 h-8 md:w-10 md:h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border"><X className="w-6 h-6" /></button>
+                                            </header>
 
-                                        <div className="p-8 pt-4">
-                                            {/* Removed Matrícula Interna from here */}
-                                        </div>
-                                    </aside>
+                                            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10">
+                                                <AnimatePresence mode="wait">
+                                                    {activeTab === 'basico' && (
+                                                        <motion.div key="basico" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                                                            <Input label="Código" value={formData.codigo_interno} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, codigo_interno: e.target.value })} placeholder="AUTO" colSpan="col-span-1" />
+                                                            <Input label={isPF ? "Nome Completo" : "Razão Social"} value={formData.nome_completo} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nome_completo: e.target.value })} colSpan="col-span-1 md:col-span-3" />
 
-                                    <div className="flex-1 flex flex-col bg-panel/50 dark:bg-transparent min-w-0">
-                                        <header className="px-6 md:px-10 py-4 md:py-6 flex justify-between items-center bg-gradient-to-b from-black/5 dark:from-white/5 to-transparent border-b border-panel-border shrink-0">
-                                            <div>
-                                                <div className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-1">Etapa {currentStep}/{navItems.length}</div>
-                                                <h3 className="text-xl md:text-2xl font-serif-premium font-bold text-foreground uppercase italic tracking-tighter lowercase first-letter:uppercase">{navItems.find(i => i.id === activeTab)?.label}</h3>
-                                            </div>
-                                            <button onClick={onClose} className="w-8 h-8 md:w-10 md:h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border"><X className="w-6 h-6" /></button>
-                                        </header>
-
-                                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10">
-                                            <AnimatePresence mode="wait">
-                                                {activeTab === 'basico' && (
-                                                    <motion.div key="basico" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                                                        <Input label="Código" value={formData.codigo_interno} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, codigo_interno: e.target.value })} placeholder="AUTO" colSpan="col-span-1" />
-                                                        <Input label={isPF ? "Nome Completo" : "Razão Social"} value={formData.nome_completo} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nome_completo: e.target.value })} colSpan="col-span-1 md:col-span-3" />
-
-                                                        {!isPF && (
-                                                            <>
-                                                                <Input label="CNPJ" value={formData.documento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, documento: e.target.value })} colSpan="col-span-1 md:col-span-1" />
-                                                                <Input label="Nome Fantasia" value={formData.nome_fantasia} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nome_fantasia: e.target.value })} colSpan="col-span-1 md:col-span-2" />
-                                                                <Input label="Insc. Estadual" value={formData.inscricao_estadual} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, inscricao_estadual: e.target.value })} colSpan="col-span-1 md:col-span-1" />
-                                                                <CurrencyInput label="Valor R$" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-1" />
-                                                                <Input label="Pessoa de Contato" value={formData.pessoa_contato} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato: e.target.value })} colSpan="col-span-1 md:col-span-2" />
-                                                                <Input label="FONE CONTATO" value={formData.pessoa_contato_tel} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato_tel: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                                <Input label="FAX CONTATO" value={formData.pessoa_contato_fax} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato_fax: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                                <Input label="Telefone Filial" value={formData.pessoa_contato_fortaleza_tel} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato_fortaleza_tel: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                                <Input label="Fax Filial" value={formData.pessoa_contato_fortaleza_fax} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato_fortaleza_fax: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                                <Select label="Prédio Empresa" value={formData.predio_empresa} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, predio_empresa: e.target.value })} options={[{ label: '...', value: '' }, { label: 'Próprio', value: 'Próprio' }, { label: 'Alugado', value: 'Alugado' }]} colSpan="col-span-1" />
-                                                                <CurrencyInput label="Valor R$" value={formData.predio_valor_aluguel} onChange={(val: number) => setFormData({ ...formData, predio_valor_aluguel: val })} colSpan="col-span-1" />
-                                                                <CurrencyInput label="Renda Mensal Empresa" value={formData.renda_principal} onChange={(val: number) => setFormData({ ...formData, renda_principal: val })} colSpan="col-span-2" />
-                                                            </>
-                                                        )}
-
-                                                        {isPF && (
-                                                            <>
-                                                                <Input label="CPF" value={formData.documento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, documento: e.target.value })} colSpan="col-span-1" />
-                                                                <Select label="Sexo" value={formData.sexo} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, sexo: e.target.value })} options={[{ label: 'Selecione', value: '' }, { label: 'Masculino', value: 'Masculino' }, { label: 'Feminino', value: 'Feminino' }]} colSpan="col-span-1" />
-                                                                <Input label="Nascimento" value={formData.data_nascimento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, data_nascimento: e.target.value })} type="date" colSpan="col-span-1 md:col-span-1" />
-
-                                                                <Input label="Identidade (RG)" value={formData.rg} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, rg: e.target.value })} colSpan="col-span-1" />
-                                                                <Input label="Órgão" value={formData.orgao_expedidor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, orgao_expedidor: e.target.value })} colSpan="col-span-1" />
-                                                                <Input label="CNH" value={formData.cnh} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cnh: e.target.value })} colSpan="col-span-1" />
-                                                                <Input label="Órgão CNH" value={formData.cnh_orgao_expedidor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cnh_orgao_expedidor: e.target.value })} colSpan="col-span-1" />
-                                                                <Select label="Estado Civil" value={formData.estado_civil} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, estado_civil: e.target.value })} options={[{ label: 'Solteiro', value: 'Solteiro' }, { label: 'Casado', value: 'Casado' }, { label: 'União estável', value: 'União estável' }, { label: 'Divorciado', value: 'Divorciado' }, { label: 'Viúvo', value: 'Viúvo' }]} colSpan="col-span-1" />
-                                                                <Input label="N. Dependentes" value={formData.num_dependentes} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, num_dependentes: e.target.value })} type="number" colSpan="col-span-1" />
-                                                                <Input label="Naturalidade" value={formData.naturalidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, naturalidade: e.target.value })} colSpan="col-span-1" />
-                                                                <Input label="Nacionalidade" value={formData.nacionalidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nacionalidade: e.target.value })} colSpan="col-span-1" />
-                                                                <Input label="Mãe / Pai" value={formData.filiacao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, filiacao: e.target.value })} colSpan="col-span-2 md:col-span-4" />
-                                                            </>
-                                                        )}
-
-                                                        <Input label="WhatsApp / Cel" value={formData.celular} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, celular: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                        <Input label="Telefone Fixo" value={formData.telefone} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, telefone: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                        <Input label="E-mail Principal" value={formData.email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })} type="email" colSpan="col-span-2 md:col-span-2" />
-                                                        <Select label="Status" value={formData.status || 'Ativo'} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, status: e.target.value })} options={[{ label: 'Ativo', value: 'Ativo' }, { label: 'Inativo', value: 'Inativo' }]} colSpan="col-span-1" />
-                                                        <Select label="Papel Cliente" value={formData.papel || 'Locatário'} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, papel: e.target.value })} options={[{ label: 'Locatário', value: 'Locatário' }, { label: 'Locatário e Fiador', value: 'Locatário e Fiador' }, { label: 'Apenas Fiador', value: 'Apenas Fiador' }]} colSpan="col-span-1 md:col-span-1" />
-                                                    </motion.div>
-                                                )}
-
-                                                {activeTab === 'representantes' && !isPF && (
-                                                    <motion.div key="reps" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-                                                        <div className="flex items-center justify-between">
-                                                            <h4 className="text-xs font-black text-text-dim uppercase tracking-widest">Representantes Legais</h4>
-                                                            <button type="button" onClick={addRepresentante} className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest hover:text-foreground transition-all"><PlusCircle className="w-4 h-4" /> Novo Representante</button>
-                                                        </div>
-                                                        <div className="space-y-4">
-                                                            {representantes.map((rep, idx) => (
-                                                                <div key={rep.id} className="p-4 md:p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-[32px] grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 relative group">
-                                                                    <div className="absolute top-4 md:top-8 right-4 md:right-8 text-[8px] md:text-xs text-text-dim">REP #{idx + 1}</div>
-                                                                    <div className="col-span-2 md:col-span-2 space-y-2">
-                                                                        <label className="text-[10px] font-black text-text-dim uppercase">Nome Completo</label>
-                                                                        <input value={rep.nome_completo} onChange={e => { const r = [...representantes]; r[idx].nome_completo = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none" />
-                                                                    </div>
-                                                                    <div className="col-span-1 md:col-span-1 space-y-2">
-                                                                        <label className="text-[10px] font-black text-text-dim uppercase">CPF</label>
-                                                                        <input value={rep.cpf} onChange={e => { const r = [...representantes]; r[idx].cpf = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none" />
-                                                                    </div>
-                                                                    <div className="col-span-1 md:col-span-1 space-y-2">
-                                                                        <label className="text-[10px] font-black text-text-dim uppercase">Ligação</label>
-                                                                        <select value={rep.ligacao_empresa} onChange={e => { const r = [...representantes]; r[idx].ligacao_empresa = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none">
-                                                                            <option value="Sócio">Sócio</option><option value="Procurador">Procurador</option><option value="Diretor">Diretor</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    {representantes.length > 1 && <button onClick={() => setRepresentantes(representantes.filter(r => r.id !== rep.id))} className="absolute -top-3 -right-3 w-8 h-8 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all border border-rose-500/20"><Trash2 className="w-4 h-4" /></button>}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-
-                                                {activeTab === 'profissional' && isPF && (
-                                                    <motion.div key="pro" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                                                        <Input label="Profissão" value={formData.profissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, profissao: e.target.value })} colSpan="col-span-1" />
-                                                        <Input label="Atividade" value={formData.atividade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, atividade: e.target.value })} colSpan="col-span-1 md:col-span-3" />
-                                                        <Input label="Empresa Atual" value={formData.empresa_trabalho} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, empresa_trabalho: e.target.value })} colSpan="col-span-2 md:col-span-3" />
-                                                        <Input label="Cargo" value={formData.cargo_funcao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cargo_funcao: e.target.value })} colSpan="col-span-1" />
-                                                        <Input label="Admissão" value={formData.data_admissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, data_admissao: e.target.value })} type="date" colSpan="col-span-1 md:col-span-1" />
-                                                        <CurrencyInput label="Renda Principal (R$)" value={formData.renda_principal} onChange={(val: number) => setFormData({ ...formData, renda_principal: val })} colSpan="col-span-1" />
-                                                        <CurrencyInput label="Outras Rendas (R$)" value={formData.outras_rendas} onChange={(val: number) => setFormData({ ...formData, outras_rendas: val })} colSpan="col-span-1" />
-                                                        <Input label="Origem Outras" value={formData.origem_outras_rendas} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, origem_outras_rendas: e.target.value })} colSpan="col-span-2 md:col-span-2" />
-                                                    </motion.div>
-                                                )}
-
-                                                {activeTab === 'endereco' && (
-                                                    <motion.div key="end" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-6 gap-4 md:gap-6">
-                                                        <div className="col-span-1 md:col-span-2 space-y-2">
-                                                            <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">CEP</label>
-                                                            <div className="relative">
-                                                                <input value={formData.cep || ""} onChange={handleCepChange} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-xs outline-none focus:border-primary transition-all font-medium" />
-                                                                {searchingCep && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary animate-spin" />}
-                                                            </div>
-                                                        </div>
-                                                        <Input label="Logradouro" value={formData.logradouro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, logradouro: e.target.value })} colSpan="col-span-1 md:col-span-4" />
-                                                        <Input label="Número" value={formData.numero} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, numero: e.target.value })} colSpan="col-span-1" />
-                                                        <Input label="Bairro" value={formData.bairro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, bairro: e.target.value })} colSpan="col-span-1 md:col-span-2" />
-                                                        <Input label="Cidade" value={formData.cidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cidade: e.target.value })} colSpan="col-span-1 md:col-span-2" />
-                                                        <Input label="Estado" value={formData.estado} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, estado: e.target.value })} colSpan="col-span-1" />
-                                                        <Select label="Residência" value={formData.tipo_residencia} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, tipo_residencia: e.target.value })} colSpan="col-span-1 md:col-span-2" options={[{ label: '...', value: '' }, { label: 'Própria', value: 'Própria' }, { label: 'Alugada', value: 'Alugada' }, { label: 'Financiada', value: 'Financiada' }, { label: 'Com parentes', value: 'Com parentes' }]} />
-                                                        {formData.tipo_residencia === 'Alugada' && <CurrencyInput label="Valor Aluguel" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-1 md:col-span-2" />}
-                                                    </motion.div>
-                                                )}
-
-                                                {!isPF && activeTab === 'referencias' && (
-                                                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-                                                        <div className="grid grid-cols-2 gap-8">
-                                                            <div className="space-y-4">
-                                                                <h5 className="text-[10px] font-black text-primary uppercase tracking-widest">Bancárias / Conta</h5>
-                                                                <div className="space-y-4 p-4 md:p-6 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-2xl md:rounded-3xl">
-                                                                    <Input label="Banco" value={formData.banco_ref} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, banco_ref: e.target.value })} colSpan="col-span-1" />
-                                                                    <div className="grid grid-cols-2 gap-4">
-                                                                        <Input label="Agência" value={formData.agencia_ref} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, agencia_ref: e.target.value })} colSpan="col-span-1" />
-                                                                        <Input label="Conta" value={formData.conta_ref} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conta_ref: e.target.value })} colSpan="col-span-1" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="space-y-4">
-                                                                <h5 className="text-[10px] font-black text-primary uppercase tracking-widest">Comerciais / Imobiliárias</h5>
-                                                                <div className="space-y-4 p-4 md:p-6 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-2xl md:rounded-3xl">
-                                                                    <Input label="Empresa/Imob" value={formData.comercial_ref} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, comercial_ref: e.target.value })} colSpan="col-span-1" />
-                                                                    <Input label="Fone" value={formData.comercial_tel} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, comercial_tel: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-
-                                                {!isPF && activeTab === 'bens' && (
-                                                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-                                                        <div className="grid grid-cols-2 gap-8">
-                                                            <div className="space-y-4">
-                                                                <h5 className="text-[10px] font-black text-primary uppercase tracking-widest">Imóveis</h5>
-                                                                <div className="space-y-4 p-4 md:p-6 bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-3xl">
-                                                                    <Input label="Endereço Imóvel" value={formData.imovel_ref_end} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, imovel_ref_end: e.target.value })} colSpan="col-span-1" />
-                                                                    <CurrencyInput label="Valor Estimado" value={formData.imovel_ref_val} onChange={(val: number) => setFormData({ ...formData, imovel_ref_val: val })} colSpan="col-span-1" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="space-y-4">
-                                                                <h5 className="text-[10px] font-black text-primary uppercase tracking-widest">Veículos</h5>
-                                                                <div className="space-y-4 p-4 md:p-6 bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-3xl">
-                                                                    <div className="grid grid-cols-2 gap-4">
-                                                                        <Input label="Marca/Placa" value={formData.veiculo_ref_placa} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, veiculo_ref_placa: e.target.value })} colSpan="col-span-1" />
-                                                                        <CurrencyInput label="Valor R$" value={formData.veiculo_ref_val} onChange={(val: number) => setFormData({ ...formData, veiculo_ref_val: val })} colSpan="col-span-1" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <CurrencyInput label="Outros Bens (R$)" value={formData.bens_outros_valor} onChange={(val: number) => setFormData({ ...formData, bens_outros_valor: val })} colSpan="col-span-1 md:col-span-1" />
-                                                    </motion.div>
-                                                )}
-
-                                                {isPF && showConjugeTab && activeTab === 'conjuge' && (
-                                                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                                                        <Input label="Nome Cônjuge" value={formData.conjuge_nome} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_nome: e.target.value })} colSpan="col-span-2 md:col-span-3" />
-                                                        <Input label="Nascimento" value={formData.conjuge_data_nascimento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_data_nascimento: e.target.value })} type="date" colSpan="col-span-1 md:col-span-1" />
-                                                        <Input label="CPF Cônjuge" value={formData.conjuge_cpf} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_cpf: e.target.value })} colSpan="col-span-1" />
-                                                        <Input label="Profissão" value={formData.conjuge_profissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_profissao: e.target.value })} colSpan="col-span-1" />
-                                                        <CurrencyInput label="Renda Mensal" value={formData.conjuge_renda} onChange={(val: number) => setFormData({ ...formData, conjuge_renda: val })} colSpan="col-span-1" />
-                                                        <Input label="WhatsApp" value={formData.conjuge_celular} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_celular: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                    </motion.div>
-                                                )}
-
-                                                {activeTab === 'documentos' && (
-                                                    <motion.div key="doc" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-                                                        className={cn("grid gap-4 md:gap-6 pb-10",
-                                                            showConjugeTab ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
-                                                        )}>
-
-                                                        {/* Selfie Box First */}
-                                                        <div className="p-8 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center border-white/20">
-                                                            <h4 className="text-xs font-black text-white uppercase italic tracking-widest text-center">Selfie / Foto</h4>
-                                                            <input type="file" id="uSelf" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
-                                                                const file = e.target.files?.[0];
-                                                                if (file && handleFileValidation(file)) {
-                                                                    setSelfie(file);
-                                                                }
-                                                            }} />
-                                                            <label htmlFor="uSelf" onClick={(e) => { if (selfie || formData.selfie_url) { e.preventDefault(); openViewer(selfie, formData.selfie_url, selfie ? selfie.name : 'Selfie', 'selfie', setSelfie); } }} className="w-full h-32 border-2 border-dashed border-accent/20 rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-accent transition-all font-black text-[10px] uppercase text-accent/50 tracking-widest text-center px-4">
-                                                                <Upload className="w-6 h-6 mb-2" /> {selfie ? selfie.name : (formData.selfie_url ? "Arquivo já enviado" : "Anexar Selfie")}
-                                                            </label>
-                                                            {(selfie || formData.selfie_url) && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        if (selfie) setSelfie(null);
-                                                                        else if (formData.selfie_url) handleDeleteFile('selfie', formData.selfie_url);
-                                                                    }}
-                                                                    className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
-                                                            )}
-                                                        </div>
-
-                                                        <div className="p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center group relative">
-                                                            <h4 className="text-xs font-black text-foreground uppercase italic tracking-widest text-center">{isPF ? "RG / CNH" : "Contrato Social"}</h4>
-                                                            <input type="file" id="uId" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
-                                                                const file = e.target.files?.[0];
-                                                                if (file && handleFileValidation(file)) setDocIdentidade(file);
-                                                            }} />
-                                                            <label htmlFor="uId" onClick={(e) => { if (docIdentidade || formData.documento_identidade_url) { e.preventDefault(); openViewer(docIdentidade, formData.documento_identidade_url, docIdentidade ? docIdentidade.name : 'Identidade', 'identidade', setDocIdentidade); } }} className="w-full h-32 border-2 border-dashed border-panel-border rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-white transition-all font-black text-[10px] uppercase text-text-dim tracking-widest text-center px-4">
-                                                                <Upload className="w-6 h-6 mb-2" /> {docIdentidade ? docIdentidade.name : (formData.documento_identidade_url ? "Arquivo já enviado" : (isPF ? "Anexar RG / CNH" : "Anexar Contrato"))}
-                                                            </label>
-                                                            {(docIdentidade || formData.documento_identidade_url) && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        if (docIdentidade) setDocIdentidade(null);
-                                                                        else if (formData.documento_identidade_url) handleDeleteFile('identidade', formData.documento_identidade_url);
-                                                                    }}
-                                                                    className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
+                                                            {!isPF && (
+                                                                <>
+                                                                    <Input label="CNPJ" value={formData.documento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, documento: e.target.value })} colSpan="col-span-1 md:col-span-1" />
+                                                                    <Input label="Nome Fantasia" value={formData.nome_fantasia} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nome_fantasia: e.target.value })} colSpan="col-span-1 md:col-span-2" />
+                                                                    <Input label="Insc. Estadual" value={formData.inscricao_estadual} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, inscricao_estadual: e.target.value })} colSpan="col-span-1 md:col-span-1" />
+                                                                    <CurrencyInput label="Valor R$" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-1" />
+                                                                    <Input label="Pessoa de Contato" value={formData.pessoa_contato} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato: e.target.value })} colSpan="col-span-1 md:col-span-2" />
+                                                                    <Input label="FONE CONTATO" value={formData.pessoa_contato_tel} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato_tel: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                                    <Input label="FAX CONTATO" value={formData.pessoa_contato_fax} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato_fax: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                                    <Input label="Telefone Filial" value={formData.pessoa_contato_fortaleza_tel} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato_fortaleza_tel: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                                    <Input label="Fax Filial" value={formData.pessoa_contato_fortaleza_fax} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pessoa_contato_fortaleza_fax: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                                    <Select label="Prédio Empresa" value={formData.predio_empresa} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, predio_empresa: e.target.value })} options={[{ label: '...', value: '' }, { label: 'Próprio', value: 'Próprio' }, { label: 'Alugado', value: 'Alugado' }]} colSpan="col-span-1" />
+                                                                    <CurrencyInput label="Valor R$" value={formData.predio_valor_aluguel} onChange={(val: number) => setFormData({ ...formData, predio_valor_aluguel: val })} colSpan="col-span-1" />
+                                                                    <CurrencyInput label="Renda Mensal Empresa" value={formData.renda_principal} onChange={(val: number) => setFormData({ ...formData, renda_principal: val })} colSpan="col-span-2" />
+                                                                </>
                                                             )}
 
-                                                            {docIdentidade && (
-                                                                <button onClick={() => handleOCR(docIdentidade)} disabled={ocrLoading}
-                                                                    className="absolute -bottom-4 bg-primary text-background px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
-                                                                    {ocrLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Scan className="w-3 h-3" />}
-                                                                    {ocrLoading ? "Lendo..." : "Escanear Documento"}
-                                                                </button>
-                                                            )}
-                                                        </div>
+                                                            {isPF && (
+                                                                <>
+                                                                    <Input label="CPF" value={formData.documento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, documento: e.target.value })} colSpan="col-span-1" />
+                                                                    <Select label="Sexo" value={formData.sexo} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, sexo: e.target.value })} options={[{ label: 'Selecione', value: '' }, { label: 'Masculino', value: 'Masculino' }, { label: 'Feminino', value: 'Feminino' }]} colSpan="col-span-1" />
+                                                                    <Input label="Nascimento" value={formData.data_nascimento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, data_nascimento: e.target.value })} type="date" colSpan="col-span-1 md:col-span-1" />
 
-                                                        {isPF && showConjugeTab && (
-                                                            <div className="p-8 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center border-primary/20 relative group">
-                                                                <h4 className="text-xs font-black text-primary uppercase italic tracking-widest text-center">RG / CNH Cônjuge</h4>
-                                                                <input type="file" id="uConj" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
+                                                                    <Input label="Identidade (RG)" value={formData.rg} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, rg: e.target.value })} colSpan="col-span-1" />
+                                                                    <Input label="Órgão" value={formData.orgao_expedidor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, orgao_expedidor: e.target.value })} colSpan="col-span-1" />
+                                                                    <Input label="CNH" value={formData.cnh} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cnh: e.target.value })} colSpan="col-span-1" />
+                                                                    <Input label="Órgão CNH" value={formData.cnh_orgao_expedidor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cnh_orgao_expedidor: e.target.value })} colSpan="col-span-1" />
+                                                                    <Select label="Estado Civil" value={formData.estado_civil} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, estado_civil: e.target.value })} options={[{ label: 'Solteiro', value: 'Solteiro' }, { label: 'Casado', value: 'Casado' }, { label: 'União estável', value: 'União estável' }, { label: 'Divorciado', value: 'Divorciado' }, { label: 'Viúvo', value: 'Viúvo' }]} colSpan="col-span-1" />
+                                                                    <Input label="N. Dependentes" value={formData.num_dependentes} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, num_dependentes: e.target.value })} type="number" colSpan="col-span-1" />
+                                                                    <Input label="Naturalidade" value={formData.naturalidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, naturalidade: e.target.value })} colSpan="col-span-1" />
+                                                                    <Input label="Nacionalidade" value={formData.nacionalidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nacionalidade: e.target.value })} colSpan="col-span-1" />
+                                                                    <Input label="Mãe / Pai" value={formData.filiacao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, filiacao: e.target.value })} colSpan="col-span-2 md:col-span-4" />
+                                                                </>
+                                                            )}
+
+                                                            <Input label="WhatsApp / Cel" value={formData.celular} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, celular: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                            <Input label="Telefone Fixo" value={formData.telefone} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, telefone: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                            <Input label="E-mail Principal" value={formData.email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })} type="email" colSpan="col-span-2 md:col-span-2" />
+                                                            <Select label="Status" value={formData.status || 'Ativo'} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, status: e.target.value })} options={[{ label: 'Ativo', value: 'Ativo' }, { label: 'Inativo', value: 'Inativo' }]} colSpan="col-span-1" />
+                                                            <Select label="Papel Cliente" value={formData.papel || 'Locatário'} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, papel: e.target.value })} options={[{ label: 'Locatário', value: 'Locatário' }, { label: 'Locatário e Fiador', value: 'Locatário e Fiador' }, { label: 'Apenas Fiador', value: 'Apenas Fiador' }]} colSpan="col-span-1 md:col-span-1" />
+                                                        </motion.div>
+                                                    )}
+
+                                                    {activeTab === 'representantes' && !isPF && (
+                                                        <motion.div key="reps" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+                                                            <div className="flex items-center justify-between">
+                                                                <h4 className="text-xs font-black text-text-dim uppercase tracking-widest">Representantes Legais</h4>
+                                                                <button type="button" onClick={addRepresentante} className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest hover:text-foreground transition-all"><PlusCircle className="w-4 h-4" /> Novo Representante</button>
+                                                            </div>
+                                                            <div className="space-y-4">
+                                                                {representantes.map((rep, idx) => (
+                                                                    <div key={rep.id} className="p-4 md:p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-[32px] grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 relative group">
+                                                                        <div className="absolute top-4 md:top-8 right-4 md:right-8 text-[8px] md:text-xs text-text-dim">REP #{idx + 1}</div>
+                                                                        <div className="col-span-2 md:col-span-2 space-y-2">
+                                                                            <label className="text-[10px] font-black text-text-dim uppercase">Nome Completo</label>
+                                                                            <input value={rep.nome_completo} onChange={e => { const r = [...representantes]; r[idx].nome_completo = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none" />
+                                                                        </div>
+                                                                        <div className="col-span-1 md:col-span-1 space-y-2">
+                                                                            <label className="text-[10px] font-black text-text-dim uppercase">CPF</label>
+                                                                            <input value={rep.cpf} onChange={e => { const r = [...representantes]; r[idx].cpf = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none" />
+                                                                        </div>
+                                                                        <div className="col-span-1 md:col-span-1 space-y-2">
+                                                                            <label className="text-[10px] font-black text-text-dim uppercase">Ligação</label>
+                                                                            <select value={rep.ligacao_empresa} onChange={e => { const r = [...representantes]; r[idx].ligacao_empresa = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none">
+                                                                                <option value="Sócio">Sócio</option><option value="Procurador">Procurador</option><option value="Diretor">Diretor</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        {representantes.length > 1 && <button onClick={() => setRepresentantes(representantes.filter(r => r.id !== rep.id))} className="absolute -top-3 -right-3 w-8 h-8 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all border border-rose-500/20"><Trash2 className="w-4 h-4" /></button>}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+
+                                                    {activeTab === 'profissional' && isPF && (
+                                                        <motion.div key="pro" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                                                            <Input label="Profissão" value={formData.profissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, profissao: e.target.value })} colSpan="col-span-1" />
+                                                            <Input label="Atividade" value={formData.atividade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, atividade: e.target.value })} colSpan="col-span-1 md:col-span-3" />
+                                                            <Input label="Empresa Atual" value={formData.empresa_trabalho} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, empresa_trabalho: e.target.value })} colSpan="col-span-2 md:col-span-3" />
+                                                            <Input label="Cargo" value={formData.cargo_funcao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cargo_funcao: e.target.value })} colSpan="col-span-1" />
+                                                            <Input label="Admissão" value={formData.data_admissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, data_admissao: e.target.value })} type="date" colSpan="col-span-1 md:col-span-1" />
+                                                            <CurrencyInput label="Renda Principal (R$)" value={formData.renda_principal} onChange={(val: number) => setFormData({ ...formData, renda_principal: val })} colSpan="col-span-1" />
+                                                            <CurrencyInput label="Outras Rendas (R$)" value={formData.outras_rendas} onChange={(val: number) => setFormData({ ...formData, outras_rendas: val })} colSpan="col-span-1" />
+                                                            <Input label="Origem Outras" value={formData.origem_outras_rendas} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, origem_outras_rendas: e.target.value })} colSpan="col-span-2 md:col-span-2" />
+                                                        </motion.div>
+                                                    )}
+
+                                                    {activeTab === 'endereco' && (
+                                                        <motion.div key="end" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-6 gap-4 md:gap-6">
+                                                            <div className="col-span-1 md:col-span-2 space-y-2">
+                                                                <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">CEP</label>
+                                                                <div className="relative">
+                                                                    <input value={formData.cep || ""} onChange={handleCepChange} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-xs outline-none focus:border-primary transition-all font-medium" />
+                                                                    {searchingCep && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary animate-spin" />}
+                                                                </div>
+                                                            </div>
+                                                            <Input label="Logradouro" value={formData.logradouro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, logradouro: e.target.value })} colSpan="col-span-1 md:col-span-4" />
+                                                            <Input label="Número" value={formData.numero} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, numero: e.target.value })} colSpan="col-span-1" />
+                                                            <Input label="Bairro" value={formData.bairro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, bairro: e.target.value })} colSpan="col-span-1 md:col-span-2" />
+                                                            <Input label="Cidade" value={formData.cidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cidade: e.target.value })} colSpan="col-span-1 md:col-span-2" />
+                                                            <Input label="Estado" value={formData.estado} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, estado: e.target.value })} colSpan="col-span-1" />
+                                                            <Select label="Residência" value={formData.tipo_residencia} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, tipo_residencia: e.target.value })} colSpan="col-span-1 md:col-span-2" options={[{ label: '...', value: '' }, { label: 'Própria', value: 'Própria' }, { label: 'Alugada', value: 'Alugada' }, { label: 'Financiada', value: 'Financiada' }, { label: 'Com parentes', value: 'Com parentes' }]} />
+                                                            {formData.tipo_residencia === 'Alugada' && <CurrencyInput label="Valor Aluguel" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-1 md:col-span-2" />}
+                                                        </motion.div>
+                                                    )}
+
+                                                    {!isPF && activeTab === 'referencias' && (
+                                                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+                                                            <div className="grid grid-cols-2 gap-8">
+                                                                <div className="space-y-4">
+                                                                    <h5 className="text-[10px] font-black text-primary uppercase tracking-widest">Bancárias / Conta</h5>
+                                                                    <div className="space-y-4 p-4 md:p-6 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-2xl md:rounded-3xl">
+                                                                        <Input label="Banco" value={formData.banco_ref} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, banco_ref: e.target.value })} colSpan="col-span-1" />
+                                                                        <div className="grid grid-cols-2 gap-4">
+                                                                            <Input label="Agência" value={formData.agencia_ref} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, agencia_ref: e.target.value })} colSpan="col-span-1" />
+                                                                            <Input label="Conta" value={formData.conta_ref} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conta_ref: e.target.value })} colSpan="col-span-1" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="space-y-4">
+                                                                    <h5 className="text-[10px] font-black text-primary uppercase tracking-widest">Comerciais / Imobiliárias</h5>
+                                                                    <div className="space-y-4 p-4 md:p-6 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-2xl md:rounded-3xl">
+                                                                        <Input label="Empresa/Imob" value={formData.comercial_ref} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, comercial_ref: e.target.value })} colSpan="col-span-1" />
+                                                                        <Input label="Fone" value={formData.comercial_tel} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, comercial_tel: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+
+                                                    {!isPF && activeTab === 'bens' && (
+                                                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+                                                            <div className="grid grid-cols-2 gap-8">
+                                                                <div className="space-y-4">
+                                                                    <h5 className="text-[10px] font-black text-primary uppercase tracking-widest">Imóveis</h5>
+                                                                    <div className="space-y-4 p-4 md:p-6 bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-3xl">
+                                                                        <Input label="Endereço Imóvel" value={formData.imovel_ref_end} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, imovel_ref_end: e.target.value })} colSpan="col-span-1" />
+                                                                        <CurrencyInput label="Valor Estimado" value={formData.imovel_ref_val} onChange={(val: number) => setFormData({ ...formData, imovel_ref_val: val })} colSpan="col-span-1" />
+                                                                    </div>
+                                                                </div>
+                                                                <div className="space-y-4">
+                                                                    <h5 className="text-[10px] font-black text-primary uppercase tracking-widest">Veículos</h5>
+                                                                    <div className="space-y-4 p-4 md:p-6 bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-3xl">
+                                                                        <div className="grid grid-cols-2 gap-4">
+                                                                            <Input label="Marca/Placa" value={formData.veiculo_ref_placa} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, veiculo_ref_placa: e.target.value })} colSpan="col-span-1" />
+                                                                            <CurrencyInput label="Valor R$" value={formData.veiculo_ref_val} onChange={(val: number) => setFormData({ ...formData, veiculo_ref_val: val })} colSpan="col-span-1" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <CurrencyInput label="Outros Bens (R$)" value={formData.bens_outros_valor} onChange={(val: number) => setFormData({ ...formData, bens_outros_valor: val })} colSpan="col-span-1 md:col-span-1" />
+                                                        </motion.div>
+                                                    )}
+
+                                                    {isPF && showConjugeTab && activeTab === 'conjuge' && (
+                                                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                                                            <Input label="Nome Cônjuge" value={formData.conjuge_nome} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_nome: e.target.value })} colSpan="col-span-2 md:col-span-3" />
+                                                            <Input label="Nascimento" value={formData.conjuge_data_nascimento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_data_nascimento: e.target.value })} type="date" colSpan="col-span-1 md:col-span-1" />
+                                                            <Input label="CPF Cônjuge" value={formData.conjuge_cpf} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_cpf: e.target.value })} colSpan="col-span-1" />
+                                                            <Input label="Profissão" value={formData.conjuge_profissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_profissao: e.target.value })} colSpan="col-span-1" />
+                                                            <CurrencyInput label="Renda Mensal" value={formData.conjuge_renda} onChange={(val: number) => setFormData({ ...formData, conjuge_renda: val })} colSpan="col-span-1" />
+                                                            <Input label="WhatsApp" value={formData.conjuge_celular} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_celular: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                        </motion.div>
+                                                    )}
+
+                                                    {activeTab === 'documentos' && (
+                                                        <motion.div key="doc" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+                                                            className={cn("grid gap-4 md:gap-6 pb-10",
+                                                                showConjugeTab ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+                                                            )}>
+
+                                                            {/* Selfie Box First */}
+                                                            <div className="p-8 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center border-white/20 relative group">
+                                                                <h4 className="text-xs font-black text-white uppercase italic tracking-widest text-center">Selfie / Foto</h4>
+                                                                <input type="file" id="uSelf" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
                                                                     const file = e.target.files?.[0];
-                                                                    if (file && handleFileValidation(file)) setDocConjuge(file);
+                                                                    if (file && handleFileValidation(file)) {
+                                                                        setSelfie(file);
+                                                                    }
                                                                 }} />
-                                                                <label htmlFor="uConj" onClick={(e) => { if (docConjuge || formData.documento_conjuge_url) { e.preventDefault(); openViewer(docConjuge, formData.documento_conjuge_url, docConjuge ? docConjuge.name : 'Documento Conjuge', 'conjuge', setDocConjuge); } }} className="w-full h-32 border-2 border-dashed border-primary/20 rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-white transition-all font-black text-[10px] uppercase text-primary/50 tracking-widest text-center px-4">
-                                                                    <Upload className="w-6 h-6 mb-2" /> {docConjuge ? docConjuge.name : (formData.documento_conjuge_url ? "Arquivo já enviado" : "Anexar RG / CNH Cônjuge")}
+                                                                <label htmlFor="uSelf" onClick={(e) => { if (selfie || formData.selfie_url) { e.preventDefault(); openViewer(selfie, formData.selfie_url, selfie ? selfie.name : 'Selfie', 'selfie', setSelfie); } }} className="w-full h-32 border-2 border-dashed border-accent/20 rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-accent transition-all font-black text-[10px] uppercase text-accent/50 tracking-widest text-center px-4">
+                                                                    <Upload className="w-6 h-6 mb-2" /> {selfie ? selfie.name : (formData.selfie_url ? "Arquivo já enviado" : "Anexar Selfie")}
                                                                 </label>
-                                                                {(docConjuge || formData.documento_conjuge_url) && (
+                                                                {(selfie || formData.selfie_url) && (
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => {
-                                                                            if (docConjuge) setDocConjuge(null);
-                                                                            else if (formData.documento_conjuge_url) handleDeleteFile('conjuge', formData.documento_conjuge_url);
+                                                                            if (selfie) setSelfie(null);
+                                                                            else if (formData.selfie_url) handleDeleteFile('selfie', formData.selfie_url);
+                                                                        }}
+                                                                        className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+
+                                                            <div className="p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center group relative">
+                                                                <h4 className="text-xs font-black text-foreground uppercase italic tracking-widest text-center">{isPF ? "RG / CNH" : "Contrato Social"}</h4>
+                                                                <input type="file" id="uId" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (file && handleFileValidation(file)) setDocIdentidade(file);
+                                                                }} />
+                                                                <label htmlFor="uId" onClick={(e) => { if (docIdentidade || formData.documento_identidade_url) { e.preventDefault(); openViewer(docIdentidade, formData.documento_identidade_url, docIdentidade ? docIdentidade.name : 'Identidade', 'identidade', setDocIdentidade); } }} className="w-full h-32 border-2 border-dashed border-panel-border rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-white transition-all font-black text-[10px] uppercase text-text-dim tracking-widest text-center px-4">
+                                                                    <Upload className="w-6 h-6 mb-2" /> {docIdentidade ? docIdentidade.name : (formData.documento_identidade_url ? "Arquivo já enviado" : (isPF ? "Anexar RG / CNH" : "Anexar Contrato"))}
+                                                                </label>
+                                                                {(docIdentidade || formData.documento_identidade_url) && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            if (docIdentidade) setDocIdentidade(null);
+                                                                            else if (formData.documento_identidade_url) handleDeleteFile('identidade', formData.documento_identidade_url);
                                                                         }}
                                                                         className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
                                                                         <Trash2 className="w-4 h-4" />
                                                                     </button>
                                                                 )}
 
-                                                                {docConjuge && (
-                                                                    <button onClick={() => handleOCR(docConjuge)} disabled={ocrLoading}
+                                                                {docIdentidade && (
+                                                                    <button onClick={() => handleOCR(docIdentidade)} disabled={ocrLoading}
                                                                         className="absolute -bottom-4 bg-primary text-background px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
                                                                         {ocrLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Scan className="w-3 h-3" />}
                                                                         {ocrLoading ? "Lendo..." : "Escanear Documento"}
                                                                     </button>
                                                                 )}
                                                             </div>
-                                                        )}
 
-                                                        <div className="p-8 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center border-primary/20 relative group">
-                                                            <h4 className="text-xs font-black text-primary uppercase italic tracking-widest text-center">Comprovante de Renda</h4>
-                                                            <input type="file" id="uRenda" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
-                                                                const file = e.target.files?.[0];
-                                                                if (file && handleFileValidation(file)) setCompRenda(file);
-                                                            }} />
-                                                            <label htmlFor="uRenda" onClick={(e) => { if (compRenda || formData.comprovante_renda_url) { e.preventDefault(); openViewer(compRenda, formData.comprovante_renda_url, compRenda ? compRenda.name : 'Comprovante Renda', 'renda', setCompRenda); } }} className="w-full h-32 border-2 border-dashed border-primary/20 rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-white transition-all font-black text-[10px] uppercase text-primary/50 tracking-widest text-center px-4">
-                                                                <Upload className="w-6 h-6 mb-2" /> {compRenda ? compRenda.name : (formData.comprovante_renda_url ? "Arquivo já enviado" : "Anexar Comprovante Renda")}
-                                                            </label>
-                                                            {(compRenda || formData.comprovante_renda_url) && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        if (compRenda) setCompRenda(null);
-                                                                        else if (formData.comprovante_renda_url) handleDeleteFile('renda', formData.comprovante_renda_url);
-                                                                    }}
-                                                                    className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
+                                                            {isPF && showConjugeTab && (
+                                                                <div className="p-8 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center border-primary/20 relative group">
+                                                                    <h4 className="text-xs font-black text-primary uppercase italic tracking-widest text-center">RG / CNH Cônjuge</h4>
+                                                                    <input type="file" id="uConj" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
+                                                                        const file = e.target.files?.[0];
+                                                                        if (file && handleFileValidation(file)) setDocConjuge(file);
+                                                                    }} />
+                                                                    <label htmlFor="uConj" onClick={(e) => { if (docConjuge || formData.documento_conjuge_url) { e.preventDefault(); openViewer(docConjuge, formData.documento_conjuge_url, docConjuge ? docConjuge.name : 'Documento Conjuge', 'conjuge', setDocConjuge); } }} className="w-full h-32 border-2 border-dashed border-primary/20 rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-white transition-all font-black text-[10px] uppercase text-primary/50 tracking-widest text-center px-4">
+                                                                        <Upload className="w-6 h-6 mb-2" /> {docConjuge ? docConjuge.name : (formData.documento_conjuge_url ? "Arquivo já enviado" : "Anexar RG / CNH Cônjuge")}
+                                                                    </label>
+                                                                    {(docConjuge || formData.documento_conjuge_url) && (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                if (docConjuge) setDocConjuge(null);
+                                                                                else if (formData.documento_conjuge_url) handleDeleteFile('conjuge', formData.documento_conjuge_url);
+                                                                            }}
+                                                                            className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
+                                                                            <Trash2 className="w-4 h-4" />
+                                                                        </button>
+                                                                    )}
+
+                                                                    {docConjuge && (
+                                                                        <button onClick={() => handleOCR(docConjuge)} disabled={ocrLoading}
+                                                                            className="absolute -bottom-4 bg-primary text-background px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50">
+                                                                            {ocrLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Scan className="w-3 h-3" />}
+                                                                            {ocrLoading ? "Lendo..." : "Escanear Documento"}
+                                                                        </button>
+                                                                    )}
+                                                                </div>
                                                             )}
-                                                        </div>
 
-                                                        <div className="p-8 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center">
-                                                            <h4 className="text-xs font-black text-foreground uppercase italic tracking-widest text-center">Endereço / Outros</h4>
-                                                            <input type="file" id="uRes" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
-                                                                const file = e.target.files?.[0];
-                                                                if (file && handleFileValidation(file)) setCompResidencia(file);
-                                                            }} />
-                                                            <label htmlFor="uRes" onClick={(e) => { if (compResidencia || formData.comprovante_residencia_url) { e.preventDefault(); openViewer(compResidencia, formData.comprovante_residencia_url, compResidencia ? compResidencia.name : 'Comprovante Endereço', 'residencia', setCompResidencia); } }} className="w-full h-32 border-2 border-dashed border-white/10 rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-white transition-all font-black text-[10px] uppercase text-text-dim tracking-widest text-center px-4">
-                                                                <Upload className="w-6 h-6 mb-2" /> {compResidencia ? compResidencia.name : (formData.comprovante_residencia_url ? "Arquivo já enviado" : "Anexar Comprovante")}
-                                                            </label>
-                                                            {(compResidencia || formData.comprovante_residencia_url) && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        if (compResidencia) setCompResidencia(null);
-                                                                        else if (formData.comprovante_residencia_url) handleDeleteFile('residencia', formData.comprovante_residencia_url);
-                                                                    }}
-                                                                    className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-
-                                            {/* OCR Result Overlay */}
-                                            <AnimatePresence>
-                                                {ocrResult && (
-                                                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-                                                        className="absolute inset-x-10 bottom-32 bg-primary rounded-[32px] p-8 shadow-2xl z-50 flex flex-col md:flex-row items-center justify-between gap-6 border border-white/20 backdrop-blur-xl">
-                                                        <div className="flex items-center gap-5">
-                                                            <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0"><Sparkles className="w-7 h-7 text-foreground" /></div>
-                                                            <div>
-                                                                <h4 className="text-lg font-black text-foreground uppercase italic leading-none">Dados Identificados!</h4>
-                                                                <p className="text-blue-100 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Encontramos informações que podem preencher o formulário.</p>
+                                                            <div className="p-8 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center border-primary/20 relative group">
+                                                                <h4 className="text-xs font-black text-primary uppercase italic tracking-widest text-center">Comprovante de Renda</h4>
+                                                                <input type="file" id="uRenda" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (file && handleFileValidation(file)) setCompRenda(file);
+                                                                }} />
+                                                                <label htmlFor="uRenda" onClick={(e) => { if (compRenda || formData.comprovante_renda_url) { e.preventDefault(); openViewer(compRenda, formData.comprovante_renda_url, compRenda ? compRenda.name : 'Comprovante Renda', 'renda', setCompRenda); } }} className="w-full h-32 border-2 border-dashed border-primary/20 rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-white transition-all font-black text-[10px] uppercase text-primary/50 tracking-widest text-center px-4">
+                                                                    <Upload className="w-6 h-6 mb-2" /> {compRenda ? compRenda.name : (formData.comprovante_renda_url ? "Arquivo já enviado" : "Anexar Comprovante Renda")}
+                                                                </label>
+                                                                {(compRenda || formData.comprovante_renda_url) && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            if (compRenda) setCompRenda(null);
+                                                                            else if (formData.comprovante_renda_url) handleDeleteFile('renda', formData.comprovante_renda_url);
+                                                                        }}
+                                                                        className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                )}
                                                             </div>
-                                                        </div>
-                                                        <div className="flex bg-white/10 rounded-2xl p-4 gap-6 overflow-x-auto">
-                                                            {ocrResult.extractedData.name && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">Nome</span><span className="text-xs font-bold text-foreground uppercase">{ocrResult.extractedData.name}</span></div>}
-                                                            {(ocrResult.extractedData.cpf || ocrResult.extractedData.cnpj) && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">Documento</span><span className="text-xs font-bold text-foreground">{ocrResult.extractedData.cpf || ocrResult.extractedData.cnpj}</span></div>}
-                                                            {ocrResult.extractedData.rg && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">RG</span><span className="text-xs font-bold text-foreground">{ocrResult.extractedData.rg}</span></div>}
-                                                        </div>
-                                                        <div className="flex gap-3">
-                                                            <button onClick={() => setOcrResult(null)} className="px-6 py-3 rounded-xl text-[10px] font-black text-foreground uppercase tracking-widest hover:bg-black/10 dark:hover:bg-white/10 transition-all">Descartar</button>
-                                                            <button onClick={applyOCR} className="bg-white text-blue-600 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center gap-2"><Wand2 className="w-4 h-4" /> Preencher Ficha</button>
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
 
-                                        <footer className="p-6 md:p-10 border-t border-panel-border bg-panel/50 dark:bg-transparent flex items-center shrink-0">
-                                            <div className="flex gap-3 md:gap-4">
-                                                <button type="button" onClick={() => {
-                                                    const prev = navItems[navItems.findIndex(i => i.id === activeTab) - 1];
-                                                    if (prev) setActiveTab(prev.id as TabType);
-                                                    else setStep(0);
-                                                }} className="px-4 md:px-8 py-3 md:py-4 rounded-xl font-black text-[9px] md:text-[10px] text-accent hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all border border-panel-border">Voltar</button>
+                                                            <div className="p-8 bg-black/[0.02] dark:bg-white/[0.02] border border-panel-border rounded-[40px] space-y-6 flex flex-col items-center relative group">
+                                                                <h4 className="text-xs font-black text-foreground uppercase italic tracking-widest text-center">Endereço / Outros</h4>
+                                                                <input type="file" id="uRes" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={e => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (file && handleFileValidation(file)) setCompResidencia(file);
+                                                                }} />
+                                                                <label htmlFor="uRes" onClick={(e) => { if (compResidencia || formData.comprovante_residencia_url) { e.preventDefault(); openViewer(compResidencia, formData.comprovante_residencia_url, compResidencia ? compResidencia.name : 'Comprovante Endereço', 'residencia', setCompResidencia); } }} className="w-full h-32 border-2 border-dashed border-white/10 rounded-[32px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-white transition-all font-black text-[10px] uppercase text-text-dim tracking-widest text-center px-4">
+                                                                    <Upload className="w-6 h-6 mb-2" /> {compResidencia ? compResidencia.name : (formData.comprovante_residencia_url ? "Arquivo já enviado" : "Anexar Comprovante")}
+                                                                </label>
+                                                                {(compResidencia || formData.comprovante_residencia_url) && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            if (compResidencia) setCompResidencia(null);
+                                                                            else if (formData.comprovante_residencia_url) handleDeleteFile('residencia', formData.comprovante_residencia_url);
+                                                                        }}
+                                                                        className="absolute -top-3 -right-3 w-8 h-8 bg-black border border-rose-500/30 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-foreground transition-all shadow-xl z-20">
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+
+                                                {/* OCR Result Overlay */}
+                                                <AnimatePresence>
+                                                    {ocrResult && (
+                                                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+                                                            className="absolute inset-x-10 bottom-32 bg-primary rounded-[32px] p-8 shadow-2xl z-50 flex flex-col md:flex-row items-center justify-between gap-6 border border-white/20 backdrop-blur-xl">
+                                                            <div className="flex items-center gap-5">
+                                                                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0"><Sparkles className="w-7 h-7 text-foreground" /></div>
+                                                                <div>
+                                                                    <h4 className="text-lg font-black text-foreground uppercase italic leading-none">Dados Identificados!</h4>
+                                                                    <p className="text-blue-100 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Encontramos informações que podem preencher o formulário.</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex bg-white/10 rounded-2xl p-4 gap-6 overflow-x-auto">
+                                                                {ocrResult.extractedData.name && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">Nome</span><span className="text-xs font-bold text-foreground uppercase">{ocrResult.extractedData.name}</span></div>}
+                                                                {(ocrResult.extractedData.cpf || ocrResult.extractedData.cnpj) && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">Documento</span><span className="text-xs font-bold text-foreground">{ocrResult.extractedData.cpf || ocrResult.extractedData.cnpj}</span></div>}
+                                                                {ocrResult.extractedData.rg && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">RG</span><span className="text-xs font-bold text-foreground">{ocrResult.extractedData.rg}</span></div>}
+                                                            </div>
+                                                            <div className="flex gap-3">
+                                                                <button onClick={() => setOcrResult(null)} className="px-6 py-3 rounded-xl text-[10px] font-black text-foreground uppercase tracking-widest hover:bg-black/10 dark:hover:bg-white/10 transition-all">Descartar</button>
+                                                                <button onClick={applyOCR} className="bg-white text-blue-600 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center gap-2"><Wand2 className="w-4 h-4" /> Preencher Ficha</button>
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
                                             </div>
-                                            <div className="flex-1" />
-                                            <div className="flex gap-3 md:gap-4">
-                                                {activeTab !== navItems[navItems.length - 1].id ? (
+
+                                            <footer className="p-6 md:p-10 border-t border-panel-border bg-panel/50 dark:bg-transparent flex items-center shrink-0">
+                                                <div className="flex gap-3 md:gap-4">
                                                     <button type="button" onClick={() => {
-                                                        const next = navItems[navItems.findIndex(i => i.id === activeTab) + 1];
-                                                        if (next) setActiveTab(next.id as TabType);
-                                                    }} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all text-[9px] md:text-sm font-black uppercase tracking-widest group">Próximo <ChevronRight className="w-4 h-4" /></button>
-                                                ) : (
-                                                    <button type="submit" disabled={loading} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all disabled:opacity-50 text-[9px] md:text-sm font-black uppercase tracking-widest group">
-                                                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Finalizar <CheckCircle2 className="w-4 h-4" /></>}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </footer>
-                                    </div>
+                                                        const prev = navItems[navItems.findIndex(i => i.id === activeTab) - 1];
+                                                        if (prev) setActiveTab(prev.id as TabType);
+                                                        else setStep(0);
+                                                    }} className="px-4 md:px-8 py-3 md:py-4 rounded-xl font-black text-[9px] md:text-[10px] text-accent hover:bg-black/5 dark:hover:bg-white/5 uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all border border-panel-border">Voltar</button>
+                                                </div>
+                                                <div className="flex-1" />
+                                                <div className="flex gap-3 md:gap-4">
+                                                    {activeTab !== navItems[navItems.length - 1].id ? (
+                                                        <button type="button" onClick={() => {
+                                                            const next = navItems[navItems.findIndex(i => i.id === activeTab) + 1];
+                                                            if (next) setActiveTab(next.id as TabType);
+                                                        }} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all text-[9px] md:text-sm font-black uppercase tracking-widest group">Próximo <ChevronRight className="w-4 h-4" /></button>
+                                                    ) : (
+                                                        <button type="submit" disabled={loading} className="btn-elite px-4 md:px-10 py-3 md:py-4 flex items-center gap-2 md:gap-4 transition-all disabled:opacity-50 text-[9px] md:text-sm font-black uppercase tracking-widest group">
+                                                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Finalizar <CheckCircle2 className="w-4 h-4" /></>}
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </footer>
+                                    </form>
                                 </>
                             )}
                         </motion.div>

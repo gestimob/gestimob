@@ -1,13 +1,11 @@
+export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { sendBrevoEmail } from '@/lib/brevo';
-import fs from 'fs';
-import path from 'path';
 
 const logToFile = (msg: string) => {
-    const logPath = path.join(process.cwd(), 'debug_email.log');
-    fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
+    console.log(`[${new Date().toISOString()}] ${msg}`);
 };
 
 export async function GET(request: Request) {

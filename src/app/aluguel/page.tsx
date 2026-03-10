@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { supabase } from "@/lib/supabase";
 import { Search, Plus, Edit2, Trash2, Loader2, AlertCircle, MoreHorizontal, Filter, FileText, Download } from "lucide-react";
@@ -11,6 +11,18 @@ import { cn } from "@/lib/utils";
 import * as XLSX from 'xlsx';
 
 export default function AluguelPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex min-h-screen bg-background items-center justify-center">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            </div>
+        }>
+            <AluguelContent />
+        </Suspense>
+    );
+}
+
+function AluguelContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const deepLinkId = searchParams.get('id');

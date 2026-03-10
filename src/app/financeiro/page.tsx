@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { supabase } from "@/lib/supabase";
 import {
@@ -45,6 +45,18 @@ function getStatusStyle(status: string) {
 }
 
 export default function FinanceiroPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex min-h-screen bg-background items-center justify-center">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            </div>
+        }>
+            <FinanceiroContent />
+        </Suspense>
+    );
+}
+
+function FinanceiroContent() {
     const searchParams = useSearchParams();
     const deepLinkId = searchParams.get('id');
 

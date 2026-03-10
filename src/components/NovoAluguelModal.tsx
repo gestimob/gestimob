@@ -13,6 +13,7 @@ interface ModalProps {
     onClose: () => void;
     onSuccess: () => void;
     initialData?: any;
+    isReadOnly?: boolean;
 }
 
 const Input = ({ label, value, onChange, placeholder = "", type = "text", colSpan = "", icon: Icon = null, ...props }: any) => (

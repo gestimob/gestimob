@@ -216,23 +216,27 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
       if (authError) throw authError;
 
       if (authData.user) {
-        // Criar perfil com role operador
+        // Criar perfil com role operador (removido campo 'nome' inexistente)
         const { error: profileError } = await supabase
           .from('profile')
           .insert({
             id: authData.user.id,
             email: email,
-            nome: 'Operador',
             role: 'operador'
           });
 
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error("Erro ao criar perfil:", profileError);
+          throw new Error(`Auth OK, mas Perfil falhou: ${profileError.message}`);
+        }
 
         alert("Usuário registrado com sucesso!");
         onSuccess();
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error("Erro completo no registro:", err);
+      const detail = err.message || "Erro de conexão (Failed to fetch)";
+      setError(`Erro: ${detail}`);
     } finally {
       setLoading(false);
     }

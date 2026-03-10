@@ -197,6 +197,7 @@ export default function LandingPage() {
 }
 
 function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -213,7 +214,8 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
         password,
         options: {
           data: {
-            role: 'operador'
+            role: 'operador',
+            nome: nome
           }
         }
       });
@@ -236,6 +238,21 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
   return (
     <form onSubmit={handleRegister} className="space-y-6">
       <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-[10px] uppercase font-black tracking-widest text-white/40 ml-1">Nome Completo</label>
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+            <input
+              type="text"
+              required
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-sm text-white focus:outline-none focus:border-white/20 transition-all font-medium"
+              placeholder="Seu nome"
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
           <label className="text-[10px] uppercase font-black tracking-widest text-white/40 ml-1">E-mail</label>
           <div className="relative">

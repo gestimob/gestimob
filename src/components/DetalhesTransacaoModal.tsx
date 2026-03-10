@@ -247,12 +247,12 @@ export function DetalhesTransacaoModal({ isOpen, onClose, transacao, onSaveSucce
                         className="bg-panel glass-elite w-full max-w-2xl h-full sm:h-auto sm:max-h-[90vh] flex flex-col rounded-none sm:rounded-[48px] shadow-2xl relative z-10 border-0 sm:border border-panel-border overflow-hidden">
 
 
-                        <header className="px-6 sm:px-10 py-4 sm:py-6 flex justify-between items-center bg-gradient-to-b from-black/5 dark:from-white/5 to-transparent border-b border-panel-border shrink-0">
-                            <div className="min-w-0">
+                        <header className="px-5 sm:px-10 py-4 sm:py-6 flex justify-between items-center bg-gradient-to-b from-black/5 dark:from-white/5 to-transparent border-b border-panel-border shrink-0">
+                            <div className="min-w-0 flex-1">
                                 <h3 className="text-xl sm:text-2xl font-serif-premium font-bold text-foreground lowercase first-letter:uppercase italic tracking-tighter truncate">Detalhes da Transação</h3>
-                                <p className="text-[9px] sm:text-[10px] uppercase font-black tracking-widest text-foreground mt-1">CÓD INTERNO: {transacao.codigo_transacao || '----'}</p>
+                                <p className="text-[8px] sm:text-[10px] uppercase font-black tracking-widest text-foreground mt-0.5 sm:mt-1">CÓD INTERNO: {transacao.codigo_transacao || '----'}</p>
                             </div>
-                            <button type="button" onClick={onClose} className="w-8 h-8 sm:w-10 sm:h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border shrink-0 ml-4"><X className="w-5 h-5 sm:w-6 sm:h-6" /></button>
+                            <button type="button" onClick={onClose} className="w-8 h-8 sm:w-10 sm:h-10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-full flex items-center justify-center text-accent transition-all border border-panel-border shrink-0 ml-2 sm:ml-4"><X className="w-5 h-5 sm:w-6 sm:h-6" /></button>
                         </header>
 
 

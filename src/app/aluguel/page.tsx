@@ -247,9 +247,10 @@ function AluguelContent() {
 
                         <tr><td colspan="4" class="section-title">Condições do Contrato</td></tr>
                         <tr><th>Início</th><td>${formatDate(c.data_inicio)}</td><th>Duração</th><td>${c.duracao_meses ? c.duracao_meses + ' meses' : '-'}</td></tr>
-                        <tr><th>Valor Aluguel</th><td>${formatCurrency(c.valor_aluguel)}</td><th>Finalidade</th><td>${c.finalidade_aluguel || '-'}</td></tr>
-                        <tr><th>Tipo Reajuste</th><td>${c.tipo_reajuste || '-'}${c.tempo_reajuste_fixo ? ' (' + c.tempo_reajuste_fixo + ' meses)' : ''}</td><th>Garantia</th><td>${c.tipo_garantia || '-'}</td></tr>
-                        ${c.caucao_valor ? `<tr><th>Caução</th><td>${c.caucao_quantidade || '-'} parcela(s) — ${formatCurrency(c.caucao_valor)}</td><th>Negócio</th><td>${c.negocio_juridico || '-'}</td></tr>` : ''}
+                        <tr><th>Valor Aluguel</th><td>${formatCurrency(c.valor_aluguel)}</td><th>Condomínio</th><td>${formatCurrency(c.valor_condominio)}</td></tr>
+                        <tr><th>Finalidade</th><td>${c.finalidade_aluguel || '-'}</td><th>Tipo Reajuste</th><td>${c.tipo_reajuste || '-'}${c.tempo_reajuste_fixo ? ' (' + c.tempo_reajuste_fixo + ' meses)' : ''}</td></tr>
+                        <tr><th>Garantia</th><td>${c.tipo_garantia || '-'}</td><th>Negócio</th><td>${c.negocio_juridico || '-'}</td></tr>
+                        ${c.caucao_valor ? `<tr><th>Caução</th><td colspan="3">${c.caucao_quantidade || '-'} parcela(s) — ${formatCurrency(c.caucao_valor)}</td></tr>` : ''}
 
                         ${(c.reajustes_fixos && c.reajustes_fixos.length > 0) ? `
                         <tr><td colspan="4" class="section-title">Reajuste Fixo</td></tr>
@@ -322,6 +323,7 @@ function AluguelContent() {
                 'Data Início': c.data_inicio || '',
                 'Duração (meses)': c.duracao_meses || '',
                 'Valor Aluguel': c.valor_aluguel ? formatCurrency(c.valor_aluguel) : '',
+                'Condomínio': c.valor_condominio ? formatCurrency(c.valor_condominio) : '',
                 'Finalidade': c.finalidade_aluguel || '',
                 'Tipo Reajuste': c.tipo_reajuste || '',
                 'Tempo Reajuste Fixo': c.tempo_reajuste_fixo || '',

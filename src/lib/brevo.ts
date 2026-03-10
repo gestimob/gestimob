@@ -1,61 +1,62 @@
-
-import nodemailer from 'nodemailer';
-import fs from 'fs';
-import path from 'path';
-
-const logToFile = (msg: string) => {
-    const logPath = path.join(process.cwd(), 'debug_email.log');
-    fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
-};
-
 export interface BrevoEmailPayload {
     to: { email: string; name?: string }[];
     subject: string;
     htmlContent: string;
 }
 
+const logToConsole = (msg: string) => {
+    console.log(`[${new Date().toISOString()}] ${msg}`);
+};
+
 /**
- * Envia um e-mail através do servidor SMTP configurado (Gmail).
- * Mantém o nome 'sendBrevoEmail' para compatibilidade com o restante do sistema.
+ * Envia um e-mail através da API REST da Brevo (Sendinblue).
+ * Compatível com Edge Runtime (Cloudflare Pages/Vercel Edge).
  */
 export async function sendBrevoEmail(payload: BrevoEmailPayload) {
-    const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
-    const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
-    const SMTP_USER = process.env.SMTP_USER;
-    const SMTP_PASS = process.env.SMTP_PASS;
-
-    if (!SMTP_USER || !SMTP_PASS) {
-        throw new Error('SMTP_USER or SMTP_PASS is not defined in environment variables');
-    }
-
-    const transporter = nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: SMTP_PORT,
-        secure: SMTP_PORT === 465, // true para porta 465 (SSL)
-        auth: {
-            user: SMTP_USER,
-            pass: SMTP_PASS,
-        },
-    });
-
-    const senderEmail = process.env.BREVO_SENDER_EMAIL || SMTP_USER;
+    const apiKey = process.env.BREVO_API_KEY;
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.SMTP_USER || 'contato@rrimobiliaria.com.br';
     const senderName = process.env.BREVO_SENDER_NAME || 'RR Imobiliária';
 
-    const mailOptions = {
-        from: `"${senderName}" <${senderEmail}>`,
-        to: payload.to.map(t => t.email).join(', '),
+    if (!apiKey || apiKey === 'x') {
+        // Abortamos graciosamente caso a chave da Brevo não esteja presente.
+        const mockMsg = 'BREVO_API_KEY is not set or invalid. Skipping email send.';
+        console.warn(mockMsg);
+        logToConsole(mockMsg);
+        return { messageId: 'mock-id-edge-bypass' };
+    }
+
+    const apiPayload = {
+        sender: {
+            name: senderName,
+            email: senderEmail
+        },
+        to: payload.to.map(t => ({ email: t.email, name: t.name || t.email })),
         subject: payload.subject,
-        html: payload.htmlContent,
+        htmlContent: payload.htmlContent
     };
 
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Gmail SMTP Success: ' + info.messageId);
-        logToFile(`Gmail SMTP Success: ${info.messageId}`);
-        return { messageId: info.messageId };
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': apiKey
+            },
+            body: JSON.stringify(apiPayload)
+        });
+
+        if (!response.ok) {
+            const errBody = await response.text();
+            throw new Error(`Brevo HTTP API Error: ${response.status} - ${errBody}`);
+        }
+
+        const data = await response.json();
+        const msgId = data.messageId || 'unknown-id';
+        logToConsole(`Brevo HTTP Success: ${msgId}`);
+        return { messageId: msgId };
     } catch (error: any) {
-        console.error('Gmail SMTP Error:', error);
-        logToFile(`Gmail SMTP Error: ${error.message}`);
+        console.error('Brevo HTTP API Error:', error);
+        logToConsole(`Brevo HTTP Error: ${error.message}`);
         throw error;
     }
 }

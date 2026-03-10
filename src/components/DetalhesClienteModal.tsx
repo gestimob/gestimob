@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Printer, ArrowLeft, Mail, Phone, MapPinned, Hash, UserCircle2, Calendar, ClipboardCheck, UserCheck, Share2, Fingerprint, Heart, Briefcase, Banknote, Building2 } from "lucide-react";
+import { X, Printer, ArrowLeft, Mail, Phone, MapPinned, Hash, UserCircle2, Calendar, ClipboardCheck, UserCheck, Share2, Fingerprint, Heart, Briefcase, Banknote, Building2, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -292,13 +292,22 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                                 <div className="col-span-12 lg:col-span-3 flex flex-col gap-6 no-print">
                                     <div className="aspect-square bg-black/5 dark:bg-white/5 border border-panel-border rounded-3xl overflow-hidden flex items-center justify-center relative group">
                                         {cliente.selfie_url ? (
-                                            <img src={cliente.selfie_url} alt="Foto" className="w-full h-full object-cover" />
+                                            cliente.selfie_url.toLowerCase().endsWith('.pdf') ? (
+                                                <a href={cliente.selfie_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 text-primary hover:text-white transition-all w-full h-full justify-center bg-primary/5 hover:bg-primary/20">
+                                                    <FileText className="w-16 h-16" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest">Ver PDF da Foto</span>
+                                                </a>
+                                            ) : (
+                                                <img src={cliente.selfie_url} alt="Foto" className="w-full h-full object-cover" />
+                                            )
                                         ) : (
                                             <UserCircle2 className="w-20 h-20 text-text-dim" />
                                         )}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                                            <span className="text-[8px] font-black text-foreground uppercase tracking-[0.2em]">Foto de Identificação</span>
-                                        </div>
+                                        {cliente.selfie_url && !cliente.selfie_url.toLowerCase().endsWith('.pdf') && (
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                                                <span className="text-[8px] font-black text-foreground uppercase tracking-[0.2em]">Foto de Identificação</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl p-6 space-y-4">

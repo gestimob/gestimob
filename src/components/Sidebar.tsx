@@ -281,8 +281,7 @@ export function Sidebar() {
             <div className="md:hidden fixed top-0 left-0 right-0 h-20 bg-panel border-b border-panel-border z-[100] flex items-center justify-between px-4 sm:px-6">
                 <Link href="/dashboard" className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     <div className="flex flex-col min-w-0">
-                        {/* Nome removido conforme solicitado */}
-                        <span className="text-[8px] text-accent uppercase tracking-[0.2em] sm:tracking-[0.3em] truncate">Elite Edition</span>
+                        <span className="text-[13px] font-bold text-foreground truncate">{userName || 'Usuário'}</span>
                     </div>
                 </Link>
                 <div className="flex items-center gap-3 sm:gap-4 shrink-0">

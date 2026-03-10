@@ -346,7 +346,7 @@ function FinanceiroContent() {
                         rows += `<tr><td colspan="7" style="background:#f5f5f5; font-weight:bold;">Transação ${t.codigo_transacao} - ${t.locatario_nome || '-'}</td></tr>`;
                         trWritten = true;
                     }
-                    total += parseFloat(p.valor || '0');
+                    total += parseFloat(p.valor_pago || '0');
                     rows += `
                         <tr>
                             <td>${t.codigo_transacao}</td>
@@ -391,7 +391,7 @@ function FinanceiroContent() {
                     </thead>
                     <tbody>${rows}</tbody>
                 </table>
-                <h3 style="text-align:right; font-size: 10px;">Total Estimado p/ Documento: ${formatBRL(total)}</h3>
+                <h3 style="text-align:right; font-size: 10px;">Total: ${formatBRL(total)}</h3>
             </body></html>
         `);
         printWindow.document.close();

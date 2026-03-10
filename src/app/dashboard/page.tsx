@@ -638,7 +638,7 @@ export default function DashboardPage() {
                                                 boxShadow: hasAnyUrgency ? '0 0 25px rgba(244, 63, 94, 0.15)' : 'none'
                                             }}
                                             transition={{ delay: i * 0.1 }}
-                                            className="glass-elite glow-top p-8 relative group overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:bg-black/5 dark:hover:bg-white/10"
+                                            className="bg-panel md:glass-elite glow-top p-8 relative group overflow-hidden flex flex-col transition-all duration-300 md:hover:-translate-y-1 md:hover:bg-black/5 dark:md:hover:bg-white/10 border border-panel-border md:border-transparent rounded-2xl"
                                         >
                                             <div className="flex justify-between items-center mb-6 relative z-10">
                                                 <div className="flex items-center gap-3">
@@ -674,11 +674,11 @@ export default function DashboardPage() {
                                                             items: alertHub[card.type]
                                                         })}
                                                         className={cn(
-                                                            "group/item relative flex items-center justify-between border px-3 py-2.5 rounded-xl transition-all hover:translate-x-[4px]",
+                                                            "group/item relative flex items-center justify-between border px-3 py-2.5 rounded-xl transition-all md:hover:translate-x-[4px]",
                                                             card.count > 0
                                                                 ? card.color === 'rose' ? 'bg-rose-500/10 border-rose-500/20 shadow-[0_4px_12px_rgba(244,63,94,0.15)]'
                                                                     : 'bg-amber-500/10 border-amber-500/20 shadow-[0_4px_12px_rgba(245,158,11,0.15)]'
-                                                                : "bg-black/5 dark:bg-white/5 border-transparent dark:border-white/5 hover:border-black/10 dark:hover:border-white/10"
+                                                                : "bg-black/5 dark:bg-white/5 border-transparent md:dark:border-white/5 md:hover:border-black/10 dark:md:hover:border-white/10"
                                                         )}
                                                     >
                                                         <span className={cn(
@@ -731,7 +731,7 @@ export default function DashboardPage() {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: i * 0.1 }}
-                                            className="glass-elite p-8 relative group overflow-hidden h-full hover:bg-black/5 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-1"
+                                            className="bg-panel md:glass-elite p-8 relative group overflow-hidden h-full md:hover:bg-black/5 dark:md:hover:bg-white/10 transition-all duration-300 md:hover:-translate-y-1 border border-panel-border md:border-transparent rounded-2xl"
                                         >
                                             <div className="flex justify-between items-center mb-6 relative z-10">
                                                 <div className="flex items-center gap-3">
@@ -781,7 +781,7 @@ export default function DashboardPage() {
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: i * 0.1 }}
-                                                className="glass-elite p-8 relative group overflow-hidden h-full hover:bg-black/5 dark:hover:bg-white/10 transition-all duration-300 hover:-translate-y-1"
+                                                className="bg-panel md:glass-elite p-8 relative group overflow-hidden h-full md:hover:bg-black/5 dark:md:hover:bg-white/10 transition-all duration-300 md:hover:-translate-y-1 border border-panel-border md:border-transparent rounded-2xl"
                                             >
                                                 <div className="flex justify-between items-center mb-6 relative z-10">
                                                     <div className="flex items-center gap-3">
@@ -851,7 +851,7 @@ export default function DashboardPage() {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: i * 0.1 }}
-                                            className="glass-elite p-8 relative group overflow-hidden h-full hover:-translate-y-1 hover:bg-black/5 dark:hover:bg-white/10 transition-all duration-300"
+                                            className="bg-panel md:glass-elite p-8 relative group overflow-hidden h-full md:hover:-translate-y-1 md:hover:bg-black/5 dark:md:hover:bg-white/10 transition-all duration-300 border border-panel-border md:border-transparent rounded-2xl"
                                         >
                                             <div className="flex justify-between items-center mb-6 relative z-10">
                                                 <div className="flex items-center gap-3">

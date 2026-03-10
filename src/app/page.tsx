@@ -11,7 +11,8 @@ import {
   X,
   Mail,
   Lock,
-  UserPlus
+  UserPlus,
+  User
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";

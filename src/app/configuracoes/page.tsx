@@ -118,7 +118,7 @@ export default function ConfiguracoesPage() {
 
             if (data) {
                 // Filtra para remover logs do usuário específico conforme solicitado
-                const filteredLogs = data.filter(log => log.profile?.email !== 'pedro@pedro.com');
+                const filteredLogs = data.filter(log => (log.profile as any)?.email !== 'pedro@pedro.com');
                 setActionLogs(filteredLogs);
             }
         } catch (error) {

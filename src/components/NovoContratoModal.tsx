@@ -240,8 +240,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
     useEffect(() => {
         if (isOpen) {
             loadAlugueis();
-            if (initialData) {
-                // Ao editar, carregamos os textos salvos no banco
+            if (initialData?.id) {
+                // Modo edição: carrega textos salvos
                 setCabecalhoText(initialData.cabecalho_contrato || "");
                 setPartesText(initialData.texto_partes || "");
                 setNegocioJuridicoText(initialData.negocio_juridico || "");
@@ -260,7 +260,27 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                 // Popula selectedData e selectedAluguelId para que o conteúdo seja exibido
                 setSelectedData(initialData);
                 setSelectedAluguelId(initialData.id || "");
+            } else if (initialData) {
+                // Modo duplicação: gera novo código e limpa textos para regeneração
+                setCabecalhoText("");
+                setPartesText("");
+                setNegocioJuridicoText("");
+                setObjetoLocacaoText("");
+                setObjetivoFinalidadeText("");
+                setPrazoLocacaoText("");
+                setPrecoLocacaoText("");
+                setClausulasGeraisText("");
+                setAssinaturasText("");
+                setRodapeText("");
+                setExistingContratoUrl(null);
+                setArquivoContrato(null);
+                setFinalizarContrato(false);
+                setShowSaveAlert(false);
+                setSelectedData(null);
+                setSelectedAluguelId("");
+                fetchNextContractCode().then(code => setNextContractCode(code));
             } else {
+                // Modo novo cadastro
                 setSelectedAluguelId("");
                 setSelectedData(null);
                 setCabecalhoText("");
@@ -755,7 +775,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
             let contratoId = initialData?.id;
             const locatarioNome = selectedData.clientes?.nome_completo || 'N/A';
 
-            if (initialData) {
+            if (initialData?.id) {
                 // Editando um contrato já existente
                 const { error } = await supabase
                     .from('contratos')

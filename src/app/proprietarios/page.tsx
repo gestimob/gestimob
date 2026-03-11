@@ -74,8 +74,8 @@ export default function ProprietariosPage() {
 
     const handleDuplicate = (item: any, e: React.MouseEvent) => {
         e.stopPropagation();
-        const { id, created_at, updated_at, documento_identidade_url, documento_selfie_url, codigo_interno, ...rest } = item;
-        setSelectedItem({ ...rest, codigo_interno: '' });
+        const { id, created_at, updated_at, documento_identidade_url, documento_selfie_url, codigo_interno, documento, ...rest } = item;
+        setSelectedItem({ ...rest, codigo_interno: '', documento: '' });
         setIsCreateModalOpen(true);
     };
 

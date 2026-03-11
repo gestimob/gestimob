@@ -155,7 +155,8 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
     useEffect(() => {
         const initForm = async () => {
             if (isOpen) {
-                if (initialData) {
+                if (initialData?.id) {
+                    // Modo edição
                     setFormData({ ...initialData, dados_bancarios: initialData.dados_bancarios || [] });
 
                     // Busca responsáveis existentes
@@ -195,7 +196,57 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                             arquivo: null, selfie: null, selfie_url: null, isNew: true
                         }]);
                     }
+                } else if (initialData) {
+                    // Modo duplicação: gera novo código, mantém dados, reseta arquivos
+                    const nextCode = await fetchNextCode();
+                    const { data: { user } } = await supabase.auth.getUser();
+                    const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Sistema";
+
+                    setFormData({
+                        ...initialForm,
+                        ...initialData,
+                        codigo: nextCode,
+                        cadastrado_por: userName,
+                        dados_bancarios: initialData.dados_bancarios || [],
+                        contrato_social_url: null
+                    });
+
+                    // Usa responsáveis passados via _responsaveis ou cria vazio
+                    if (initialData._responsaveis && initialData._responsaveis.length > 0) {
+                        setResponsaveis(initialData._responsaveis.map((r: any) => ({
+                            id: Math.random().toString(36).substr(2, 9),
+                            nome: r.nome || '',
+                            nacionalidade: r.nacionalidade || '',
+                            estado_civil: r.estado_civil || '',
+                            cpf: r.cpf || '',
+                            rg: r.rg || '',
+                            orgao_emissor: r.orgao_emissor || '',
+                            cep: r.cep || '',
+                            logradouro: r.logradouro || '',
+                            numero: r.numero || '',
+                            complemento: r.complemento || '',
+                            bairro: r.bairro || '',
+                            cidade: r.cidade || '',
+                            estado: r.estado || '',
+                            arquivo: null,
+                            documento_url: null,
+                            selfie: null,
+                            selfie_url: null,
+                            isNew: true
+                        })));
+                    } else {
+                        setResponsaveis([{
+                            id: Math.random().toString(36).substr(2, 9),
+                            nome: '',
+                            nacionalidade: '', estado_civil: '', cpf: '', rg: '', orgao_emissor: '',
+                            cep: '', logradouro: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '',
+                            arquivo: null, selfie: null, selfie_url: null, isNew: true
+                        }]);
+                    }
+                    setContratoSocial(null);
+                    setOcrResult(null);
                 } else {
+                    // Modo novo cadastro
                     const nextCode = await fetchNextCode();
 
                     // Busca o usuário logado para gravar quem cadastrou
@@ -383,8 +434,9 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                 finalData.cadastrado_por = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Sistema";
             }
 
-            // Remove campos que vêm de Join
+            // Remove campos que vêm de Join ou campos auxiliares
             delete finalData.empresa_responsaveis;
+            delete finalData._responsaveis;
 
             let empresaId = initialData?.id;
 

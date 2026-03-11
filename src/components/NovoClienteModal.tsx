@@ -219,14 +219,33 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
     useEffect(() => {
         const initForm = async () => {
             if (isOpen) {
-                if (initialData) {
+                if (initialData?.id) {
+                    // Modo edição: carrega dados existentes
                     setFormData({ ...initialData });
                     setStep(1);
                     if (initialData.tipo === 'PJ') {
                         const { data } = await supabase.from('cliente_representantes').select('*').eq('cliente_id', initialData.id);
                         if (data && data.length > 0) setRepresentantes(data);
                     }
+                } else if (initialData) {
+                    // Modo duplicação: gera novo código e reseta arquivos
+                    const nextCode = await fetchNextCode();
+                    const { data: { user } } = await supabase.auth.getUser();
+                    const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Sistema";
+                    setFormData({ ...initialFormState, ...initialData, codigo_interno: nextCode, cadastrado_por: userName });
+                    setDocIdentidade(null);
+                    setCompResidencia(null);
+                    setDocConjuge(null);
+                    setCompRenda(null);
+                    setSelfie(null);
+                    setOcrResult(null);
+                    setRepresentantes([
+                        { id: 'temp-' + Date.now(), nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio" }
+                    ]);
+                    setStep(1);
+                    setActiveTab('basico');
                 } else {
+                    // Modo novo cadastro
                     const nextCode = await fetchNextCode();
                     const { data: { user } } = await supabase.auth.getUser();
                     const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Sistema";

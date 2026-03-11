@@ -104,7 +104,8 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
     useEffect(() => {
         if (isOpen) {
             fetchRelationalData();
-            if (initialData) {
+            if (initialData?.id) {
+                // Modo edição
                 const createdDate = initialData.created_at ? new Date(initialData.created_at).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
 
                 // Migrate legacy data if needed
@@ -126,7 +127,31 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                 });
                 setCagepaFile(null);
                 setEnergisaFile(null);
+            } else if (initialData) {
+                // Modo duplicação: gera novo código e usa dados duplicados
+                const createdDate = new Date().toISOString().slice(0, 10);
+
+                let legacyArr = initialData.reajustes_fixos || [];
+                if (initialData.tipo_reajuste === "Fixo" && !initialData.reajustes_fixos) {
+                    if (initialData.rf_p1_inicio) legacyArr.push({ inicio: initialData.rf_p1_inicio, final: initialData.rf_p1_final, valor: initialData.rf_p1_valor });
+                    if (initialData.rf_p2_inicio) legacyArr.push({ inicio: initialData.rf_p2_inicio, final: initialData.rf_p2_final, valor: initialData.rf_p2_valor });
+                    if (initialData.rf_p3_inicio) legacyArr.push({ inicio: initialData.rf_p3_inicio, final: initialData.rf_p3_final, valor: initialData.rf_p3_valor });
+                }
+
+                setFormData({
+                    ...initialFormState, ...initialData,
+                    reajustes_fixos: legacyArr,
+                    cliente_id: initialData.cliente_id || "",
+                    proprietario_id: initialData.proprietario_id || initialData.imoveis?.empresas?.id || initialData.imoveis?.proprietarios?.id || "",
+                    imovel_id: initialData.imovel_id || "",
+                    tipo_proprietario: initialData.proprietario_id ? "PF" : (initialData.imoveis?.empresas ? "PJ" : "PF"),
+                    created_at: createdDate
+                });
+                generateCode();
+                setCagepaFile(null);
+                setEnergisaFile(null);
             } else {
+                // Modo novo cadastro
                 generateCode();
                 setFormData((prev: any) => ({ ...prev, created_at: new Date().toISOString().slice(0, 10) }));
                 setCagepaFile(null);

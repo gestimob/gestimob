@@ -80,8 +80,8 @@ export default function ClientesPage() {
 
     const handleDuplicate = (cliente: any, e: React.MouseEvent) => {
         e.stopPropagation();
-        const { id, created_at, updated_at, documento_identidade_url, comprovante_residencia_url, selfie_url, documento_conjuge_url, codigo_interno, ...rest } = cliente;
-        setSelectedCliente({ ...rest, codigo_interno: '' });
+        const { id, created_at, updated_at, documento_identidade_url, comprovante_residencia_url, selfie_url, documento_conjuge_url, codigo_interno, documento, ...rest } = cliente;
+        setSelectedCliente({ ...rest, codigo_interno: '', documento: '' });
         setIsCreateModalOpen(true);
     };
 

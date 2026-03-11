@@ -110,8 +110,8 @@ function AluguelContent() {
 
     const handleDuplicate = (contrato: any, e: React.MouseEvent) => {
         e.stopPropagation();
-        const { id, created_at, updated_at, codigo_interno, codigo_contrato, clientes, imoveis, proprietarios, cagepa_url, energisa_url, ...rest } = contrato;
-        setSelectedContrato({ ...rest, codigo_interno: '', codigo_contrato: '' });
+        const { id, created_at, updated_at, codigo_interno, codigo_contrato, clientes, imoveis, proprietarios, cagepa_url, energisa_url, comprovante_cagepa_url, comprovante_energisa_url, ...rest } = contrato;
+        setSelectedContrato({ ...rest, codigo_interno: '', codigo_contrato: '', status: 'Preparação de Contrato', comprovante_cagepa_url: '', comprovante_energisa_url: '' });
         setIsCreateModalOpen(true);
     };
 

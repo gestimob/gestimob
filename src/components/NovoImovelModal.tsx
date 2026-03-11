@@ -86,7 +86,8 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
     useEffect(() => {
         if (isOpen) {
             fetchRelationalData();
-            if (initialData) {
+            if (initialData?.id) {
+                // Modo edição
                 setFormData({
                     ...initialFormState,
                     ...initialData,
@@ -94,7 +95,18 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                     proprietarios_secundarios: initialData.proprietarios_secundarios || []
                 });
                 setStep(1);
+            } else if (initialData) {
+                // Modo duplicação: gera novo código e usa dados duplicados
+                setFormData({
+                    ...initialFormState,
+                    ...initialData,
+                    tipo_proprietario_principal: initialData.empresa_id ? "PJ" : "PF",
+                    proprietarios_secundarios: initialData.proprietarios_secundarios || []
+                });
+                generateCode();
+                setStep(1);
             } else {
+                // Modo novo cadastro
                 generateCode();
                 setStep(1);
             }

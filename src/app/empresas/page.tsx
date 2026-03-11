@@ -69,10 +69,25 @@ export default function EmpresasPage() {
         setIsCreateModalOpen(true);
     };
 
-    const handleDuplicate = (empresa: any, e: React.MouseEvent) => {
+    const handleDuplicate = async (empresa: any, e: React.MouseEvent) => {
         e.stopPropagation();
-        const { id, created_at, updated_at, contrato_social_url, codigo, cnpj, empresa_responsaveis, ...rest } = empresa;
-        setSelectedEmpresa({ ...rest, codigo: '', cnpj: '' });
+        const { id, created_at, updated_at, contrato_social_url, codigo, empresa_responsaveis, ...rest } = empresa;
+
+        // Busca responsáveis do banco para passar ao modal na duplicação
+        let responsaveisData: any[] = [];
+        if (id) {
+            const { data } = await supabase.from('empresa_responsaveis').select('*').eq('empresa_id', id);
+            if (data && data.length > 0) {
+                responsaveisData = data.map((r: any) => ({
+                    nome: r.nome, nacionalidade: r.nacionalidade, estado_civil: r.estado_civil,
+                    cpf: r.cpf, rg: r.rg, orgao_emissor: r.orgao_emissor,
+                    cep: r.cep, logradouro: r.logradouro, numero: r.numero,
+                    complemento: r.complemento, bairro: r.bairro, cidade: r.cidade, estado: r.estado
+                }));
+            }
+        }
+
+        setSelectedEmpresa({ ...rest, codigo: '', contrato_social_url: null, _responsaveis: responsaveisData });
         setIsCreateModalOpen(true);
     };
 

@@ -157,9 +157,18 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
     useEffect(() => {
         const initForm = async () => {
             if (isOpen) {
-                if (initialData) {
+                if (initialData?.id) {
+                    // Modo edição
                     setFormData({ ...initialFormState, ...initialData });
+                } else if (initialData) {
+                    // Modo duplicação: gera novo código e reseta arquivos
+                    const nextCode = await fetchNextCode();
+                    setFormData({ ...initialFormState, ...initialData, codigo_interno: nextCode });
+                    setDocIdentidade(null);
+                    setSelfie(null);
+                    setOcrResult(null);
                 } else {
+                    // Modo novo cadastro
                     const nextCode = await fetchNextCode();
                     setFormData({ ...initialFormState, codigo_interno: nextCode, dados_bancarios: [] });
                     setDocIdentidade(null);

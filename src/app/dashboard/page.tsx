@@ -383,7 +383,8 @@ export default function DashboardPage() {
         const upcoming = (pr.data || []).filter(p =>
             (p.status === 'Pendente' || p.status === 'A Vencer') &&
             new Date(p.data_vencimento + 'T12:00:00') <= threeDaysLater &&
-            new Date(p.data_vencimento + 'T12:00:00') >= today
+            new Date(p.data_vencimento + 'T12:00:00') >= today &&
+            (!p.historico_comunicacoes || (Array.isArray(p.historico_comunicacoes) && p.historico_comunicacoes.length === 0))
         ).map(p => {
             const transacao = extract(p.transacoes);
             const contrato = extract(transacao?.contratos);

@@ -36,6 +36,7 @@ function AluguelContent() {
     const [statusFilter, setStatusFilter] = useState("Todos os Status");
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [userRole, setUserRole] = useState<string | null>(null);
+    const filtroParam = searchParams.get('filtro');
 
     useEffect(() => {
         fetchAlugueis();
@@ -84,7 +85,7 @@ function AluguelContent() {
             setError(null);
             const { data, error } = await supabase
                 .from('alugueis')
-                .select('*, clientes(id, nome_completo), imoveis(id, endereco, nome_identificacao, logradouro, numero, bairro, cidade, estado, proprietarios(id, nome_completo), empresas(id, nome_fantasia)), proprietarios(id, nome_completo)')
+                .select('*, clientes(id, nome_completo), imoveis(id, endereco, nome_identificacao, logradouro, numero, bairro, cidade, estado, proprietarios(id, nome_completo), empresas(id, nome_fantasia)), proprietarios(id, nome_completo), data_finalizacao')
                 .order('codigo_interno', { ascending: false });
 
             if (error) throw error;
@@ -192,6 +193,17 @@ function AluguelContent() {
 
         const matchesStatus = statusFilter === "Todos os Status" ||
             contrato.status === statusFilter;
+
+        // Filtro especial do dashboard: vencendo em 30 dias
+        if (filtroParam === 'vencendo30d') {
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            const em30dias = new Date(hoje);
+            em30dias.setDate(hoje.getDate() + 30);
+            if (!contrato.data_finalizacao) return false;
+            const dataFinal = new Date(contrato.data_finalizacao + 'T00:00:00');
+            if (!(dataFinal >= hoje && dataFinal <= em30dias)) return false;
+        }
 
         return matchesSearch && matchesStatus;
     });
@@ -385,6 +397,18 @@ function AluguelContent() {
                         Novo Aluguel
                     </button>
                 </header>
+
+                {/* Banner de filtro ativo — Contratos vencendo em 30 dias */}
+                {filtroParam === 'vencendo30d' && (
+                    <div className="mb-4 flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-2xl px-6 py-3">
+                        <span className="text-sm font-bold text-amber-500 uppercase tracking-widest">
+                            Exibindo apenas contratos vencendo em 30 dias ({filteredContratos.length})
+                        </span>
+                        <a href="/aluguel" className="text-xs font-bold text-amber-500 hover:text-amber-400 underline underline-offset-2 transition-colors">
+                            Ver todos
+                        </a>
+                    </div>
+                )}
 
                 {/* Filter and Control Bar */}
                 <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 border border-panel-border bg-panel dark:bg-panel/50 glass-elite p-4">

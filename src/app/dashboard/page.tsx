@@ -45,6 +45,8 @@ export default function DashboardPage() {
         contratosPendentes: 0
     });
 
+    const [contratosVencendo30d, setContratosVencendo30d] = useState(0);
+
     const [iptuConfig, setIptuConfig] = useState({
         inicio: '15/01/2026',
         fim: '15/03/2026'
@@ -322,7 +324,7 @@ export default function DashboardPage() {
         const [cl, im, al, pr, ct, conf] = await Promise.all([
             supabase.from('clientes').select('id', { count: 'exact' }),
             supabase.from('imoveis').select('id, status'),
-            supabase.from('alugueis').select('id, status, troca_titularidade_cagepa, troca_titularidade_energisa, comprovante_cagepa_url, comprovante_energisa_url, codigo_interno, clientes(nome_completo, id), imoveis(nome_identificacao)'),
+            supabase.from('alugueis').select('id, status, data_finalizacao, troca_titularidade_cagepa, troca_titularidade_energisa, comprovante_cagepa_url, comprovante_energisa_url, codigo_interno, clientes(nome_completo, id), imoveis(nome_identificacao)'),
             supabase.from('parcelas').select('id, status, data_vencimento, valor, transacoes(contratos(clientes(nome_completo))), historico_comunicacoes(id)'),
             supabase.from('contratos').select('id, status, cliente_id, codigo_interno, codigo_contrato'),
             supabase.from('configuracoes').select('iptu_data_inicio, iptu_data_fim').order('created_at', { ascending: false }).limit(1).single()
@@ -484,6 +486,18 @@ export default function DashboardPage() {
             upcoming,
             overdue
         });
+
+        // Calcular contratos vencendo em 30 dias
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        const em30dias = new Date(hoje);
+        em30dias.setDate(hoje.getDate() + 30);
+        const vencendo30 = allLeases.filter(l => {
+            if (!l.data_finalizacao) return false;
+            const dataFinal = new Date(l.data_finalizacao + 'T00:00:00');
+            return dataFinal >= hoje && dataFinal <= em30dias;
+        });
+        setContratosVencendo30d(vencendo30.length);
 
         if (conf.data) {
             setIptuConfig({
@@ -980,6 +994,48 @@ export default function DashboardPage() {
                             }
                             return null;
                         })()}
+
+                        {/* Alerta de Contratos Vencendo em 30 dias */}
+                        {contratosVencendo30d > 0 && (
+                            <Link href="/aluguel?filtro=vencendo30d">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{
+                                        opacity: 1,
+                                        y: 0,
+                                        borderColor: ['rgba(245, 158, 11, 0.2)', 'rgba(245, 158, 11, 0.6)', 'rgba(245, 158, 11, 0.2)']
+                                    }}
+                                    transition={{
+                                        borderColor: { repeat: Infinity, duration: 2, ease: "easeInOut" }
+                                    }}
+                                    className="w-full glass-elite bg-amber-500/5 dark:bg-amber-500/10 px-6 py-4 flex items-center justify-center gap-4 rounded-2xl border transition-all duration-300 cursor-pointer hover:bg-amber-500/10 dark:hover:bg-amber-500/20 mt-4"
+                                >
+                                    <motion.div
+                                        animate={{
+                                            scale: [1, 1.2, 1],
+                                            opacity: [0.7, 1, 0.7]
+                                        }}
+                                        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                                    >
+                                        <Calendar className="w-5 h-5 text-amber-500" />
+                                    </motion.div>
+
+                                    <span className="text-sm md:text-base font-black text-amber-500 uppercase tracking-widest">
+                                        {contratosVencendo30d} {contratosVencendo30d === 1 ? 'contrato vencendo' : 'contratos vencendo'} em 30 dias
+                                    </span>
+
+                                    <motion.div
+                                        animate={{
+                                            scale: [1, 1.2, 1],
+                                            opacity: [0.7, 1, 0.7]
+                                        }}
+                                        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                                    >
+                                        <Calendar className="w-5 h-5 text-amber-500" />
+                                    </motion.div>
+                                </motion.div>
+                            </Link>
+                        )}
                     </>
                 )}
             </main >

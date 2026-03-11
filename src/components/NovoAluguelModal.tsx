@@ -306,6 +306,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                 'troca_titularidade_cagepa', 'troca_titularidade_energisa',
                 'comprovante_cagepa_url', 'comprovante_energisa_url',
                 'valor_condominio', 'tipo_pagamento_condominio', 'valor_total_aluguel_condominio',
+                'data_finalizacao',
                 'created_at'
             ];
 
@@ -562,24 +563,39 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                     const newDate = e.target.value;
                                     // Calcular vencimento = data_inicio + 30 dias
                                     let vencimento = '';
+                                    let finalizacao = '';
                                     if (newDate) {
                                         const d = new Date(newDate + 'T00:00:00');
                                         d.setDate(d.getDate() + 30);
                                         vencimento = d.toISOString().slice(0, 10);
+                                        // Calcular finalização = data_inicio + duracao_meses
+                                        if (formData.duracao_meses) {
+                                            const df = new Date(newDate + 'T00:00:00');
+                                            df.setMonth(df.getMonth() + parseInt(formData.duracao_meses));
+                                            finalizacao = df.toISOString().slice(0, 10);
+                                        }
                                     }
                                     if (formData.tipo_reajuste === 'Fixo') {
                                         const datas = calcularDatasReajuste(newDate, formData.duracao_meses);
-                                        setFormData({ ...formData, data_inicio: newDate, data_vencimento: vencimento, ...datas });
+                                        setFormData({ ...formData, data_inicio: newDate, data_vencimento: vencimento, data_finalizacao: finalizacao, ...datas });
                                     } else {
-                                        setFormData({ ...formData, data_inicio: newDate, data_vencimento: vencimento });
+                                        setFormData({ ...formData, data_inicio: newDate, data_vencimento: vencimento, data_finalizacao: finalizacao });
                                     }
                                 }} />
                                 <Input disabled={isReadOnly} label="Vencimento" type="date" value={formData.data_vencimento} onChange={(e: any) => setFormData({ ...formData, data_vencimento: e.target.value })} />
                                 <Input required disabled={isReadOnly} label="Duração (Meses)" type="number" value={formData.duracao_meses} onChange={(e: any) => {
                                     const m = parseInt(e.target.value) || 0;
+                                    // Calcular finalização = data_inicio + meses
+                                    let finalizacao = '';
+                                    if (formData.data_inicio && m > 0) {
+                                        const df = new Date(formData.data_inicio + 'T00:00:00');
+                                        df.setMonth(df.getMonth() + m);
+                                        finalizacao = df.toISOString().slice(0, 10);
+                                    }
                                     setFormData({
                                         ...formData,
                                         duracao_meses: m,
+                                        data_finalizacao: finalizacao,
                                         ...(formData.tipo_reajuste === "Fixo" ? calcularDatasReajuste(formData.data_inicio, m, formData.reajustes_fixos) : {})
                                     });
                                 }} />
@@ -598,6 +614,13 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                         valor_condominio: val
                                     }));
                                 }} />
+
+                                <Input readOnly label="Finalização do Contrato" value={(() => {
+                                    if (!formData.data_finalizacao) return '';
+                                    const parts = formData.data_finalizacao.split('-');
+                                    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                                    return formData.data_finalizacao;
+                                })()} colSpan="col-span-1" icon={CalendarClock} />
 
                                 <div className="col-span-2 space-y-3 pt-4 border-t border-panel-border mt-2">
                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Forma de Pagamento do Condomínio</label>

@@ -615,12 +615,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                     }));
                                 }} />
 
-                                <Input readOnly label="Finalização do Contrato" value={(() => {
-                                    if (!formData.data_finalizacao) return '';
-                                    const parts = formData.data_finalizacao.split('-');
-                                    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
-                                    return formData.data_finalizacao;
-                                })()} colSpan="col-span-1" icon={CalendarClock} />
+                                <Input disabled={isReadOnly} label="Finalização do Contrato" type="date" value={formData.data_finalizacao || ''} onChange={(e: any) => setFormData({ ...formData, data_finalizacao: e.target.value })} colSpan="col-span-1" />
 
                                 <div className="col-span-2 space-y-3 pt-4 border-t border-panel-border mt-2">
                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Forma de Pagamento do Condomínio</label>

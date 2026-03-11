@@ -85,7 +85,7 @@ function AluguelContent() {
             const { data, error } = await supabase
                 .from('alugueis')
                 .select('*, clientes(id, nome_completo), imoveis(id, endereco, nome_identificacao, logradouro, numero, bairro, cidade, estado, proprietarios(id, nome_completo), empresas(id, nome_fantasia)), proprietarios(id, nome_completo)')
-                .order('created_at', { ascending: false });
+                .order('codigo_interno', { ascending: false });
 
             if (error) throw error;
             if (data) setContratos(data);

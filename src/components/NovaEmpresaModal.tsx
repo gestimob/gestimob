@@ -661,7 +661,14 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                         <label className="text-[10px] font-black text-text-dim uppercase tracking-[0.2em]">CNPJ Oficial</label>
                                                         <input
                                                             required
-                                                            value={formData.cnpj}
+                                                            value={(() => {
+                                                                const v = (formData.cnpj || '').replace(/\D/g, '');
+                                                                if (v.length <= 2) return v;
+                                                                if (v.length <= 5) return `${v.slice(0, 2)}.${v.slice(2)}`;
+                                                                if (v.length <= 8) return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5)}`;
+                                                                if (v.length <= 12) return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5, 8)}/${v.slice(8)}`;
+                                                                return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5, 8)}/${v.slice(8, 12)}-${v.slice(12, 14)}`;
+                                                            })()}
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                 const val = e.target.value.replace(/\D/g, "").slice(0, 14);
                                                                 setFormData({ ...formData, cnpj: val });

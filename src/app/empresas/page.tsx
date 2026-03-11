@@ -16,7 +16,8 @@ import {
     MoreHorizontal,
     Filter,
     FileText,
-    Download
+    Download,
+    Copy
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { NovaEmpresaModal } from "@/components/NovaEmpresaModal";
@@ -65,6 +66,13 @@ export default function EmpresasPage() {
     const handleOpenEdit = (empresa: any, e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedEmpresa(empresa);
+        setIsCreateModalOpen(true);
+    };
+
+    const handleDuplicate = (empresa: any, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const { id, created_at, updated_at, contrato_social_url, codigo, cnpj, empresa_responsaveis, ...rest } = empresa;
+        setSelectedEmpresa({ ...rest, codigo: '', cnpj: '' });
         setIsCreateModalOpen(true);
     };
 
@@ -448,6 +456,13 @@ export default function EmpresasPage() {
                                                             title="Editar"
                                                         >
                                                             <Edit2 className="w-3.5 h-3.5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDuplicate(empresa, e)}
+                                                            className="w-8 h-8 flex items-center justify-center rounded-lg text-accent hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                                                            title="Duplicar"
+                                                        >
+                                                            <Copy className="w-3.5 h-3.5" />
                                                         </button>
                                                         <button
                                                             onClick={(e) => handleDelete(empresa.id, e)}

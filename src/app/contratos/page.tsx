@@ -14,7 +14,8 @@ import {
     Filter,
     FileText,
     Download,
-    Printer
+    Printer,
+    Copy
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { NovoContratoModal } from "@/components/NovoContratoModal";
@@ -107,6 +108,13 @@ export default function ContratosPage() {
     const handleOpenEdit = (contrato: any, e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedContrato(contrato);
+        setIsCreateModalOpen(true);
+    };
+
+    const handleDuplicate = (contrato: any, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const { id, created_at, updated_at, contrato_assinado_url, codigo_contrato, codigo_interno, clientes, imoveis, proprietarios, ...rest } = contrato;
+        setSelectedContrato({ ...rest, codigo_contrato: '', codigo_interno: '' });
         setIsCreateModalOpen(true);
     };
 
@@ -407,6 +415,13 @@ export default function ContratosPage() {
                                                             title={contrato.status === 'Finalizado' ? "Visualizar" : "Editar"}
                                                         >
                                                             <Edit2 className="w-3.5 h-3.5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDuplicate(contrato, e)}
+                                                            className="w-7 h-7 flex items-center justify-center rounded-lg text-accent hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                                                            title="Duplicar"
+                                                        >
+                                                            <Copy className="w-3.5 h-3.5" />
                                                         </button>
                                                         {(contrato.status !== 'Finalizado' || userRole === 'admin') && (
                                                             <button

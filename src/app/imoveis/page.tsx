@@ -18,7 +18,8 @@ import {
     Building2,
     Home,
     MapPin,
-    Printer
+    Printer,
+    Copy
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { NovoImovelModal } from "@/components/NovoImovelModal";
@@ -85,6 +86,13 @@ function ImoveisContent() {
     const handleOpenEdit = (imovel: any, e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedImovel(imovel);
+        setIsCreateModalOpen(true);
+    };
+
+    const handleDuplicate = (imovel: any, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const { id, created_at, updated_at, fotos_urls, arquivo_matricula_url, iptu_pdf_url, codigo_interno, proprietarios, empresas, ...rest } = imovel;
+        setSelectedImovel({ ...rest, codigo_interno: '' });
         setIsCreateModalOpen(true);
     };
 
@@ -470,6 +478,13 @@ function ImoveisContent() {
                                                             title="Editar"
                                                         >
                                                             <Edit2 className="w-3.5 h-3.5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDuplicate(imovel, e)}
+                                                            className="w-7 h-7 flex items-center justify-center rounded-lg text-accent hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                                                            title="Duplicar"
+                                                        >
+                                                            <Copy className="w-3.5 h-3.5" />
                                                         </button>
                                                         <button
                                                             onClick={(e) => handleDelete(imovel.id, e)}

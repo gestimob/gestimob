@@ -16,7 +16,8 @@ import {
     Download,
     User,
     Users,
-    Mail
+    Mail,
+    Copy
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NovoClienteModal } from "@/components/NovoClienteModal";
@@ -74,6 +75,13 @@ export default function ClientesPage() {
     const handleOpenEdit = (cliente: any, e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedCliente(cliente);
+        setIsCreateModalOpen(true);
+    };
+
+    const handleDuplicate = (cliente: any, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const { id, created_at, updated_at, documento_identidade_url, comprovante_residencia_url, selfie_url, documento_conjuge_url, codigo_interno, ...rest } = cliente;
+        setSelectedCliente({ ...rest, codigo_interno: '' });
         setIsCreateModalOpen(true);
     };
 
@@ -512,6 +520,13 @@ export default function ClientesPage() {
                                                             title="Editar"
                                                         >
                                                             <Edit2 className="w-3.5 h-3.5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDuplicate(cliente, e)}
+                                                            className="w-7 h-7 flex items-center justify-center rounded-lg text-accent hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                                                            title="Duplicar"
+                                                        >
+                                                            <Copy className="w-3.5 h-3.5" />
                                                         </button>
                                                         <button
                                                             onClick={(e) => handleDelete(cliente.id, e)}

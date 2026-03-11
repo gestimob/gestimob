@@ -14,7 +14,8 @@ import {
     Filter,
     FileText,
     Download,
-    Mail
+    Mail,
+    Copy
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { NovoProprietarioModal } from "@/components/NovoProprietarioModal";
@@ -68,6 +69,13 @@ export default function ProprietariosPage() {
     const handleOpenEdit = (item: any, e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedItem(item);
+        setIsCreateModalOpen(true);
+    };
+
+    const handleDuplicate = (item: any, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const { id, created_at, updated_at, documento_identidade_url, documento_selfie_url, codigo_interno, ...rest } = item;
+        setSelectedItem({ ...rest, codigo_interno: '' });
         setIsCreateModalOpen(true);
     };
 
@@ -444,6 +452,13 @@ export default function ProprietariosPage() {
                                                             title="Editar"
                                                         >
                                                             <Edit2 className="w-3.5 h-3.5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDuplicate(item, e)}
+                                                            className="w-7 h-7 flex items-center justify-center rounded-lg text-accent hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                                                            title="Duplicar"
+                                                        >
+                                                            <Copy className="w-3.5 h-3.5" />
                                                         </button>
                                                         <button
                                                             onClick={(e) => handleDelete(item.id, e)}

@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { supabase } from "@/lib/supabase";
-import { Search, Plus, Edit2, Trash2, Loader2, AlertCircle, MoreHorizontal, Filter, FileText, Download } from "lucide-react";
+import { Search, Plus, Edit2, Trash2, Loader2, AlertCircle, MoreHorizontal, Filter, FileText, Download, Copy } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
 import { NovoAluguelModal } from "@/components/NovoAluguelModal";
@@ -105,6 +105,13 @@ function AluguelContent() {
     const handleOpenEdit = (contrato: any, e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedContrato(contrato);
+        setIsCreateModalOpen(true);
+    };
+
+    const handleDuplicate = (contrato: any, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const { id, created_at, updated_at, codigo_interno, codigo_contrato, clientes, imoveis, proprietarios, cagepa_url, energisa_url, ...rest } = contrato;
+        setSelectedContrato({ ...rest, codigo_interno: '', codigo_contrato: '' });
         setIsCreateModalOpen(true);
     };
 
@@ -528,6 +535,13 @@ function AluguelContent() {
                                                             title={contrato.status === 'Finalizado' ? "Visualizar" : "Editar"}
                                                         >
                                                             <Edit2 className="w-3.5 h-3.5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDuplicate(contrato, e)}
+                                                            className="w-7 h-7 flex items-center justify-center rounded-lg text-accent hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                                                            title="Duplicar"
+                                                        >
+                                                            <Copy className="w-3.5 h-3.5" />
                                                         </button>
                                                         {(contrato.status !== 'Finalizado' || userRole === 'admin') && (
                                                             <button

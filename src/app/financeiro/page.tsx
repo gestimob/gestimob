@@ -309,7 +309,11 @@ function FinanceiroContent() {
             const ps = parcelas[t.id] || [];
             if (ps.length > 0) {
                 hasMatchingParcela = ps.some(p => {
-                    const mathcesStatusInner = statusFilter === "Todos os Status" || getParcelaStatusAtual(p) === statusFilter;
+                    const statusAtual = getParcelaStatusAtual(p);
+                    const mathcesStatusInner = statusFilter === "Todos os Status" || 
+                        ((statusFilter === "Pago" || statusFilter === "Pago e Juros") 
+                            ? (statusAtual === "Pago" || statusAtual === "Pago e Juros") 
+                            : statusAtual === statusFilter);
                     const matchesSearchInner = term === "" ||
                         (p.numero_parcela && String(p.numero_parcela).includes(term)) ||
                         matchesSearch; // if parent matches search, all parcelas match search 
@@ -652,7 +656,11 @@ function FinanceiroContent() {
                                                         (t.aluguel_codigo?.toLowerCase() || '').includes(term) ||
                                                         (t.locatario_nome?.toLowerCase() || '').includes(term);
 
-                                                    const mathcesStatusInner = statusFilter === "Todos os Status" || getParcelaStatusAtual(p) === statusFilter;
+                                                    const statusAtual = getParcelaStatusAtual(p);
+                                                    const mathcesStatusInner = statusFilter === "Todos os Status" || 
+                                                        ((statusFilter === "Pago" || statusFilter === "Pago e Juros") 
+                                                            ? (statusAtual === "Pago" || statusAtual === "Pago e Juros") 
+                                                            : statusAtual === statusFilter);
                                                     const matchesSearchInner = term === "" ||
                                                         (p.numero_parcela && String(p.numero_parcela).includes(term)) ||
                                                         matchesSearch;

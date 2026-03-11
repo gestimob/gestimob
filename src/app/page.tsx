@@ -110,23 +110,13 @@ export default function LandingPage() {
           {/* Subtle logo background glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 blur-[120px] rounded-full group-hover:bg-white/10 transition-colors pointer-events-none" />
 
-          {loading ? (
-            <Loader2 className="w-10 h-10 text-white/20 animate-spin" />
-          ) : (
-            logoUrl ? (
-              <img
-                src={logoUrl}
-                alt="Logo"
-                onClick={handleLogoClick}
-                className="h-16 md:h-24 w-auto object-contain transition-all duration-700 transform group-hover:scale-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] group-hover:drop-shadow-[0_0_50px_rgba(255,255,255,0.4)] cursor-pointer"
-                title="RR Imobiliária"
-              />
-            ) : (
-              <div className="h-20 w-20 glass rounded-[24px] flex items-center justify-center glow-border cursor-pointer" onClick={handleLogoClick}>
-                <Building2 className="w-10 h-10 text-white/40" />
-              </div>
-            )
-          )}
+          <img
+            src="https://jkgkwzyxtmqmhaypobba.supabase.co/storage/v1/object/public/configuracoes/logo_rr_sombra.png"
+            alt="Logo"
+            onClick={handleLogoClick}
+            className="h-16 md:h-24 w-auto object-contain transition-all duration-700 transform group-hover:scale-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] group-hover:drop-shadow-[0_0_50px_rgba(255,255,255,0.4)] cursor-pointer"
+            title="RR Imobiliária"
+          />
 
           <div className="space-y-6 relative">
             <h1 className="text-3xl md:text-5xl font-serif-premium text-white leading-tight tracking-tight drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">

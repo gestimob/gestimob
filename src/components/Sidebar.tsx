@@ -19,7 +19,8 @@ import {
     DollarSign,
     ChevronLeft,
     Menu,
-    X as CloseIcon
+    X as CloseIcon,
+    CreditCard
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ type MenuItem = {
     icon: any;
     label: string;
     href: string;
+    external?: boolean;
 };
 
 type MenuGroup = {
@@ -59,6 +61,7 @@ const sidebarItems: SidebarItem[] = [
     },
     { icon: FileText, label: "Contratos", href: "/contratos" },
     { icon: DollarSign, label: "Financeiro", href: "/financeiro" },
+    { icon: CreditCard, label: "Contas a Pagar", href: "https://contasrrimob.pages.dev/login", external: true },
     { icon: Settings, label: "Configurações", href: "/configuracoes" },
 ];
 
@@ -178,41 +181,54 @@ export function Sidebar() {
 
     const renderMenuItem = (item: MenuItem, isChild = false) => {
         const isActive = pathname === item.href;
-        return (
-            <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
-                <div className={cn(
-                    "group flex items-center rounded-xl transition-all duration-200 cursor-pointer overflow-hidden relative",
-                    isChild ? "px-4 py-2.5 ml-4 border-l-2" : "px-4 py-3",
-                    isActive
-                        ? isChild
-                            ? "bg-primary/10 text-primary border-l-primary"
-                            : "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_20px_rgba(0,0,0,0.02)] dark:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
-                        : isChild
-                            ? "text-accent hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground border-l-transparent hover:border-l-accent/30"
-                            : "text-accent hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground",
-                    isCollapsed && !isChild ? "justify-center px-0" : "justify-between"
-                )}>
-                    <div className={cn("flex items-center gap-3", isCollapsed && !isChild && "gap-0")}>
-                        <item.icon className={cn(
-                            isChild ? "w-4 h-4" : "w-5 h-5",
-                            isActive ? "text-primary" : "text-accent group-hover:text-foreground",
-                            isCollapsed && !isChild && "w-6 h-6"
-                        )} />
-                        {!isCollapsed && <span className={cn("font-medium whitespace-nowrap", isChild && "text-[13px]")}>{item.label}</span>}
-                        {isCollapsed && !isChild && (
-                            <div className="absolute left-full ml-4 px-2 py-1 bg-panel border border-panel-border rounded-md text-[10px] font-bold text-foreground opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
-                                {item.label}
-                            </div>
-                        )}
-                    </div>
-                    {isActive && !isChild && !isCollapsed && <ChevronRight className="w-4 h-4 text-primary" />}
-                    {isActive && !isChild && (
-                        <div className={cn(
-                            "absolute left-0 top-0 h-full bg-primary shadow-[0_0_10px_rgba(0,0,0,0.1)] dark:shadow-[0_0_10px_rgba(255,255,255,0.3)]",
-                            isCollapsed ? "w-1" : "w-1"
-                        )} />
+        
+        const content = (
+            <div className={cn(
+                "group flex items-center rounded-xl transition-all duration-200 cursor-pointer overflow-hidden relative",
+                isChild ? "px-4 py-2.5 ml-4 border-l-2" : "px-4 py-3",
+                isActive
+                    ? isChild
+                        ? "bg-primary/10 text-primary border-l-primary"
+                        : "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_20px_rgba(0,0,0,0.02)] dark:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                    : isChild
+                        ? "text-accent hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground border-l-transparent hover:border-l-accent/30"
+                        : "text-accent hover:bg-black/5 dark:hover:bg-white/10 hover:text-foreground",
+                isCollapsed && !isChild ? "justify-center px-0" : "justify-between"
+            )}>
+                <div className={cn("flex items-center gap-3", isCollapsed && !isChild && "gap-0")}>
+                    <item.icon className={cn(
+                        isChild ? "w-4 h-4" : "w-5 h-5",
+                        isActive ? "text-primary" : "text-accent group-hover:text-foreground",
+                        isCollapsed && !isChild && "w-6 h-6"
+                    )} />
+                    {!isCollapsed && <span className={cn("font-medium whitespace-nowrap", isChild && "text-[13px]")}>{item.label}</span>}
+                    {isCollapsed && !isChild && (
+                        <div className="absolute left-full ml-4 px-2 py-1 bg-panel border border-panel-border rounded-md text-[10px] font-bold text-foreground opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
+                            {item.label}
+                        </div>
                     )}
                 </div>
+                {isActive && !isChild && !isCollapsed && <ChevronRight className="w-4 h-4 text-primary" />}
+                {isActive && !isChild && (
+                    <div className={cn(
+                        "absolute left-0 top-0 h-full bg-primary shadow-[0_0_10px_rgba(0,0,0,0.1)] dark:shadow-[0_0_10px_rgba(255,255,255,0.3)]",
+                        isCollapsed ? "w-1" : "w-1"
+                    )} />
+                )}
+            </div>
+        );
+
+        if (item.external) {
+            return (
+                <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="block outline-none">
+                    {content}
+                </a>
+            );
+        }
+
+        return (
+            <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+                {content}
             </Link>
         );
     };

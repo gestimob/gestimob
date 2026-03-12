@@ -3,6 +3,8 @@ import { supabase, supabaseStorage } from '@/lib/supabase';
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
 
+export const runtime = 'edge';
+
 export async function GET() {
     try {
         const zip = new JSZip();

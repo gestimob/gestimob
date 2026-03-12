@@ -44,12 +44,12 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
             <html>
             <head>
                 <meta charset="utf-8">
-                <title>Contrato - {contrato.codigo_contrato || '-----'}</title>
+                <title>${contrato.clientes?.nome_completo?.toUpperCase() || 'CONTRATO'}_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}</title>
 
                 <style>
                     @page {
                         size: A4 portrait;
-                        margin: 8mm 15mm 6mm 15mm;
+                        margin: 15mm 15mm 10mm 15mm;
                         @bottom-right {
                             content: "Pág. " counter(page) "/" counter(pages);
                             font-size: 8pt;
@@ -128,8 +128,8 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                         align-items: center;
                         justify-content: center;
                         width: 100%;
-                        min-height: 100px;
-                        margin-bottom: 15px;
+                        min-height: 30mm;
+                        margin-bottom: 20px;
                         position: relative;
                         overflow: visible;
                     }

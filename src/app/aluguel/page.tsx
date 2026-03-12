@@ -288,7 +288,7 @@ function AluguelContent() {
 
         printWindow.document.write(`
             <!DOCTYPE html>
-            <html><head><title>Ficha - Contratos de Aluguel</title>
+            <html><head><title>${selected.length === 1 ? (selected[0].clientes?.nome_completo?.toUpperCase() || 'ALUGUEL') : 'CONTRATOS_LOTE'}_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}</title>
             <style>
                 @page { size: A4; margin: 10mm; }
                 body { font-family: Arial, sans-serif; font-size: 9pt; color: #111; margin: 0; }

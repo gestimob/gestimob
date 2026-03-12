@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/Sidebar";
-import { Save, Upload, Image as ImageIcon, FileText, Trash2, UserPlus, Lock, Mail, Shield, User, Loader2, List, Calendar } from "lucide-react";
+import { Save, Upload, Image as ImageIcon, FileText, Trash2, UserPlus, Lock, Mail, Shield, User, Loader2, List, Calendar, Database } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { compressAndConvertToWebP } from "@/lib/imageUtils";
 import { logAction } from "@/lib/logUtils";
@@ -220,6 +220,36 @@ export default function ConfiguracoesPage() {
         else if (type === 'heroMobile') setHeroBgMobileUrl(null);
         setMessage({ type: 'success', text: 'Imagem removida da visualização. Salve para confirmar.' });
         setTimeout(() => setMessage(null), 2000);
+    };
+
+    const handleDownloadBackup = async () => {
+        setLoading(true);
+        setMessage({ type: 'success', text: 'Iniciando geração do backup... Isso pode levar alguns minutos.' });
+        try {
+            const response = await fetch('/api/backup');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Falha ao gerar backup');
+            }
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const timestamp = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+            a.download = `Backup_Gestimob_${timestamp}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            setMessage({ type: 'success', text: 'Backup baixado com sucesso!' });
+            await logAction('Gerou Backup', 'Baixou arquivo compactado com todos os dados e arquivos do sistema.');
+        } catch (error: any) {
+            console.error('Erro no backup:', error);
+            setMessage({ type: 'error', text: 'Erro ao baixar backup: ' + error.message });
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleCreateUser = async (e: React.FormEvent) => {
@@ -588,10 +618,45 @@ export default function ConfiguracoesPage() {
                         </div>
                     )}
 
-                    {/* Secão de Log de Ações (Apenas Admin) */}
+                    {/* Seção Log de Ações (Apenas Admin) */}
                     {currentUserRole === 'admin' && (
-                        <div className="mt-8 bg-panel glass-elite p-8 border border-panel-border shadow-sm">
-                            <div className="flex items-center justify-between mb-6">
+                        <>
+                            <div className="mt-8 bg-panel glass-elite p-8 border border-panel-border shadow-sm">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                        <Database className="w-5 h-5" />
+                                    </div>
+                                    <h2 className="text-xl font-bold">Segurança e Backup</h2>
+                                </div>
+
+                                <p className="text-sm text-accent mb-6 leading-relaxed">
+                                    Baixe um arquivo compactado (.zip) contendo todas as planilhas de dados (Excel) e os anexos (Documentos, Fotos) salvos no servidor.
+                                </p>
+
+                                <div className="bg-black/5 dark:bg-white/5 p-6 rounded-2xl border border-panel-border flex flex-col md:flex-row items-center justify-between gap-4">
+                                    <div className="flex items-center gap-4 text-accent">
+                                        <div className="p-3 bg-blue-500/5 rounded-full">
+                                            <Shield className="w-6 h-6 text-blue-500" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-foreground">Backup Completo</h3>
+                                            <p className="text-[10px] uppercase font-black tracking-widest">Planilhas XLSX + Anexos ZIP</p>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={handleDownloadBackup}
+                                        disabled={loading}
+                                        className="btn-elite px-6 py-3 flex items-center gap-2 text-xs bg-blue-500 hover:bg-blue-600 border-none shadow-blue-500/20"
+                                    >
+                                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
+                                        Baixar Backup (.zip)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 bg-panel glass-elite p-8 border border-panel-border shadow-sm">
+                                <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
                                         <List className="w-5 h-5" />
@@ -653,6 +718,7 @@ export default function ConfiguracoesPage() {
                                 )}
                             </div>
                         </div>
+                        </>
                     )}
 
                     <div className="mt-10 flex justify-end">

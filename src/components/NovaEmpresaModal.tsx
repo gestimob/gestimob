@@ -1189,17 +1189,17 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                     <AnimatePresence>
                                         {ocrResult && (
                                             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                                className="absolute bottom-32 inset-x-10 bg-primary rounded-[30px] p-6 shadow-2xl z-50 flex items-center justify-between border border-white/20 backdrop-blur-xl">
+                                                className="absolute bottom-32 inset-x-10 bg-primary text-primary-foreground rounded-[30px] p-6 shadow-2xl z-50 flex items-center justify-between border border-white/20 backdrop-blur-xl">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shrink-0"><Sparkles className="w-6 h-6 text-foreground" /></div>
+                                                    <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shrink-0"><Sparkles className="w-6 h-6 text-primary-foreground" /></div>
                                                     <div>
-                                                        <h4 className="text-sm font-black text-foreground uppercase italic leading-none">Dados Identificados!</h4>
-                                                        <p className="text-blue-100 text-[9px] font-bold uppercase tracking-widest mt-1 opacity-80">Deseja preencher automaticamente?</p>
+                                                        <h4 className="text-sm font-black text-primary-foreground uppercase italic leading-none">Dados Identificados!</h4>
+                                                        <p className="text-primary-foreground/70 text-[9px] font-bold uppercase tracking-widest mt-1 opacity-80">Deseja preencher automaticamente?</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-4">
-                                                    <button type="button" onClick={() => setOcrResult(null)} className="text-[10px] font-black text-foreground uppercase tracking-widest px-4">Recusar</button>
-                                                    <button type="button" onClick={applyOCR} className="bg-white text-blue-600 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all"><Wand2 className="w-4 h-4" /> Preencher Ficha</button>
+                                                    <button type="button" onClick={() => setOcrResult(null)} className="text-[10px] font-black text-primary-foreground uppercase tracking-widest px-4">Recusar</button>
+                                                    <button type="button" onClick={applyOCR} className="bg-primary-foreground text-primary px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2 hover:scale-105 transition-all"><Wand2 className="w-4 h-4" /> Preencher Ficha</button>
                                                 </div>
                                             </motion.div>
                                         )}

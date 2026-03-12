@@ -921,22 +921,22 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                 <AnimatePresence>
                                                     {ocrResult && (
                                                         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-                                                            className="absolute inset-x-10 bottom-32 bg-primary rounded-[32px] p-8 shadow-2xl z-50 flex flex-col md:flex-row items-center justify-between gap-6 border border-white/20 backdrop-blur-xl">
+                                                            className="absolute inset-x-10 bottom-32 bg-primary text-primary-foreground rounded-[32px] p-8 shadow-2xl z-50 flex flex-col md:flex-row items-center justify-between gap-6 border border-white/20 backdrop-blur-xl">
                                                             <div className="flex items-center gap-5">
-                                                                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0"><Sparkles className="w-7 h-7 text-foreground" /></div>
+                                                                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0"><Sparkles className="w-7 h-7 text-primary-foreground" /></div>
                                                                 <div>
-                                                                    <h4 className="text-lg font-black text-foreground uppercase italic leading-none">Dados Identificados!</h4>
-                                                                    <p className="text-blue-100 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Encontramos informações que podem preencher o formulário.</p>
+                                                                    <h4 className="text-lg font-black text-primary-foreground uppercase italic leading-none">Dados Identificados!</h4>
+                                                                    <p className="text-primary-foreground/80 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Encontramos informações que podem preencher o formulário.</p>
                                                                 </div>
                                                             </div>
                                                             <div className="flex bg-white/10 rounded-2xl p-4 gap-6 overflow-x-auto">
-                                                                {ocrResult.extractedData.name && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">Nome</span><span className="text-xs font-bold text-foreground uppercase">{ocrResult.extractedData.name}</span></div>}
-                                                                {(ocrResult.extractedData.cpf || ocrResult.extractedData.cnpj) && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">Documento</span><span className="text-xs font-bold text-foreground">{ocrResult.extractedData.cpf || ocrResult.extractedData.cnpj}</span></div>}
-                                                                {ocrResult.extractedData.rg && <div className="shrink-0"><span className="block text-[8px] font-black text-blue-200 uppercase">RG</span><span className="text-xs font-bold text-foreground">{ocrResult.extractedData.rg}</span></div>}
+                                                                {ocrResult.extractedData.name && <div className="shrink-0"><span className="block text-[8px] font-black text-primary-foreground/60 uppercase">Nome</span><span className="text-xs font-bold text-primary-foreground uppercase">{ocrResult.extractedData.name}</span></div>}
+                                                                {(ocrResult.extractedData.cpf || ocrResult.extractedData.cnpj) && <div className="shrink-0"><span className="block text-[8px] font-black text-primary-foreground/60 uppercase">Documento</span><span className="text-xs font-bold text-primary-foreground">{ocrResult.extractedData.cpf || ocrResult.extractedData.cnpj}</span></div>}
+                                                                {ocrResult.extractedData.rg && <div className="shrink-0"><span className="block text-[8px] font-black text-primary-foreground/60 uppercase">RG</span><span className="text-xs font-bold text-primary-foreground">{ocrResult.extractedData.rg}</span></div>}
                                                             </div>
                                                             <div className="flex gap-3">
-                                                                <button type="button" onClick={() => setOcrResult(null)} className="px-6 py-3 rounded-xl text-[10px] font-black text-foreground uppercase tracking-widest hover:bg-black/10 dark:hover:bg-white/10 transition-all">Descartar</button>
-                                                                <button type="button" onClick={applyOCR} className="bg-white text-blue-600 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center gap-2"><Wand2 className="w-4 h-4" /> Preencher Ficha</button>
+                                                                <button type="button" onClick={() => setOcrResult(null)} className="px-6 py-3 rounded-xl text-[10px] font-black text-primary-foreground uppercase tracking-widest hover:bg-black/10 dark:hover:bg-white/10 transition-all">Descartar</button>
+                                                                <button type="button" onClick={applyOCR} className="bg-primary-foreground text-primary px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center gap-2"><Wand2 className="w-4 h-4" /> Preencher Ficha</button>
                                                             </div>
                                                         </motion.div>
                                                     )}

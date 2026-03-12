@@ -588,7 +588,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                     <AnimatePresence>
                                         {ocrResult && (
                                             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-                                                className="absolute bottom-10 inset-x-10 bg-primary rounded-[32px] p-6 shadow-2xl z-50 flex items-center justify-between">
+                                                className="absolute bottom-10 inset-x-10 bg-primary text-primary-foreground rounded-[32px] p-6 shadow-2xl z-50 flex items-center justify-between border border-white/(0.1)">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shadow-lg shrink-0"><Sparkles className="w-6 h-6 text-primary-foreground" /></div>
                                                     <div className="space-y-1">
@@ -598,7 +598,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                                 </div>
                                                 <div className="flex gap-3">
                                                     <button type="button" onClick={() => setOcrResult(null)} className="px-5 py-3 text-[10px] font-black text-primary-foreground uppercase tracking-widest hover:bg-black/10 rounded-xl transition-all">Cancelar</button>
-                                                    <button type="button" onClick={applyOCR} className="bg-background text-foreground px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center gap-2"><Wand2 className="w-4 h-4" /> Preencher</button>
+                                                    <button type="button" onClick={applyOCR} className="bg-primary-foreground text-primary px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all flex items-center gap-2"><Wand2 className="w-4 h-4" /> Preencher</button>
                                                 </div>
                                             </motion.div>
                                         )}

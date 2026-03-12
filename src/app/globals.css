@@ -7,6 +7,7 @@
   --color-panel-border: var(--panel-border);
   --color-panel-border-hover: var(--panel-border-hover);
   --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --color-primary-glow: var(--primary-glow);
   --color-accent: var(--accent);
   --color-text-dim: var(--text-dim);
@@ -24,6 +25,7 @@
     --panel-border: rgba(0, 0, 0, 0.08);
     --panel-border-hover: rgba(0, 0, 0, 0.15);
     --primary: #1A1A1C;
+    --primary-foreground: #FFFFFF;
     --primary-glow: rgba(0, 0, 0, 0.05);
     --accent: #4A4A4F;
     --text-dim: #71717A;
@@ -41,6 +43,7 @@
     --panel-border: rgba(255, 255, 255, 0.08);
     --panel-border-hover: rgba(255, 255, 255, 0.15);
     --primary: #EAEAEA;
+    --primary-foreground: #0B0B0C;
     --primary-glow: rgba(255, 255, 255, 0.1);
     --accent: #A0A0A0;
     --text-dim: #666666;

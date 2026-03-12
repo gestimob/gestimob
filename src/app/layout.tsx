@@ -23,6 +23,8 @@ export const metadata: Metadata = {
   description: "A plataforma definitiva para gestão de imóveis, contratos e clientes.",
   icons: {
     icon: "https://jkgkwzyxtmqmhaypobba.supabase.co/storage/v1/object/public/configuracoes/favicon-rr.svg",
+    shortcut: "https://jkgkwzyxtmqmhaypobba.supabase.co/storage/v1/object/public/configuracoes/favicon-rr.svg",
+    apple: "https://jkgkwzyxtmqmhaypobba.supabase.co/storage/v1/object/public/configuracoes/favicon-rr.svg",
   },
 };
 

@@ -64,7 +64,8 @@ const initialFormState = {
     area_m2: 0, quartos: 0, suites: 0, banheiros: 0, vagas: 0, andar_imovel: "", valor_aluguel: 0, valor_condominio: 0,
     cep: "", endereco: "", logradouro: "", numero: "", complemento: "", bairro: "", cidade: "", estado: "",
     inscricao_iptu: "", iptu_vencimento: "", iptu_pdf_url: "", num_energisa: "", num_cagepa: "", num_matricula: "", arquivo_matricula_url: "",
-    empresa_id: "", proprietario_id: "", fotos_urls: [], tipo_proprietario_principal: "PF", proprietarios_secundarios: []
+    empresa_id: "", proprietario_id: "", fotos_urls: [], tipo_proprietario_principal: "PF", proprietarios_secundarios: [],
+    impresso_no_contrato: true // Proprietário principal sempre true
 };
 
 export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: ModalProps) {
@@ -297,6 +298,7 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
             }
 
             delete finalData.tipo_proprietario_principal;
+            delete finalData.impresso_no_contrato; // Not a DB column, used for UI only
 
             if (finalData.proprietarios_secundarios) {
                 finalData.proprietarios_secundarios = finalData.proprietarios_secundarios.filter((p: any) => p.id && String(p.id).trim() !== "");
@@ -374,80 +376,122 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                                     <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10">
                                         <AnimatePresence mode="wait">
                                             {activeTab === 'basico' && (
-                                                <motion.div key="basico" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                                                    <div className="col-span-2 md:col-span-4 space-y-2">
-                                                        <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Proprietário Principal *</label>
-                                                        <div className="flex gap-2 mb-2 bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-panel-border max-w-[200px]">
-                                                            <button type="button" onClick={() => setFormData({ ...formData, tipo_proprietario_principal: "PF", proprietario_id: "", empresa_id: "" })}
-                                                                className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario_principal === "PF" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PF</button>
-                                                            <button type="button" onClick={() => setFormData({ ...formData, tipo_proprietario_principal: "PJ", proprietario_id: "", empresa_id: "" })}
-                                                                className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario_principal === "PJ" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PJ</button>
-                                                        </div>
-                                                        <select required value={formData.tipo_proprietario_principal === "PF" ? (formData.proprietario_id || "") : (formData.empresa_id || "")} onChange={(e) => setFormData(formData.tipo_proprietario_principal === "PF" ? { ...formData, proprietario_id: e.target.value } : { ...formData, empresa_id: e.target.value })}
-                                                            className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-4 md:px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none">
-                                                            <option value="" className="bg-[#121212] text-white underline-none">Selecione um {formData.tipo_proprietario_principal === "PF" ? "proprietário" : "empresa"}...</option>
-                                                            {(formData.tipo_proprietario_principal === "PF" ? proprietarios : empresas).map((p: any) => (
-                                                                <option key={p.id} value={p.id} className="bg-[#121212] text-white">{p.nome_completo || p.nome_fantasia}</option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-
-                                                    <div className="col-span-2 md:col-span-4 mt-2">
-                                                        <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1 block mb-2">Proprietários Adicionais</label>
-                                                        {(formData.proprietarios_secundarios || []).map((sec: any, idx: number) => (
-                                                            <div key={idx} className="flex gap-4 items-end mb-4 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-panel-border">
-                                                                <div className="flex-1 space-y-2">
-                                                                    <div className="flex gap-2 bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-panel-border w-fit">
-                                                                        <button type="button" onClick={() => {
-                                                                            const newSec = [...formData.proprietarios_secundarios];
-                                                                            newSec[idx] = { ...newSec[idx], tipo: 'PF', id: '' };
-                                                                            setFormData({ ...formData, proprietarios_secundarios: newSec });
-                                                                        }} className={cn("px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", sec.tipo === "PF" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PF</button>
-                                                                        <button type="button" onClick={() => {
-                                                                            const newSec = [...formData.proprietarios_secundarios];
-                                                                            newSec[idx] = { ...newSec[idx], tipo: 'PJ', id: '' };
-                                                                            setFormData({ ...formData, proprietarios_secundarios: newSec });
-                                                                        }} className={cn("px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", sec.tipo === "PJ" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PJ</button>
-                                                                    </div>
-                                                                    <select value={sec.id || ""} onChange={(e) => {
-                                                                        const newSec = [...formData.proprietarios_secundarios];
-                                                                        newSec[idx].id = e.target.value;
-                                                                        setFormData({ ...formData, proprietarios_secundarios: newSec });
-                                                                    }} className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none">
-                                                                        <option value="" className="bg-[#121212] text-white">Selecione...</option>
-                                                                        {(sec.tipo === "PF" ? proprietarios : empresas).map((p: any) => (
-                                                                            <option key={p.id} value={p.id} className="bg-[#121212] text-white">{p.nome_completo || p.nome_fantasia}</option>
-                                                                        ))}
-                                                                    </select>
+                                                <motion.div key="basico" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                                                    <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
+                                                        {/* Left Side: Owner Fields */}
+                                                        <div className="flex-1 space-y-6">
+                                                            <div className="space-y-2">
+                                                                <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Proprietário Principal *</label>
+                                                                <div className="flex gap-2 mb-2 bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-panel-border max-w-[200px]">
+                                                                    <button type="button" onClick={() => setFormData({ ...formData, tipo_proprietario_principal: "PF", proprietario_id: "", empresa_id: "" })}
+                                                                        className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario_principal === "PF" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PF</button>
+                                                                    <button type="button" onClick={() => setFormData({ ...formData, tipo_proprietario_principal: "PJ", proprietario_id: "", empresa_id: "" })}
+                                                                        className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario_principal === "PJ" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PJ</button>
                                                                 </div>
-                                                                <button type="button" onClick={() => {
-                                                                    const newSec = formData.proprietarios_secundarios.filter((_: any, i: number) => i !== idx);
-                                                                    setFormData({ ...formData, proprietarios_secundarios: newSec });
-                                                                }} className="w-11 h-11 shrink-0 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500/20 transition-all border border-red-500/20">
-                                                                    <Trash2 className="w-5 h-5" />
+                                                                <select required value={formData.tipo_proprietario_principal === "PF" ? (formData.proprietario_id || "") : (formData.empresa_id || "")} onChange={(e) => setFormData(formData.tipo_proprietario_principal === "PF" ? { ...formData, proprietario_id: e.target.value } : { ...formData, empresa_id: e.target.value })}
+                                                                    className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-4 md:px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none">
+                                                                    <option value="" className="bg-[#121212] text-white underline-none">Selecione um {formData.tipo_proprietario_principal === "PF" ? "proprietário" : "empresa"}...</option>
+                                                                    {(formData.tipo_proprietario_principal === "PF" ? proprietarios : empresas).map((p: any) => (
+                                                                        <option key={p.id} value={p.id} className="bg-[#121212] text-white">{p.nome_completo || p.nome_fantasia}</option>
+                                                                    ))}
+                                                                </select>
+                                                            </div>
+
+                                                            <div className="mt-2">
+                                                                <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1 block mb-2">Proprietários Adicionais</label>
+                                                                {(formData.proprietarios_secundarios || []).map((sec: any, idx: number) => (
+                                                                    <div key={idx} className="flex gap-3 items-end mb-4 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-panel-border">
+                                                                        <div className="flex-1 space-y-2">
+                                                                            <div className="flex gap-2 bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-panel-border w-fit">
+                                                                                <button type="button" onClick={() => {
+                                                                                    const newSec = [...formData.proprietarios_secundarios];
+                                                                                    newSec[idx] = { ...newSec[idx], tipo: 'PF', id: '' };
+                                                                                    setFormData({ ...formData, proprietarios_secundarios: newSec });
+                                                                                }} className={cn("px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", sec.tipo === "PF" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PF</button>
+                                                                                <button type="button" onClick={() => {
+                                                                                    const newSec = [...formData.proprietarios_secundarios];
+                                                                                    newSec[idx] = { ...newSec[idx], tipo: 'PJ', id: '' };
+                                                                                    setFormData({ ...formData, proprietarios_secundarios: newSec });
+                                                                                }} className={cn("px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", sec.tipo === "PJ" ? "bg-primary text-background shadow-lg" : "text-accent hover:text-foreground")}>PJ</button>
+                                                                            </div>
+                                                                            <select value={sec.id || ""} onChange={(e) => {
+                                                                                const newSec = [...formData.proprietarios_secundarios];
+                                                                                newSec[idx].id = e.target.value;
+                                                                                setFormData({ ...formData, proprietarios_secundarios: newSec });
+                                                                            }} className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none">
+                                                                                <option value="" className="bg-[#121212] text-white">Selecione...</option>
+                                                                                {(sec.tipo === "PF" ? proprietarios : empresas).map((p: any) => (
+                                                                                    <option key={p.id} value={p.id} className="bg-[#121212] text-white">{p.nome_completo || p.nome_fantasia}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                        </div>
+                                                                        <button type="button" onClick={() => {
+                                                                            const newSec = formData.proprietarios_secundarios.filter((_: any, i: number) => i !== idx);
+                                                                            setFormData({ ...formData, proprietarios_secundarios: newSec });
+                                                                        }} className="w-11 h-11 shrink-0 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500/20 transition-all border border-red-500/20">
+                                                                            <Trash2 className="w-5 h-5" />
+                                                                        </button>
+                                                                    </div>
+                                                                ))}
+                                                                <button type="button" onClick={() => setFormData({ ...formData, proprietarios_secundarios: [...(formData.proprietarios_secundarios || []), { id: '', tipo: 'PF', no_contrato: true }] })}
+                                                                    className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors flex items-center gap-2 mt-2">
+                                                                    + Adicionar Proprietário
                                                                 </button>
                                                             </div>
-                                                        ))}
-                                                        <button type="button" onClick={() => setFormData({ ...formData, proprietarios_secundarios: [...(formData.proprietarios_secundarios || []), { id: '', tipo: 'PF' }] })}
-                                                            className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors flex items-center gap-2 mt-2">
-                                                            + Adicionar Proprietário
-                                                        </button>
+                                                        </div>
+
+                                                        {/* Right Side: Contract Selection */}
+                                                        <div className="w-full lg:w-80 shrink-0">
+                                                            <div className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl p-6 h-full">
+                                                                <h4 className="text-[10px] font-black text-accent uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                                    <FileText className="w-4 h-4 text-primary" /> Impresso no Contrato:
+                                                                </h4>
+                                                                <div className="space-y-3">
+                                                                    {/* Primary Owner Checkbox */}
+                                                                    <label className="flex items-center gap-3 p-3 bg-background border border-panel-border rounded-xl cursor-not-allowed opacity-80">
+                                                                        <input type="checkbox" checked={true} disabled className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
+                                                                        <span className="text-xs font-bold text-foreground truncate">
+                                                                            {(formData.tipo_proprietario_principal === "PF" 
+                                                                                ? proprietarios.find(p => p.id === formData.proprietario_id)?.nome_completo 
+                                                                                : empresas.find(e => e.id === formData.empresa_id)?.nome_fantasia) || 'Proprietário Principal'}
+                                                                        </span>
+                                                                    </label>
+
+                                                                    {/* Secondary Owners Checkboxes */}
+                                                                    {(formData.proprietarios_secundarios || []).map((sec: any, idx: number) => {
+                                                                        const name = (sec.tipo === "PF" ? proprietarios : empresas).find(p => p.id === sec.id)?.nome_completo || (sec.tipo === "PF" ? proprietarios : empresas).find(p => p.id === sec.id)?.nome_fantasia || 'Novo Proprietário';
+                                                                        return (
+                                                                            <label key={`contract-${idx}`} className="flex items-center gap-3 p-3 bg-background border border-panel-border rounded-xl cursor-pointer hover:border-primary transition-all">
+                                                                                <input type="checkbox" checked={sec.no_contrato !== false} onChange={(e) => {
+                                                                                    const newSec = [...formData.proprietarios_secundarios];
+                                                                                    newSec[idx].no_contrato = e.target.checked;
+                                                                                    setFormData({ ...formData, proprietarios_secundarios: newSec });
+                                                                                }} className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
+                                                                                <span className="text-xs font-bold text-foreground truncate">{name}</span>
+                                                                            </label>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
-                                                    <Input label="Nome / Identificação do Imóvel" value={formData.nome_identificacao} onChange={(e: any) => setFormData({ ...formData, nome_identificacao: e.target.value })} colSpan="col-span-2 md:col-span-4" placeholder="Ex: Apto 101 Beira Mar, Galpão Logístico..." />
-                                                    <Select label="Tipo de Imóvel" value={formData.tipo} onChange={(e: any) => setFormData({ ...formData, tipo: e.target.value })} options={[{ label: 'Apartamento', value: 'Apartamento' }, { label: 'Casa', value: 'Casa' }, { label: 'Comercial', value: 'Comercial' }, { label: 'Terreno', value: 'Terreno' }, { label: 'Galpão', value: 'Galpão' }]} colSpan="col-span-1 md:col-span-2" />
-                                                    <Select label="Status" value={formData.status} onChange={(e: any) => setFormData({ ...formData, status: e.target.value })} options={[{ label: 'Disponível', value: 'Disponível' }, { label: 'Alugado', value: 'Alugado' }, { label: 'Inativo', value: 'Inativo' }]} colSpan="col-span-1 md:col-span-1" />
-                                                    <Select label="Tipo Aluguel" value={formData.tipo_aluguel} onChange={(e: any) => setFormData({ ...formData, tipo_aluguel: e.target.value })} options={[{ label: 'Residencial', value: 'Residencial' }, { label: 'Comercial', value: 'Comercial' }]} colSpan="col-span-2 md:col-span-1" />
-                                                    <CurrencyInput label="Valor Aluguel" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-2 md:col-span-2" />
-                                                    <CurrencyInput label="Valor Condomínio" value={formData.valor_condominio} onChange={(val: number) => setFormData({ ...formData, valor_condominio: val })} colSpan="col-span-2 md:col-span-2" />
+                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-10 border-t border-panel-border pt-10">
+                                                        <Input label="Nome / Identificação do Imóvel" value={formData.nome_identificacao} onChange={(e: any) => setFormData({ ...formData, nome_identificacao: e.target.value })} colSpan="col-span-2 md:col-span-4" placeholder="Ex: Apto 101 Beira Mar, Galpão Logístico..." />
+                                                        <Select label="Tipo de Imóvel" value={formData.tipo} onChange={(e: any) => setFormData({ ...formData, tipo: e.target.value })} options={[{ label: 'Apartamento', value: 'Apartamento' }, { label: 'Casa', value: 'Casa' }, { label: 'Comercial', value: 'Comercial' }, { label: 'Terreno', value: 'Terreno' }, { label: 'Galpão', value: 'Galpão' }]} colSpan="col-span-1 md:col-span-2" />
+                                                        <Select label="Status" value={formData.status} onChange={(e: any) => setFormData({ ...formData, status: e.target.value })} options={[{ label: 'Disponível', value: 'Disponível' }, { label: 'Alugado', value: 'Alugado' }, { label: 'Inativo', value: 'Inativo' }]} colSpan="col-span-1 md:col-span-1" />
+                                                        <Select label="Tipo Aluguel" value={formData.tipo_aluguel} onChange={(e: any) => setFormData({ ...formData, tipo_aluguel: e.target.value })} options={[{ label: 'Residencial', value: 'Residencial' }, { label: 'Comercial', value: 'Comercial' }]} colSpan="col-span-2 md:col-span-1" />
+                                                        <CurrencyInput label="Valor Aluguel" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-2 md:col-span-2" />
+                                                        <CurrencyInput label="Valor Condomínio" value={formData.valor_condominio} onChange={(val: number) => setFormData({ ...formData, valor_condominio: val })} colSpan="col-span-2 md:col-span-2" />
 
-                                                    <div className="col-span-2 md:col-span-4 grid grid-cols-3 md:grid-cols-6 gap-4 mt-4 bg-black/5 dark:bg-white/5 p-4 md:p-6 rounded-2xl border border-panel-border">
-                                                        <Input label="Área (m²)" value={formData.area_m2} onChange={(e: any) => setFormData({ ...formData, area_m2: e.target.value })} type="number" colSpan="col-span-1" />
-                                                        <Input label="Quartos" value={formData.quartos} onChange={(e: any) => setFormData({ ...formData, quartos: e.target.value })} type="number" colSpan="col-span-1" />
-                                                        <Input label="Suítes" value={formData.suites} onChange={(e: any) => setFormData({ ...formData, suites: e.target.value })} type="number" colSpan="col-span-1" />
-                                                        <Input label="Banheiros" value={formData.banheiros} onChange={(e: any) => setFormData({ ...formData, banheiros: e.target.value })} type="number" colSpan="col-span-1" />
-                                                        <Input label="Vagas" value={formData.vagas} onChange={(e: any) => setFormData({ ...formData, vagas: e.target.value })} type="number" colSpan="col-span-1" />
-                                                        <Input label="Andar" value={formData.andar_imovel} onChange={(e: any) => setFormData({ ...formData, andar_imovel: e.target.value })} colSpan="col-span-1" />
+                                                        <div className="col-span-2 md:col-span-4 grid grid-cols-3 md:grid-cols-6 gap-4 mt-4 bg-black/5 dark:bg-white/5 p-4 md:p-6 rounded-2xl border border-panel-border">
+                                                            <Input label="Área (m²)" value={formData.area_m2} onChange={(e: any) => setFormData({ ...formData, area_m2: e.target.value })} type="number" colSpan="col-span-1" />
+                                                            <Input label="Quartos" value={formData.quartos} onChange={(e: any) => setFormData({ ...formData, quartos: e.target.value })} type="number" colSpan="col-span-1" />
+                                                            <Input label="Suítes" value={formData.suites} onChange={(e: any) => setFormData({ ...formData, suites: e.target.value })} type="number" colSpan="col-span-1" />
+                                                            <Input label="Banheiros" value={formData.banheiros} onChange={(e: any) => setFormData({ ...formData, banheiros: e.target.value })} type="number" colSpan="col-span-1" />
+                                                            <Input label="Vagas" value={formData.vagas} onChange={(e: any) => setFormData({ ...formData, vagas: e.target.value })} type="number" colSpan="col-span-1" />
+                                                            <Input label="Andar" value={formData.andar_imovel} onChange={(e: any) => setFormData({ ...formData, andar_imovel: e.target.value })} colSpan="col-span-1" />
+                                                        </div>
                                                     </div>
                                                 </motion.div>
                                             )}

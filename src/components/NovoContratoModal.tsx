@@ -165,6 +165,42 @@ function addMonths(dateStr: string, months: number) {
 }
 
 const dataBR = (d: string) => d ? d.split('-').reverse().join('/') : "";
+
+function maskCPF(cpf: string) {
+    if (!cpf) return "N/A";
+    const clean = cpf.replace(/\D/g, "");
+    if (clean.length !== 11) return cpf;
+    return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}
+
+function maskCNPJ(cnpj: string) {
+    if (!cnpj) return "N/A";
+    const clean = cnpj.replace(/\D/g, "");
+    if (clean.length !== 14) return cnpj;
+    return clean.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+}
+
+function maskCEP(cep: string) {
+    if (!cep) return "N/A";
+    const clean = cep.replace(/\D/g, "");
+    if (clean.length !== 8) return cep;
+    return clean.replace(/(\d{5})(\d{3})/, "$1-$2");
+}
+
+function maskDocumento(doc: string) {
+    if (!doc) return "N/A";
+    const clean = doc.replace(/\D/g, "");
+    if (clean.length === 11) return maskCPF(clean);
+    if (clean.length === 14) return maskCNPJ(clean);
+    return doc;
+}
+
+function maskPIX(key: string) {
+    if (!key) return "";
+    const clean = key.replace(/\D/g, "");
+    if (clean.length === 11 || clean.length === 14) return maskDocumento(clean);
+    return key;
+}
 // const formatBRL = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v); // Already imported from @/lib/utils
 
 export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isReadOnly }: ModalProps) {
@@ -517,15 +553,15 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                 const locadoresBlocks = activeOwners.map(locador => {
                     const locadorNome = locador.nome_completo || locador.nome_fantasia || locador.razao_social || 'N/A';
-                    const locadorDoc = locador.documento || locador.cnpj || 'N/A';
-                    const locadorAddress = `${locador.logradouro || ''}${locador.numero ? ', n° ' + locador.numero : ''}${locador.complemento ? ' (' + locador.complemento + ')' : ''}${locador.bairro ? ', ' + locador.bairro : ''}, ${locador.cidade || ''} - ${locador.estado || ''}${locador.cep ? ', CEP ' + locador.cep : ''}`;
+                    const locadorDoc = maskDocumento(locador.documento || locador.cnpj || 'N/A');
+                    const locadorAddress = `${locador.logradouro || ''}${locador.numero ? ', n° ' + locador.numero : ''}${locador.complemento ? ' (' + locador.complemento + ')' : ''}${locador.bairro ? ', ' + locador.bairro : ''}, ${locador.cidade || ''} - ${locador.estado || ''}${locador.cep ? ', CEP ' + maskCEP(locador.cep) : ''}`;
 
                     let representanteText = '';
                     let representanteLabel = 'representante legal';
                     if (locador.empresa_responsaveis && locador.empresa_responsaveis.length > 0) {
                         representanteText = locador.empresa_responsaveis.map((r: any) => {
-                            const enderecoCompl = `${r.logradouro || ''}${r.numero ? ', n° ' + r.numero : ''}${r.complemento ? ' (' + r.complemento + ')' : ''}${r.bairro ? ', ' + r.bairro : ''}, ${r.cidade || ''} - ${r.estado || ''}${r.cep ? ', CEP ' + r.cep : ''}`;
-                            return `<b>${r.nome}</b>, ${r.nacionalidade || 'Nacionalidade não informada'}, ${r.estado_civil || 'Estado civil não informado'}, portador(a) do RG nº ${r.rg || 'N/A'} SSP/${r.orgao_emissor || 'N/A'} e inscrito(a) no CPF sob o nº ${r.cpf || 'N/A'}, residente e domiciliado(a) em ${enderecoCompl || 'Endereço não informado'}`;
+                            const enderecoCompl = `${r.logradouro || ''}${r.numero ? ', n° ' + r.numero : ''}${r.complemento ? ' (' + r.complemento + ')' : ''}${r.bairro ? ', ' + r.bairro : ''}, ${r.cidade || ''} - ${r.estado || ''}${r.cep ? ', CEP ' + maskCEP(r.cep) : ''}`;
+                            return `<b>${r.nome}</b>, ${r.nacionalidade || 'Nacionalidade não informada'}, ${r.estado_civil || 'Estado civil não informado'}, portador(a) do RG nº ${r.rg || 'N/A'} SSP/${r.orgao_emissor || 'N/A'} e inscrito(a) no CPF sob o nº ${maskCPF(r.cpf)}, residente e domiciliado(a) em ${enderecoCompl || 'Endereço não informado'}`;
                         }).join(' e ');
                         if (locador.empresa_responsaveis.length > 1) representanteLabel = 'representantes legais';
                         representanteText = `, ${representanteLabel} ${representanteText}`;
@@ -540,9 +576,9 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                 const locatId = selected.cliente_id;
                 const locatObj = clientsList.find((c: any) => c.id === locatId) || selected.clientes || {};
-                const locatAddress = `${locatObj.logradouro || ''}${locatObj.numero ? ', n° ' + locatObj.numero : ''}${locatObj.complemento ? ' (' + locatObj.complemento + ')' : ''}${locatObj.bairro ? ', ' + locatObj.bairro : ''}, ${locatObj.cidade || ''} - ${locatObj.estado || ''}${locatObj.cep ? ', CEP ' + locatObj.cep : ''}`;
+                const locatAddress = `${locatObj.logradouro || ''}${locatObj.numero ? ', n° ' + locatObj.numero : ''}${locatObj.complemento ? ' (' + locatObj.complemento + ')' : ''}${locatObj.bairro ? ', ' + locatObj.bairro : ''}, ${locatObj.cidade || ''} - ${locatObj.estado || ''}${locatObj.cep ? ', CEP ' + maskCEP(locatObj.cep) : ''}`;
 
-                const locatText = `<div style="text-align: justify"><b>1.2 – LOCATÁRIO(A):</b> Como <b>LOCATÁRIO(A)</b>, forma pela qual será doravante, no presente instrumento, abreviadamente designado, <b>${locatObj.nome_completo || 'N/A'}</b>, inscrito no CPF/CNPJ sob o nº ${(locatObj.documento || 'N/A')}, residente e domiciliado em ${locatAddress || 'Endereço não informado'}. Contato ${locatObj.telefone || ''}, e-mail: ${locatObj.email || ''}</div>`;
+                const locatText = `<div style="text-align: justify"><b>1.2 – LOCATÁRIO(A):</b> Como <b>LOCATÁRIO(A)</b>, forma pela qual será doravante, no presente instrumento, abreviadamente designado, <b>${locatObj.nome_completo || 'N/A'}</b>, inscrito no CPF/CNPJ sob o nº ${maskDocumento(locatObj.documento || 'N/A')}, residente e domiciliado em ${locatAddress || 'Endereço não informado'}. Contato ${locatObj.telefone || ''}, e-mail: ${locatObj.email || ''}</div>`;
 
                 let fiadText = "";
                 if (selected.tipo_garantia === "Fiador") {
@@ -556,8 +592,10 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                     if (fiadoresObjs.length > 0) {
                         const fiadoresStr = fiadoresObjs.map((f: any) => {
-                            const fAddress = `${f.logradouro || ''}${f.numero ? ', n° ' + f.numero : ''}${f.complemento ? ' (' + f.complemento + ')' : ''}${f.bairro ? ', ' + f.bairro : ''}, ${f.cidade || ''} - ${f.estado || ''}${f.cep ? ', CEP ' + f.cep : ''}`;
-                            return `<b>${f.nome_completo}</b>, inscrito no CPF/CNPJ sob o nº ${f.documento}, residente e domiciliado em ${fAddress}`;
+                            const fAddress = `${f.logradouro || ''}${f.numero ? ', n° ' + f.numero : ''}${f.complemento ? ' (' + f.complemento + ')' : ''}${f.bairro ? ', ' + f.bairro : ''}, ${f.cidade || ''} - ${f.estado || ''}${f.cep ? ', CEP ' + maskCEP(f.cep) : ''}`;
+                            const extraInfo = [f.nacionalidade, f.estado_civil, f.profissao].filter(Boolean).join(', ');
+                            const extraInfoStr = extraInfo ? `, ${extraInfo}` : '';
+                            return `<b>${f.nome_completo}</b>${extraInfoStr}, inscrito no CPF/CNPJ sob o nº ${maskDocumento(f.documento || 'N/A')}, residente e domiciliado em ${fAddress}`;
                         }).join(" e ");
                         fiadText = `<br><div style="text-align: justify"><b>1.3 – FIADOR(ES):</b> Como <b>FIADOR(ES)</b>, forma pela qual será doravante, no presente instrumento, abreviadamente designado, ${fiadoresStr}.</div>`;
                     }
@@ -608,7 +646,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
 
                 if (selectedBankAccounts.length > 0) {
                     const bankLines = selectedBankAccounts.map(acc => {
-                        return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${acc.chave_pix}`;
+                        return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}`;
                     }).join(" ou ");
                     bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLines} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
                 } else if (locador.dados_bancarios && Array.isArray(locador.dados_bancarios) && locador.dados_bancarios.length > 0) {
@@ -616,7 +654,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                         // Se houver apenas uma conta, seleciona automaticamente e gera o texto
                         const acc = locador.dados_bancarios[0];
                         setSelectedBankAccounts([acc]);
-                        const bankLine = `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${acc.chave_pix}`;
+                        const bankLine = `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}`;
                         bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLine} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
                     } else {
                         // Se houver mais de uma, abre o modal de seleção

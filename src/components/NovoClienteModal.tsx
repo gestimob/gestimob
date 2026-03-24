@@ -39,6 +39,12 @@ const maskPhone = (value: string) => {
     return `(${val.slice(0, 2)}) ${val.slice(2, 7)}-${val.slice(7, 11)}`;
 };
 
+const maskCEP = (value: string) => {
+    const val = value.replace(/\D/g, "");
+    if (val.length <= 5) return val;
+    return val.replace(/(\d{5})(\d{1,3})/, "$1-$2").slice(0, 9);
+};
+
 const formatBRL = (val: number | string) => {
     if (val === undefined || val === null) return "";
     const numericVal = typeof val === 'string' ? parseFloat(val) : val;
@@ -55,13 +61,13 @@ interface ModalProps {
 
 type TabType = 'basico' | 'representantes' | 'profissional' | 'endereco' | 'conjuge' | 'referencias' | 'bens' | 'documentos';
 
-const Input = ({ label, value, onChange, placeholder, type = "text", colSpan = "col-span-1", readOnly = false }: {
-    label: string, value: any, onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void, placeholder?: string, type?: string, colSpan?: string, readOnly?: boolean
+const Input = ({ label, value, onChange, placeholder, type = "text", colSpan = "col-span-1", readOnly = false, required = false, maxLength }: {
+    label: string, value: any, onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void, placeholder?: string, type?: string, colSpan?: string, readOnly?: boolean, required?: boolean, maxLength?: number
 }) => (
     <div className={cn("space-y-2", colSpan)}>
-        <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">{label}</label>
-        <input type={type} value={value || ""} onChange={onChange} readOnly={readOnly}
-            className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium" placeholder={placeholder} />
+        <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">{label} {required && "*"}</label>
+        <input type={type} value={value || ""} onChange={onChange} readOnly={readOnly} required={required} maxLength={maxLength}
+            className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium placeholder:text-text-dim/30" placeholder={placeholder} />
     </div>
 );
 
@@ -86,12 +92,12 @@ const CurrencyInput = ({ label, value, onChange, colSpan = "col-span-1" }: {
     );
 };
 
-const Select = ({ label, value, onChange, options, colSpan = "col-span-1" }: {
-    label: string, value: any, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: { label: string, value: string }[], colSpan?: string
+const Select = ({ label, value, onChange, options, colSpan = "col-span-1", required = false }: {
+    label: string, value: any, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, options: { label: string, value: string }[], colSpan?: string, required?: boolean
 }) => (
     <div className={cn("space-y-2", colSpan)}>
-        <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">{label}</label>
-        <select value={value || ""} onChange={onChange}
+        <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">{label} {required && "*"}</label>
+        <select value={value || ""} onChange={onChange} required={required}
             className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium">
             {options.map((o, idx) => <option key={`${o.label}-${idx}`} value={o.value} className="bg-[#121212] text-white">{o.label}</option>)}
         </select>
@@ -258,7 +264,12 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                     setSelfie(null);
                     setOcrResult(null);
                     setRepresentantes([
-                        { id: 'temp-' + Date.now(), nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio" }
+                        { 
+                            id: 'temp-' + Date.now(), 
+                            nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio",
+                            sexo: "Masculino", nacionalidade: "Brasileiro", estado_civil: "Solteiro", profissao: "",
+                            email: "", celular: "", cep: "", endereco_residencial: "", numero: "", bairro: "", cidade: "", uf: "", complemento: ""
+                        }
                     ]);
                     setStep(0);
                     setActiveTab('basico');
@@ -269,20 +280,52 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
     }, [initialData, isOpen]);
 
     const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const cep = e.target.value.replace(/\D/g, "").slice(0, 8);
+        const cep = maskCEP(e.target.value);
         setFormData((p: any) => ({ ...p, cep }));
-        if (cep.length === 8) {
+        const rawCep = cep.replace(/\D/g, "");
+        if (rawCep.length === 8) {
             setSearchingCep(true);
             try {
-                const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const res = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
                 const data = await res.json();
                 if (!data.erro) setFormData((p: any) => ({ ...p, logradouro: data.logradouro, bairro: data.bairro, cidade: data.localidade, estado: data.uf }));
             } catch (e) { console.error(e); } finally { setSearchingCep(false); }
         }
     };
 
+    const [searchingRepCep, setSearchingRepCep] = useState<string | null>(null);
+
+    const handleRepCepChange = async (idx: number, value: string) => {
+        const cep = maskCEP(value);
+        const r = [...representantes];
+        r[idx].cep = cep;
+        setRepresentantes(r);
+
+        const rawCep = cep.replace(/\D/g, "");
+        if (rawCep.length === 8) {
+            setSearchingRepCep(r[idx].id);
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
+                const data = await res.json();
+                if (!data.erro) {
+                    const updated = [...representantes];
+                    updated[idx].endereco_residencial = data.logradouro;
+                    updated[idx].bairro = data.bairro;
+                    updated[idx].cidade = data.localidade;
+                    updated[idx].uf = data.uf;
+                    setRepresentantes(updated);
+                }
+            } catch (e) { console.error(e); } finally { setSearchingRepCep(null); }
+        }
+    };
+
     const addRepresentante = () => {
-        setRepresentantes([...representantes, { id: 'temp-' + Date.now(), nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio" }]);
+        setRepresentantes([...representantes, { 
+            id: 'temp-' + Date.now(), 
+            nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio",
+            sexo: "Masculino", nacionalidade: "Brasileiro", estado_civil: "Solteiro", profissao: "",
+            email: "", celular: "", cep: "", endereco_residencial: "", numero: "", bairro: "", cidade: "", uf: "", complemento: ""
+        }]);
     };
 
     const handleDeleteFile = async (type: 'identidade' | 'residencia' | 'conjuge' | 'selfie' | 'renda', url: string) => {
@@ -406,6 +449,14 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                 setActiveTab('basico');
                 return;
             }
+
+            // Validação de pelo menos um representante legal
+            const validReps = representantes.filter(r => r.nome_completo.trim() !== "" && r.cpf.trim() !== "");
+            if (validReps.length === 0) {
+                alert("Por favor, preencha pelo menos um representante legal com Nome e CPF na aba 'Representantes'.");
+                setActiveTab('representantes');
+                return;
+            }
         }
 
         if (!formData.cep || !formData.logradouro || !formData.numero || !formData.cidade || !formData.estado) {
@@ -444,7 +495,8 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
             // Representantes logic
             if (formData.tipo === 'PJ') {
                 await supabase.from('cliente_representantes').delete().eq('cliente_id', clienteId);
-                const repsToInsert = representantes.map(({ id, ...rest }) => ({ ...rest, cliente_id: clienteId }));
+                const validReps = representantes.filter(r => r.nome_completo.trim() !== "" && r.cpf.trim() !== "");
+                const repsToInsert = validReps.map(({ id, ...rest }) => ({ ...rest, cliente_id: clienteId }));
                 await supabase.from('cliente_representantes').insert(repsToInsert);
             }
 
@@ -662,22 +714,38 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                             </div>
                                                             <div className="space-y-4">
                                                                 {representantes.map((rep, idx) => (
-                                                                    <div key={rep.id} className="p-4 md:p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-[32px] grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 relative group">
+                                                                    <div key={rep.id} className="p-4 md:p-8 bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl md:rounded-[32px] space-y-6 relative group">
                                                                         <div className="absolute top-4 md:top-8 right-4 md:right-8 text-[8px] md:text-xs text-text-dim">REP #{idx + 1}</div>
-                                                                        <div className="col-span-2 md:col-span-2 space-y-2">
-                                                                            <label className="text-[10px] font-black text-text-dim uppercase">Nome Completo</label>
-                                                                            <input value={rep.nome_completo} onChange={e => { const r = [...representantes]; r[idx].nome_completo = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none" />
+                                                                        
+                                                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                                                                            <Input required label="Nome Completo" value={rep.nome_completo} onChange={e => { const r = [...representantes]; r[idx].nome_completo = e.target.value; setRepresentantes(r); }} colSpan="col-span-2 md:col-span-3" />
+                                                                            <Input required label="CPF" value={rep.cpf} onChange={e => { const r = [...representantes]; r[idx].cpf = maskCpfCnpj(e.target.value); setRepresentantes(r); }} colSpan="col-span-1 md:col-span-1" maxLength={14} />
+                                                                            
+                                                                            <Select required label="Sexo" value={rep.sexo} onChange={e => { const r = [...representantes]; r[idx].sexo = e.target.value; setRepresentantes(r); }} options={[{ label: 'Masculino', value: 'Masculino' }, { label: 'Feminino', value: 'Feminino' }]} />
+                                                                            <Select required label="Ligação" value={rep.ligacao_empresa} onChange={e => { const r = [...representantes]; r[idx].ligacao_empresa = e.target.value; setRepresentantes(r); }} options={[{ label: 'Sócio', value: 'Sócio' }, { label: 'Procurador', value: 'Procurador' }, { label: 'Diretor', value: 'Diretor' }]} />
+                                                                            <Input label="Nacionalidade" value={rep.nacionalidade} onChange={e => { const r = [...representantes]; r[idx].nacionalidade = e.target.value; setRepresentantes(r); }} />
+                                                                            <Select label="Estado Civil" value={rep.estado_civil} onChange={e => { const r = [...representantes]; r[idx].estado_civil = e.target.value; setRepresentantes(r); }} options={[{ label: 'Solteiro', value: 'Solteiro' }, { label: 'Casado', value: 'Casado' }, { label: 'União estável', value: 'União estável' }, { label: 'Divorciado', value: 'Divorciado' }, { label: 'Viúvo', value: 'Viúvo' }]} />
+
+                                                                            <Input label="Profissão" value={rep.profissao} onChange={e => { const r = [...representantes]; r[idx].profissao = e.target.value; setRepresentantes(r); }} />
+                                                                            <Input label="E-mail" value={rep.email} onChange={e => { const r = [...representantes]; r[idx].email = e.target.value; setRepresentantes(r); }} colSpan="col-span-2 md:col-span-2" />
+                                                                            <Input label="Contato" value={rep.celular} onChange={e => { const r = [...representantes]; r[idx].celular = maskPhone(e.target.value); setRepresentantes(r); }} />
+
+                                                                            <div className="col-span-1 md:col-span-1 space-y-2">
+                                                                                <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">CEP</label>
+                                                                                <div className="relative">
+                                                                                    <input value={rep.cep || ""} onChange={e => handleRepCepChange(idx, e.target.value)} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-xs outline-none focus:border-primary transition-all font-medium" maxLength={9} />
+                                                                                    {searchingRepCep === rep.id && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary animate-spin" />}
+                                                                                </div>
+                                                                            </div>
+                                                                            <Input label="Endereço Completo" value={rep.endereco_residencial} onChange={e => { const r = [...representantes]; r[idx].endereco_residencial = e.target.value; setRepresentantes(r); }} colSpan="col-span-1 md:col-span-2" />
+                                                                            <Input label="Nº" value={rep.numero} onChange={e => { const r = [...representantes]; r[idx].numero = e.target.value; setRepresentantes(r); }} />
+
+                                                                            <Input label="Bairro" value={rep.bairro} onChange={e => { const r = [...representantes]; r[idx].bairro = e.target.value; setRepresentantes(r); }} />
+                                                                            <Input label="Cidade" value={rep.cidade} onChange={e => { const r = [...representantes]; r[idx].cidade = e.target.value; setRepresentantes(r); }} />
+                                                                            <Input label="UF" value={rep.uf} onChange={e => { const r = [...representantes]; r[idx].uf = e.target.value; setRepresentantes(r); }} maxLength={2} />
+                                                                            <Input label="Complemento" value={rep.complemento} onChange={e => { const r = [...representantes]; r[idx].complemento = e.target.value; setRepresentantes(r); }} placeholder="Apto, Sala..." />
                                                                         </div>
-                                                                        <div className="col-span-1 md:col-span-1 space-y-2">
-                                                                            <label className="text-[10px] font-black text-text-dim uppercase">CPF</label>
-                                                                            <input value={rep.cpf} onChange={e => { const r = [...representantes]; r[idx].cpf = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none" />
-                                                                        </div>
-                                                                        <div className="col-span-1 md:col-span-1 space-y-2">
-                                                                            <label className="text-[10px] font-black text-text-dim uppercase">Ligação</label>
-                                                                            <select value={rep.ligacao_empresa} onChange={e => { const r = [...representantes]; r[idx].ligacao_empresa = e.target.value; setRepresentantes(r); }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none">
-                                                                                <option value="Sócio">Sócio</option><option value="Procurador">Procurador</option><option value="Diretor">Diretor</option>
-                                                                            </select>
-                                                                        </div>
+
                                                                         {representantes.length > 1 && <button type="button" onClick={() => setRepresentantes(representantes.filter(r => r.id !== rep.id))} className="absolute -top-3 -right-3 w-8 h-8 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all border border-rose-500/20"><Trash2 className="w-4 h-4" /></button>}
                                                                     </div>
                                                                 ))}

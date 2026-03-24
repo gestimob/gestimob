@@ -3,7 +3,8 @@
 import { X, ArrowLeft, Printer, Building2, MapPin, FileText, FileBox, Camera, User, ExternalLink, Image as ImageIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface ModalProps {
     isOpen: boolean;
@@ -13,6 +14,44 @@ interface ModalProps {
 
 export function DetalhesImovelModal({ isOpen, imovel, onClose }: ModalProps) {
     if (!isOpen || !imovel) return null;
+
+    const [proprietariosSec, setProprietariosSec] = useState<any[]>([]);
+    const [loadingSec, setLoadingSec] = useState(false);
+
+    useEffect(() => {
+        if (isOpen && imovel?.proprietarios_secundarios?.length > 0) {
+            fetchSecondaryOwners();
+        } else {
+            setProprietariosSec([]);
+        }
+    }, [isOpen, imovel]);
+
+    async function fetchSecondaryOwners() {
+        setLoadingSec(true);
+        try {
+            const secondaryList = imovel.proprietarios_secundarios; // [{id, tipo}]
+            const pfIds = secondaryList.filter((p: any) => p.tipo === 'PF').map((p: any) => p.id);
+            const pjIds = secondaryList.filter((p: any) => p.tipo === 'PJ').map((p: any) => p.id);
+
+            let results: any[] = [];
+
+            if (pfIds.length > 0) {
+                const { data: pfData } = await supabase.from('proprietarios').select('id, nome_completo').in('id', pfIds);
+                if (pfData) results = [...results, ...pfData.map(p => ({ ...p, display_name: p.nome_completo, tipo: 'PF' }))];
+            }
+
+            if (pjIds.length > 0) {
+                const { data: pjData } = await supabase.from('empresas').select('id, nome_fantasia').in('id', pjIds);
+                if (pjData) results = [...results, ...pjData.map(p => ({ ...p, display_name: p.nome_fantasia, tipo: 'PJ' }))];
+            }
+
+            setProprietariosSec(results);
+        } catch (err) {
+            console.error("Erro ao buscar proprietários secundários:", err);
+        } finally {
+            setLoadingSec(false);
+        }
+    }
 
     const handlePrint = () => {
         window.print();
@@ -284,23 +323,47 @@ export function DetalhesImovelModal({ isOpen, imovel, onClose }: ModalProps) {
 
                                     {/* Prop and Empresa */}
                                     <div className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-[24px] sm:rounded-[32px] p-6 sm:p-8">
-                                        <h3 className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-6 flex items-center gap-3"><User className="w-4 h-4 text-primary" /> RESPONSÁVEIS VINCULADOS</h3>
+                                        <h3 className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-6 flex items-center gap-3"><User className="w-4 h-4 text-primary" /> PROPRIETÁRIOS</h3>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 sm:gap-y-8 gap-x-6 sm:gap-x-12">
-                                            <div className="space-y-2">
-                                                <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Empresa Administradora</p>
-                                                <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3">
-                                                    <Building2 className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" />
-                                                    <p className="text-xs sm:text-sm font-bold text-foreground truncate">{imovel.empresas?.nome_fantasia || 'Nenhuma'}</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 sm:gap-y-6 gap-x-6 sm:gap-x-12">
+                                            {/* Proprietário Principal (PJ/Empresa) */}
+                                            {imovel.empresas?.nome_fantasia && (
+                                                <div className="space-y-2">
+                                                    <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Proprietário (PJ)</p>
+                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3">
+                                                        <Building2 className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" />
+                                                        <p className="text-xs sm:text-sm font-bold text-foreground truncate">{imovel.empresas.nome_fantasia}</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Proprietário</p>
-                                                <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3">
-                                                    <User className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" />
-                                                    <p className="text-xs sm:text-sm font-bold text-foreground truncate">{imovel.proprietarios?.nome_completo || 'Nenhum'}</p>
+                                            )}
+
+                                            {/* Proprietário Principal (PF) */}
+                                            {imovel.proprietarios?.nome_completo && (
+                                                <div className="space-y-2">
+                                                    <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Proprietário (PF)</p>
+                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3">
+                                                        <User className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" />
+                                                        <p className="text-xs sm:text-sm font-bold text-foreground truncate">{imovel.proprietarios.nome_completo}</p>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
+
+                                            {/* Proprietários Secundários */}
+                                            {proprietariosSec.map((sec, idx) => (
+                                                <div key={idx} className="space-y-2">
+                                                    <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Proprietário ({sec.tipo})</p>
+                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3">
+                                                        {sec.tipo === 'PJ' ? <Building2 className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" /> : <User className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" />}
+                                                        <p className="text-xs sm:text-sm font-bold text-foreground truncate">{sec.display_name}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+
+                                            {!imovel.empresas?.nome_fantasia && !imovel.proprietarios?.nome_completo && proprietariosSec.length === 0 && (
+                                                <div className="col-span-2 py-4 text-center italic text-accent text-xs">
+                                                    Nenhum proprietário vinculado.
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 

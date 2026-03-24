@@ -448,7 +448,11 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
         setSelectedAluguelId(val);
         const selected = items.find(a => a.id === val);
         setSelectedData(selected || null);
-        setSelectedBankAccounts([]);
+        if (selected && selected.contas_bancarias && Array.isArray(selected.contas_bancarias) && selected.contas_bancarias.length > 0) {
+            setSelectedBankAccounts(selected.contas_bancarias);
+        } else {
+            setSelectedBankAccounts([]);
+        }
 
         if (selected) {
             // 1. Objeto da Locação
@@ -678,16 +682,15 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                     const bankLines = selectedBankAccounts.map(acc => {
                         return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}`;
                     }).join(" ou ");
-                    bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLines} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
+                    bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos na Conta Corrente do Banco no(s) ${bankLines} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
                 } else if (locador.dados_bancarios && Array.isArray(locador.dados_bancarios) && locador.dados_bancarios.length > 0) {
+                    // Fallback para quando o aluguel não tem contas salvas (legado)
                     if (locador.dados_bancarios.length === 1) {
-                        // Se houver apenas uma conta, seleciona automaticamente e gera o texto
                         const acc = locador.dados_bancarios[0];
                         setSelectedBankAccounts([acc]);
                         const bankLine = `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}`;
-                        bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLine} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
+                        bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos na Conta Corrente do Banco no(s) ${bankLine} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
                     } else {
-                        // Se houver mais de uma, abre o modal de seleção
                         setAvailableBankAccounts(locador.dados_bancarios);
                         setIsBankModalOpen(true);
                     }

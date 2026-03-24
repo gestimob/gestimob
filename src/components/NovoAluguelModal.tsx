@@ -90,6 +90,7 @@ const initialFormState = {
     valor_condominio: 0,
     tipo_pagamento_condominio: "Separado",
     valor_total_aluguel_condominio: 0,
+    contas_bancarias: [],
     created_at: new Date().toISOString().slice(0, 10)
 };
 
@@ -102,6 +103,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
     const [empresas, setEmpresas] = useState<any[]>([]);
     const [cagepaFile, setCagepaFile] = useState<File | null>(null);
     const [energisaFile, setEnergisaFile] = useState<File | null>(null);
+    const [availableBankAccounts, setAvailableBankAccounts] = useState<any[]>([]);
 
     useEffect(() => {
         if (isOpen) {
@@ -127,6 +129,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                     tipo_proprietario: initialData.proprietario_id ? "PF" : (initialData.imoveis?.empresas ? "PJ" : "PF"),
                     proprietarios_secundarios: initialData.proprietarios_secundarios || [],
                     impresso_no_contrato: initialData.impresso_no_contrato !== false,
+                    contas_bancarias: initialData.contas_bancarias || [],
                     created_at: createdDate
                 });
                 setCagepaFile(null);
@@ -151,6 +154,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                     tipo_proprietario: initialData.proprietario_id ? "PF" : (initialData.imoveis?.empresas ? "PJ" : "PF"),
                     proprietarios_secundarios: initialData.proprietarios_secundarios || [],
                     impresso_no_contrato: initialData.impresso_no_contrato !== false,
+                    contas_bancarias: initialData.contas_bancarias || [],
                     created_at: createdDate
                 });
                 generateCode();
@@ -207,14 +211,37 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
         const [c, i, p, e] = await Promise.all([
             supabase.from('clientes').select('id, nome_completo, papel').order('nome_completo'),
             supabase.from('imoveis').select('id, endereco, logradouro, nome_identificacao, valor_aluguel, valor_condominio, proprietario_id, empresa_id, proprietarios_secundarios, impresso_no_contrato').eq('status', 'Disponível'),
-            supabase.from('proprietarios').select('id, nome_completo').order('nome_completo'),
-            supabase.from('empresas').select('id, nome_fantasia').order('nome_fantasia')
+            supabase.from('proprietarios').select('id, nome_completo, dados_bancarios').order('nome_completo'),
+            supabase.from('empresas').select('id, nome_fantasia, dados_bancarios').order('nome_fantasia')
         ]);
         if (c.data) setClientes(c.data);
         if (i.data) setImoveis(initialData && initialData.imoveis ? [initialData.imoveis, ...i.data.filter(x => x.id !== initialData.imovel_id)] : i.data);
         if (p.data) setProprietarios(p.data);
         if (e.data) setEmpresas(e.data.map(x => ({ ...x, nome_completo: x.nome_fantasia })));
     }
+
+    useEffect(() => {
+        if (!formData.proprietario_id) {
+            setAvailableBankAccounts([]);
+            return;
+        }
+
+        const owner = formData.tipo_proprietario === "PF" 
+            ? proprietarios.find(p => p.id === formData.proprietario_id)
+            : empresas.find(e => e.id === formData.proprietario_id);
+        
+        if (owner && owner.dados_bancarios) {
+            const accounts = Array.isArray(owner.dados_bancarios) ? owner.dados_bancarios : [];
+            setAvailableBankAccounts(accounts);
+            
+            // Auto-select if none selected and it's mandatory
+            if (formData.status === 'Preparação de Contrato' && (!formData.contas_bancarias || formData.contas_bancarias.length === 0) && accounts.length > 0) {
+                // setFormData(prev => ({ ...prev, contas_bancarias: [accounts[0]] })); // Removed to avoid loops, let user pick
+            }
+        } else {
+            setAvailableBankAccounts([]);
+        }
+    }, [formData.proprietario_id, formData.tipo_proprietario, proprietarios, empresas]);
 
     // Função auxiliar para adicionar meses a uma data (formato yyyy-mm-dd)
     function addMonthsToDate(dateStr: string, months: number): string {
@@ -302,6 +329,11 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
         setLoading(true);
 
         try {
+            if (formData.status === 'Preparação de Contrato' && (!formData.contas_bancarias || formData.contas_bancarias.length === 0)) {
+                alert("Pelo menos uma conta bancária deve ser selecionada para impressão no contrato.");
+                setLoading(false);
+                return;
+            }
             // Lista de campos que realmente existem na tabela 'alugueis'
             const validKeys = [
                 'codigo_interno', 'cliente_id', 'proprietario_id', 'imovel_id',
@@ -314,6 +346,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                 'comprovante_cagepa_url', 'comprovante_energisa_url',
                 'valor_condominio', 'tipo_pagamento_condominio', 'valor_total_aluguel_condominio',
                 'data_finalizacao',
+                'contas_bancarias',
                 'created_at'
             ];
 
@@ -668,9 +701,9 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
 
                                 <Input disabled={isReadOnly} label="Finalização do Contrato" type="date" value={formData.data_finalizacao || ''} onChange={(e: any) => setFormData({ ...formData, data_finalizacao: e.target.value })} colSpan="col-span-1" />
 
-                                <div className="col-span-2 space-y-3 pt-4 border-t border-panel-border mt-2">
+                                <div className="col-span-1 space-y-3 pt-4 border-t border-panel-border mt-2">
                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Forma de Pagamento do Condomínio</label>
-                                    <div className="flex gap-6">
+                                    <div className="flex flex-col gap-3">
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input type="radio" className="accent-primary w-4 h-4 cursor-pointer"
                                                 disabled={isReadOnly}
@@ -686,6 +719,56 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                             <span className="text-sm font-bold text-foreground">Pagamento Único</span>
                                         </label>
                                     </div>
+                                    
+                                    <div className="pt-2">
+                                        <Select
+                                            label="Status"
+                                            value={formData.status}
+                                            onChange={(e: any) => setFormData({ ...formData, status: e.target.value })}
+                                            disabled={!initialData || isReadOnly}
+                                            options={[
+                                                { label: 'Preparação de Contrato', value: 'Preparação de Contrato' },
+                                                { label: 'Em Vigência', value: 'Em Vigência' },
+                                                { label: 'Finalizado', value: 'Finalizado' },
+                                                { label: 'Cancelado', value: 'Cancelado' },
+                                                { label: 'Aguardando Assinatura', value: 'Aguardando Assinatura' }
+                                            ]}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="col-span-1 space-y-2 pt-4 border-t border-panel-border mt-2">
+                                    <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Impresso no Contrato (Contas) *</label>
+                                    <div className="space-y-2 max-h-[160px] overflow-y-auto custom-scrollbar border border-panel-border rounded-xl p-3 bg-black/5 dark:bg-white/5">
+                                        {availableBankAccounts.length === 0 ? (
+                                            <div className="text-[10px] text-accent italic p-2">Nenhum dado bancário cadastrado para este proprietário.</div>
+                                        ) : (
+                                            availableBankAccounts.map((acc, idx) => (
+                                                <label key={idx} className="flex items-center gap-3 p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-panel-border">
+                                                    <input type="checkbox" 
+                                                        disabled={isReadOnly}
+                                                        checked={formData.contas_bancarias?.some((a: any) => a.conta === acc.conta && a.agencia === acc.agencia)}
+                                                        onChange={(e) => {
+                                                            let newSelection = [...(formData.contas_bancarias || [])];
+                                                            if (e.target.checked) {
+                                                                newSelection.push(acc);
+                                                            } else {
+                                                                newSelection = newSelection.filter((a: any) => !(a.conta === acc.conta && a.agencia === acc.agencia));
+                                                            }
+                                                            setFormData({ ...formData, contas_bancarias: newSelection });
+                                                        }}
+                                                        className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
+                                                    <div className="flex flex-col overflow-hidden">
+                                                        <span className="text-[11px] font-bold text-foreground truncate">{acc.banco} - {acc.tipo_conta}</span>
+                                                        <span className="text-[9px] text-text-dim">Ag: {acc.agencia} | C: {acc.conta}</span>
+                                                    </div>
+                                                </label>
+                                            ))
+                                        )}
+                                    </div>
+                                    {formData.status === 'Preparação de Contrato' && (!formData.contas_bancarias || formData.contas_bancarias.length === 0) && (
+                                        <p className="text-[9px] text-rose-500 font-bold uppercase tracking-wider ml-1">Mínimo 1 conta para contrato</p>
+                                    )}
                                 </div>
 
                                 {formData.tipo_pagamento_condominio === "Único" && (
@@ -697,20 +780,6 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                         colSpan="col-span-2"
                                     />
                                 )}
-
-                                <Select
-                                    label="Status"
-                                    value={formData.status}
-                                    onChange={(e: any) => setFormData({ ...formData, status: e.target.value })}
-                                    disabled={!initialData || isReadOnly}
-                                    options={[
-                                        { label: 'Preparação de Contrato', value: 'Preparação de Contrato' },
-                                        { label: 'Em Vigência', value: 'Em Vigência' },
-                                        { label: 'Finalizado', value: 'Finalizado' },
-                                        { label: 'Cancelado', value: 'Cancelado' },
-                                        { label: 'Aguardando Assinatura', value: 'Aguardando Assinatura' }
-                                    ]}
-                                />
 
                                 <div className="col-span-2 space-y-3 pt-4 border-t border-panel-border mt-2">
                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Finalidade do Aluguel</label>

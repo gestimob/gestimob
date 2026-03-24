@@ -221,27 +221,51 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
     }
 
     useEffect(() => {
-        if (!formData.proprietario_id) {
-            setAvailableBankAccounts([]);
-            return;
+        let allAccounts: any[] = [];
+        
+        // 1. Proprietário Principal
+        if (formData.proprietario_id) {
+            const owner = formData.tipo_proprietario === "PF" 
+                ? proprietarios.find(p => p.id === formData.proprietario_id)
+                : empresas.find(e => e.id === formData.proprietario_id);
+            
+            if (owner && owner.dados_bancarios) {
+                const accounts = Array.isArray(owner.dados_bancarios) ? owner.dados_bancarios : [];
+                if (accounts.length > 0) {
+                    allAccounts.push({
+                        ownerName: owner.nome_completo || owner.nome_fantasia || owner.razao_social || "Proprietário Principal",
+                        ownerId: owner.id,
+                        accounts: accounts
+                    });
+                }
+            }
         }
 
-        const owner = formData.tipo_proprietario === "PF" 
-            ? proprietarios.find(p => p.id === formData.proprietario_id)
-            : empresas.find(e => e.id === formData.proprietario_id);
-        
-        if (owner && owner.dados_bancarios) {
-            const accounts = Array.isArray(owner.dados_bancarios) ? owner.dados_bancarios : [];
-            setAvailableBankAccounts(accounts);
-            
-            // Auto-select if none selected and it's mandatory
-            if (formData.status === 'Preparação de Contrato' && (!formData.contas_bancarias || formData.contas_bancarias.length === 0) && accounts.length > 0) {
-                // setFormData(prev => ({ ...prev, contas_bancarias: [accounts[0]] })); // Removed to avoid loops, let user pick
-            }
-        } else {
-            setAvailableBankAccounts([]);
+        // 2. Proprietários Secundários
+        if (formData.proprietarios_secundarios && Array.isArray(formData.proprietarios_secundarios)) {
+            formData.proprietarios_secundarios.forEach((sec: any) => {
+                const owner = sec.tipo === "PF"
+                    ? proprietarios.find(p => p.id === sec.id)
+                    : empresas.find(e => e.id === sec.id);
+                
+                if (owner && owner.dados_bancarios) {
+                    const accounts = Array.isArray(owner.dados_bancarios) ? owner.dados_bancarios : [];
+                    if (accounts.length > 0) {
+                        // Evitar duplicar se por acaso for o mesmo id do principal (não deveria, mas por segurança)
+                        if (owner.id !== formData.proprietario_id) {
+                            allAccounts.push({
+                                ownerName: owner.nome_completo || owner.nome_fantasia || owner.razao_social || "Proprietário Secundário",
+                                ownerId: owner.id,
+                                accounts: accounts
+                            });
+                        }
+                    }
+                }
+            });
         }
-    }, [formData.proprietario_id, formData.tipo_proprietario, proprietarios, empresas]);
+
+        setAvailableBankAccounts(allAccounts);
+    }, [formData.proprietario_id, formData.tipo_proprietario, formData.proprietarios_secundarios, proprietarios, empresas]);
 
     // Função auxiliar para adicionar meses a uma data (formato yyyy-mm-dd)
     function addMonthsToDate(dateStr: string, months: number): string {
@@ -739,30 +763,36 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
 
                                 <div className="col-span-1 space-y-2 pt-4 border-t border-panel-border mt-2">
                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Impresso no Contrato (Contas) *</label>
-                                    <div className="space-y-2 max-h-[160px] overflow-y-auto custom-scrollbar border border-panel-border rounded-xl p-3 bg-black/5 dark:bg-white/5">
+                                    <div className="space-y-4 max-h-[160px] overflow-y-auto custom-scrollbar border border-panel-border rounded-xl p-3 bg-black/5 dark:bg-white/5">
                                         {availableBankAccounts.length === 0 ? (
-                                            <div className="text-[10px] text-accent italic p-2">Nenhum dado bancário cadastrado para este proprietário.</div>
+                                            <div className="text-[10px] text-accent italic p-2">Nenhum dado bancário cadastrado.</div>
                                         ) : (
-                                            availableBankAccounts.map((acc, idx) => (
-                                                <label key={idx} className="flex items-center gap-3 p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-panel-border">
-                                                    <input type="checkbox" 
-                                                        disabled={isReadOnly}
-                                                        checked={formData.contas_bancarias?.some((a: any) => a.conta === acc.conta && a.agencia === acc.agencia)}
-                                                        onChange={(e) => {
-                                                            let newSelection = [...(formData.contas_bancarias || [])];
-                                                            if (e.target.checked) {
-                                                                newSelection.push(acc);
-                                                            } else {
-                                                                newSelection = newSelection.filter((a: any) => !(a.conta === acc.conta && a.agencia === acc.agencia));
-                                                            }
-                                                            setFormData({ ...formData, contas_bancarias: newSelection });
-                                                        }}
-                                                        className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
-                                                    <div className="flex flex-col overflow-hidden">
-                                                        <span className="text-[11px] font-bold text-foreground truncate">{acc.banco} - {acc.tipo_conta}</span>
-                                                        <span className="text-[9px] text-text-dim">Ag: {acc.agencia} | C: {acc.conta}</span>
-                                                    </div>
-                                                </label>
+                                            availableBankAccounts.map((group, grpIdx) => (
+                                                <div key={grpIdx} className="space-y-1">
+                                                    <div className="text-[9px] font-bold text-primary/80 uppercase tracking-tighter ml-1 mb-1 border-b border-panel-border/30 pb-0.5">{group.ownerName}</div>
+                                                    {group.accounts.map((acc: any, idx: number) => (
+                                                        <label key={`${grpIdx}-${idx}`} className="flex items-center gap-3 p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-panel-border">
+                                                            <input type="checkbox" 
+                                                                disabled={isReadOnly}
+                                                                checked={formData.contas_bancarias?.some((a: any) => a.conta === acc.conta && a.agencia === acc.agencia && a.ownerId === group.ownerId)}
+                                                                onChange={(e) => {
+                                                                    let newSelection = [...(formData.contas_bancarias || [])];
+                                                                    const accWithId = { ...acc, ownerId: group.ownerId };
+                                                                    if (e.target.checked) {
+                                                                        newSelection.push(accWithId);
+                                                                    } else {
+                                                                        newSelection = newSelection.filter((a: any) => !(a.conta === acc.conta && a.agencia === acc.agencia && a.ownerId === group.ownerId));
+                                                                    }
+                                                                    setFormData({ ...formData, contas_bancarias: newSelection });
+                                                                }}
+                                                                className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
+                                                            <div className="flex flex-col overflow-hidden">
+                                                                <span className="text-[11px] font-bold text-foreground truncate">{acc.banco} - {acc.tipo_conta}</span>
+                                                                <span className="text-[9px] text-text-dim">Ag: {acc.agencia} | C: {acc.conta}</span>
+                                                            </div>
+                                                        </label>
+                                                    ))}
+                                                </div>
                                             ))
                                         )}
                                     </div>

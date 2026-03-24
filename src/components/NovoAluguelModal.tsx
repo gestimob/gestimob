@@ -83,6 +83,8 @@ const initialFormState = {
     reajustes_fixos: [],
     tipo_garantia: "Fiador", fiadores_ids: [], caucao_quantidade: 0, caucao_valor: 0,
     tipo_proprietario: "PF",
+    proprietarios_secundarios: [],
+    impresso_no_contrato: true,
     troca_titularidade_cagepa: false, troca_titularidade_energisa: false,
     comprovante_cagepa_url: "", comprovante_energisa_url: "",
     valor_condominio: 0,
@@ -123,6 +125,8 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                     proprietario_id: initialData.proprietario_id || initialData.imoveis?.empresas?.id || initialData.imoveis?.proprietarios?.id || "",
                     imovel_id: initialData.imovel_id || "",
                     tipo_proprietario: initialData.proprietario_id ? "PF" : (initialData.imoveis?.empresas ? "PJ" : "PF"),
+                    proprietarios_secundarios: initialData.proprietarios_secundarios || [],
+                    impresso_no_contrato: initialData.impresso_no_contrato !== false,
                     created_at: createdDate
                 });
                 setCagepaFile(null);
@@ -145,6 +149,8 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                     proprietario_id: initialData.proprietario_id || initialData.imoveis?.empresas?.id || initialData.imoveis?.proprietarios?.id || "",
                     imovel_id: initialData.imovel_id || "",
                     tipo_proprietario: initialData.proprietario_id ? "PF" : (initialData.imoveis?.empresas ? "PJ" : "PF"),
+                    proprietarios_secundarios: initialData.proprietarios_secundarios || [],
+                    impresso_no_contrato: initialData.impresso_no_contrato !== false,
                     created_at: createdDate
                 });
                 generateCode();
@@ -153,7 +159,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
             } else {
                 // Modo novo cadastro
                 generateCode();
-                setFormData((prev: any) => ({ ...prev, created_at: new Date().toISOString().slice(0, 10) }));
+                setFormData((prev: any) => ({ ...prev, created_at: new Date().toISOString().slice(0, 10), proprietarios_secundarios: [], impresso_no_contrato: true }));
                 setCagepaFile(null);
                 setEnergisaFile(null);
             }
@@ -200,7 +206,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
     async function fetchRelationalData() {
         const [c, i, p, e] = await Promise.all([
             supabase.from('clientes').select('id, nome_completo, papel').order('nome_completo'),
-            supabase.from('imoveis').select('id, endereco, logradouro, nome_identificacao, valor_aluguel, valor_condominio, proprietario_id, empresa_id').eq('status', 'Disponível'),
+            supabase.from('imoveis').select('id, endereco, logradouro, nome_identificacao, valor_aluguel, valor_condominio, proprietario_id, empresa_id, proprietarios_secundarios, impresso_no_contrato').eq('status', 'Disponível'),
             supabase.from('proprietarios').select('id, nome_completo').order('nome_completo'),
             supabase.from('empresas').select('id, nome_fantasia').order('nome_fantasia')
         ]);
@@ -303,6 +309,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                 'finalidade_aluguel', 'tipo_reajuste', 'tempo_reajuste_fixo',
                 'reajustes_fixos',
                 'tipo_garantia', 'fiadores_ids', 'caucao_quantidade', 'caucao_valor',
+                'proprietarios_secundarios', 'impresso_no_contrato',
                 'troca_titularidade_cagepa', 'troca_titularidade_energisa',
                 'comprovante_cagepa_url', 'comprovante_energisa_url',
                 'valor_condominio', 'tipo_pagamento_condominio', 'valor_total_aluguel_condominio',
@@ -528,11 +535,13 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                                 imovel_id: id,
                                                 proprietario_id: imovel.proprietario_id || imovel.empresa_id || "",
                                                 tipo_proprietario: imovel.proprietario_id ? "PF" : (imovel.empresa_id ? "PJ" : "PF"),
+                                                proprietarios_secundarios: imovel.proprietarios_secundarios || [],
+                                                impresso_no_contrato: imovel.impresso_no_contrato !== false,
                                                 valor_aluguel: imovel.valor_aluguel || 0,
                                                 valor_condominio: imovel.valor_condominio || 0
                                             });
                                         } else {
-                                            setFormData({ ...formData, imovel_id: id });
+                                            setFormData({ ...formData, imovel_id: id, proprietarios_secundarios: [], impresso_no_contrato: true });
                                         }
                                     }}
                                     disabled={isReadOnly}
@@ -542,22 +551,64 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
 
                                 <Select required disabled={isReadOnly} label="Cliente (Locatário)" value={formData.cliente_id} onChange={(e: any) => setFormData({ ...formData, cliente_id: e.target.value })} options={[{ label: 'Selecione um cliente...', value: '' }, ...clientes.filter(c => c.papel !== 'Apenas Fiador').map(c => ({ label: c.nome_completo, value: c.id }))]} colSpan="col-span-1" />
 
-                                <div className="col-span-1 space-y-2 relative pointer-events-none opacity-60">
-                                    <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Proprietário Responsável *</label>
-                                    <div className="flex gap-2 mb-2 bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-panel-border">
-                                        <button type="button" disabled={isReadOnly} onClick={() => setFormData({ ...formData, tipo_proprietario: "PF", proprietario_id: "" })}
-                                            className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario === "PF" ? "bg-primary shadow-lg text-background" : "text-accent hover:text-foreground")}>PF</button>
-                                        <button type="button" disabled={isReadOnly} onClick={() => setFormData({ ...formData, tipo_proprietario: "PJ", proprietario_id: "" })}
-                                            className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario === "PJ" ? "bg-primary shadow-lg text-background" : "text-accent hover:text-foreground")}>PJ</button>
+                                {formData.proprietarios_secundarios && formData.proprietarios_secundarios.length > 0 ? (
+                                    <div className="col-span-1 border border-panel-border rounded-2xl p-4 bg-black/5 dark:bg-white/5 space-y-3">
+                                        <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1 flex items-center gap-2">
+                                            <FileText className="w-3 h-3 text-primary" /> Proprietários no Contrato
+                                        </label>
+                                        <div className="space-y-2 max-h-[120px] overflow-y-auto custom-scrollbar pr-2">
+                                            {/* Proprietário Principal */}
+                                            <label className="flex items-center gap-2 p-2 bg-background/50 border border-panel-border rounded-xl cursor-pointer hover:border-primary transition-all">
+                                                <input type="checkbox" 
+                                                    disabled={isReadOnly}
+                                                    checked={formData.impresso_no_contrato !== false} 
+                                                    onChange={(e) => setFormData({ ...formData, impresso_no_contrato: e.target.checked })} 
+                                                    className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
+                                                <span className="text-[11px] font-bold text-foreground truncate">
+                                                    {(formData.tipo_proprietario === "PF" 
+                                                        ? proprietarios.find(p => p.id === formData.proprietario_id)?.nome_completo 
+                                                        : empresas.find(e => e.id === formData.proprietario_id)?.nome_fantasia) || 'Proprietário Principal'} (Principal)
+                                                </span>
+                                            </label>
+
+                                            {/* Proprietários Secundários */}
+                                            {formData.proprietarios_secundarios.map((sec: any, idx: number) => {
+                                                const name = (sec.tipo === "PF" ? proprietarios : empresas).find(p => p.id === sec.id)?.nome_completo || (sec.tipo === "PF" ? proprietarios : empresas).find(p => p.id === sec.id)?.nome_fantasia || 'Proprietário Adicional';
+                                                return (
+                                                    <label key={`owner-sec-${idx}`} className="flex items-center gap-2 p-2 bg-background/50 border border-panel-border rounded-xl cursor-pointer hover:border-primary transition-all">
+                                                        <input type="checkbox" 
+                                                            disabled={isReadOnly}
+                                                            checked={sec.no_contrato !== false} 
+                                                            onChange={(e) => {
+                                                                const newSec = [...formData.proprietarios_secundarios];
+                                                                newSec[idx].no_contrato = e.target.checked;
+                                                                setFormData({ ...formData, proprietarios_secundarios: newSec });
+                                                            }} 
+                                                            className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
+                                                        <span className="text-[11px] font-bold text-foreground truncate">{name}</span>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                    <select required disabled={isReadOnly || true} value={formData.proprietario_id || ""} onChange={(e) => setFormData({ ...formData, proprietario_id: e.target.value })}
-                                        className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none block">
-                                        <option value="" className="bg-[#121212] text-white">Selecione um {formData.tipo_proprietario === "PF" ? "proprietário" : "empresa"}...</option>
-                                        {(formData.tipo_proprietario === "PF" ? proprietarios : empresas).map((p: any) => (
-                                            <option key={p.id} value={p.id} className="bg-[#121212] text-white">{p.nome_completo}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                ) : (
+                                    <div className="col-span-1 space-y-2 relative pointer-events-none opacity-60">
+                                        <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">Proprietário Responsável *</label>
+                                        <div className="flex gap-2 mb-2 bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-panel-border">
+                                            <button type="button" disabled={isReadOnly} onClick={() => setFormData({ ...formData, tipo_proprietario: "PF", proprietario_id: "" })}
+                                                className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario === "PF" ? "bg-primary shadow-lg text-background" : "text-accent hover:text-foreground")}>PF</button>
+                                            <button type="button" disabled={isReadOnly} onClick={() => setFormData({ ...formData, tipo_proprietario: "PJ", proprietario_id: "" })}
+                                                className={cn("flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", formData.tipo_proprietario === "PJ" ? "bg-primary shadow-lg text-background" : "text-accent hover:text-foreground")}>PJ</button>
+                                        </div>
+                                        <select required disabled={isReadOnly || true} value={formData.proprietario_id || ""} onChange={(e) => setFormData({ ...formData, proprietario_id: e.target.value })}
+                                            className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none block">
+                                            <option value="" className="bg-[#121212] text-white">Selecione um {formData.tipo_proprietario === "PF" ? "proprietário" : "empresa"}...</option>
+                                            {(formData.tipo_proprietario === "PF" ? proprietarios : empresas).map((p: any) => (
+                                                <option key={p.id} value={p.id} className="bg-[#121212] text-white">{p.nome_completo || p.nome_fantasia}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
 
                                 <Input required disabled={isReadOnly} label="Início do Contrato" type="date" value={formData.data_inicio} onChange={(e: any) => {
                                     const newDate = e.target.value;

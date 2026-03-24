@@ -173,6 +173,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
     const [selectedAluguelId, setSelectedAluguelId] = useState("");
     const [selectedData, setSelectedData] = useState<any>(null);
     const [allClientes, setAllClientes] = useState<any[]>([]);
+    const [allProprietarios, setAllProprietarios] = useState<any[]>([]);
+    const [allEmpresas, setAllEmpresas] = useState<any[]>([]);
 
     const [cabecalhoText, setCabecalhoText] = useState("");
     const [partesText, setPartesText] = useState("");
@@ -358,8 +360,15 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
     };
 
     async function loadAlugueis() {
-        const { data: clientsData } = await supabase.from('clientes').select('*');
-        if (clientsData) setAllClientes(clientsData);
+        const [clientsRes, propsRes, compsRes] = await Promise.all([
+            supabase.from('clientes').select('*'),
+            supabase.from('proprietarios').select('*'),
+            supabase.from('empresas').select('*, empresa_responsaveis(*)')
+        ]);
+        
+        if (clientsRes.data) setAllClientes(clientsRes.data);
+        if (propsRes.data) setAllProprietarios(propsRes.data);
+        if (compsRes.data) setAllEmpresas(compsRes.data);
 
         let query = supabase
             .from('alugueis')
@@ -390,12 +399,12 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
             setAlugueis(data);
             if (initialData) {
                 const found = data.find(d => d.id === initialData.id);
-                if (found) handleSelectAluguel(initialData.id, data, clientsData || []);
+                if (found) handleSelectAluguel(initialData.id, data, clientsRes.data || []);
             }
         }
     }
 
-    const handleSelectAluguel = async (val: string, items: any[] = alugueis, clientsList: any[] = allClientes) => {
+    const handleSelectAluguel = async (val: string, items: any[] = alugueis, clientsList: any[] = allClientes, propsList: any[] = allProprietarios, compsList: any[] = allEmpresas) => {
         setSelectedAluguelId(val);
         const selected = items.find(a => a.id === val);
         setSelectedData(selected || null);
@@ -487,30 +496,52 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
             } else {
                 const rawImovel = selected.imoveis;
                 const imovelObj = Array.isArray(rawImovel) ? rawImovel[0] : (rawImovel || {});
-                const locador = selected.proprietarios || selected.empresas || imovelObj.proprietarios || imovelObj.empresas || {};
-                const locadorNome = locador.nome_completo || locador.nome_fantasia || locador.razao_social || 'N/A';
-                const locadorDoc = locador.documento || locador.cnpj || 'N/A';
-                const locadorAddress = `${locador.logradouro || ''}${locador.numero ? ', n° ' + locador.numero : ''}${locador.complemento ? ' (' + locador.complemento + ')' : ''}${locador.bairro ? ', ' + locador.bairro : ''}, ${locador.cidade || ''} - ${locador.estado || ''}${locador.cep ? ', CEP ' + locador.cep : ''}`;
+
+                // Obter todos os proprietários ativos (principal + secundários que devem constar no contrato)
+                const activeOwners: any[] = [];
+                if (selected.impresso_no_contrato !== false) {
+                    const primary = selected.proprietarios || selected.empresas || imovelObj.proprietarios || imovelObj.empresas || {};
+                    if (primary && (primary.nome_completo || primary.nome_fantasia || primary.razao_social)) {
+                        activeOwners.push(primary);
+                    }
+                }
+
+                if (selected.proprietarios_secundarios && Array.isArray(selected.proprietarios_secundarios)) {
+                    selected.proprietarios_secundarios.forEach((sec: any) => {
+                        if (sec.no_contrato !== false) {
+                            const owner = (sec.tipo === 'PF' ? propsList : compsList).find(p => p.id === sec.id);
+                            if (owner) activeOwners.push(owner);
+                        }
+                    });
+                }
+
+                const locadoresBlocks = activeOwners.map(locador => {
+                    const locadorNome = locador.nome_completo || locador.nome_fantasia || locador.razao_social || 'N/A';
+                    const locadorDoc = locador.documento || locador.cnpj || 'N/A';
+                    const locadorAddress = `${locador.logradouro || ''}${locador.numero ? ', n° ' + locador.numero : ''}${locador.complemento ? ' (' + locador.complemento + ')' : ''}${locador.bairro ? ', ' + locador.bairro : ''}, ${locador.cidade || ''} - ${locador.estado || ''}${locador.cep ? ', CEP ' + locador.cep : ''}`;
+
+                    let representanteText = '';
+                    let representanteLabel = 'representante legal';
+                    if (locador.empresa_responsaveis && locador.empresa_responsaveis.length > 0) {
+                        representanteText = locador.empresa_responsaveis.map((r: any) => {
+                            const enderecoCompl = `${r.logradouro || ''}${r.numero ? ', n° ' + r.numero : ''}${r.complemento ? ' (' + r.complemento + ')' : ''}${r.bairro ? ', ' + r.bairro : ''}, ${r.cidade || ''} - ${r.estado || ''}${r.cep ? ', CEP ' + r.cep : ''}`;
+                            return `<b>${r.nome}</b>, ${r.nacionalidade || 'Nacionalidade não informada'}, ${r.estado_civil || 'Estado civil não informado'}, portador(a) do RG nº ${r.rg || 'N/A'} SSP/${r.orgao_emissor || 'N/A'} e inscrito(a) no CPF sob o nº ${r.cpf || 'N/A'}, residente e domiciliado(a) em ${enderecoCompl || 'Endereço não informado'}`;
+                        }).join(' e ');
+                        if (locador.empresa_responsaveis.length > 1) representanteLabel = 'representantes legais';
+                        representanteText = `, ${representanteLabel} ${representanteText}`;
+                    } else if (locador.responsavel_legal) {
+                        representanteText = `, representante legal <b>${locador.responsavel_legal}</b>`;
+                    }
+
+                    return `<b>${locadorNome}</b>, inscrito sob o ${locador.cnpj ? 'CNPJ' : 'CPF'} nº ${locadorDoc}, situado/domiciliado em ${locadorAddress || 'Endereço não informado'}${representanteText}`;
+                }).join("; e, ");
+
+                const locadorText = `<div style="text-align: justify"><b>1.1 – LOCADOR(ES):</b> Como <b>LOCADOR(ES)</b>, forma pela qual serão doravante, no presente instrumento, abreviadamente designado, ${locadoresBlocks}.</div>`;
 
                 const locatId = selected.cliente_id;
                 const locatObj = clientsList.find((c: any) => c.id === locatId) || selected.clientes || {};
                 const locatAddress = `${locatObj.logradouro || ''}${locatObj.numero ? ', n° ' + locatObj.numero : ''}${locatObj.complemento ? ' (' + locatObj.complemento + ')' : ''}${locatObj.bairro ? ', ' + locatObj.bairro : ''}, ${locatObj.cidade || ''} - ${locatObj.estado || ''}${locatObj.cep ? ', CEP ' + locatObj.cep : ''}`;
 
-                let representanteText = '<b>NÃO INFORMADO</b>';
-                let representanteLabel = 'representante legal';
-                if (locador.empresa_responsaveis && locador.empresa_responsaveis.length > 0) {
-                    representanteText = locador.empresa_responsaveis.map((r: any) => {
-                        const enderecoCompl = `${r.logradouro || ''}${r.numero ? ', n° ' + r.numero : ''}${r.complemento ? ' (' + r.complemento + ')' : ''}${r.bairro ? ', ' + r.bairro : ''}, ${r.cidade || ''} - ${r.estado || ''}${r.cep ? ', CEP ' + r.cep : ''}`;
-                        return `<b>${r.nome}</b>, ${r.nacionalidade || 'Nacionalidade não informada'}, ${r.estado_civil || 'Estado civil não informado'}, portador(a) do RG nº ${r.rg || 'N/A'} SSP/${r.orgao_emissor || 'N/A'} e inscrito(a) no CPF sob o nº ${r.cpf || 'N/A'}, residente e domiciliado(a) em ${enderecoCompl || 'Endereço não informado'}`;
-                    }).join(' e ');
-                    if (locador.empresa_responsaveis.length > 1) representanteLabel = 'representantes legais';
-                } else if (locador.responsavel_legal) {
-                    representanteText = `<b>${locador.responsavel_legal}</b>`;
-                }
-
-                const locadorText = locador.cnpj ?
-                    `<div style="text-align: justify"><b>1.1 – LOCADOR(ES):</b> Como <b>LOCADOR(ES)</b>, forma pela qual serão doravante, no presente instrumento, abreviadamente designado, <b>${locadorNome}</b>, inscrito sob o CNPJ nº ${locadorDoc}, situado em ${locadorAddress || 'Endereço não informado'}, ${representanteLabel} ${representanteText}.</div>` :
-                    `<div style="text-align: justify"><b>1.1 – LOCADOR(ES):</b> Como <b>LOCADOR(ES)</b>, forma pela qual serão doravante, no presente instrumento, abreviadamente designado, <b>${locadorNome}</b>, inscrito sob o CPF nº ${locadorDoc}, situado/domiciliado em ${locadorAddress || 'Endereço não informado'}.</div>`;
                 const locatText = `<div style="text-align: justify"><b>1.2 – LOCATÁRIO(A):</b> Como <b>LOCATÁRIO(A)</b>, forma pela qual será doravante, no presente instrumento, abreviadamente designado, <b>${locatObj.nome_completo || 'N/A'}</b>, inscrito no CPF/CNPJ sob o nº ${(locatObj.documento || 'N/A')}, residente e domiciliado em ${locatAddress || 'Endereço não informado'}. Contato ${locatObj.telefone || ''}, e-mail: ${locatObj.email || ''}</div>`;
 
                 let fiadText = "";
@@ -623,8 +654,28 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
             } else {
                 const rawImovel = selected.imoveis;
                 const imovelObj = Array.isArray(rawImovel) ? rawImovel[0] : (rawImovel || {});
-                const locador = selected.proprietarios || selected.empresas || imovelObj.proprietarios || imovelObj.empresas || {};
-                const locadorNome = locador.nome_completo || locador.nome_fantasia || locador.razao_social || 'N/A';
+                
+                // Proprietários Ativos para Assinaturas
+                const activeOwners: any[] = [];
+                if (selected.impresso_no_contrato !== false) {
+                    const primary = selected.proprietarios || selected.empresas || imovelObj.proprietarios || imovelObj.empresas || {};
+                    if (primary && (primary.nome_completo || primary.nome_fantasia || primary.razao_social)) {
+                        activeOwners.push(primary);
+                    }
+                }
+                if (selected.proprietarios_secundarios && Array.isArray(selected.proprietarios_secundarios)) {
+                    selected.proprietarios_secundarios.forEach((sec: any) => {
+                        if (sec.no_contrato !== false) {
+                            const owner = (sec.tipo === 'PF' ? propsList : compsList).find(p => p.id === sec.id);
+                            if (owner) activeOwners.push(owner);
+                        }
+                    });
+                }
+
+                const locadoresSignature = activeOwners.map(locador => {
+                    const locadorNome = locador.nome_completo || locador.nome_fantasia || locador.razao_social || 'N/A';
+                    return `<br><div style="text-align: center">________________________________________________<br><b>${locadorNome}</b><br>LOCADOR(A)</div>`;
+                }).join("");
 
                 const locatId = selected.cliente_id;
                 const locatObj = clientsList.find((c: any) => c.id === locatId) || selected.clientes || {};
@@ -651,7 +702,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                 const hoje = new Date();
                 const dataExtensoHoje = `${hoje.getDate().toString().padStart(2, '0')} de ${meses[hoje.getMonth()]} de ${hoje.getFullYear()}`;
 
-                const defaultAssinaturas = `<div style="text-align: justify">E por estarem, assim, justas e acordadas, assinam o presente instrumento em 02 (duas) vias de igual teor e forma e para um mesmo fim, juntamente com 02 (duas) testemunhas que a tudo estiveram presentes, para que surta os efeitos legais.</div><br><div style="text-align: center">João Pessoa, ${dataExtensoHoje}.</div><br><br><div style="text-align: center">________________________________________________<br><b>${locadorNome}</b><br>LOCADOR(A)</div><br><div style="text-align: center">_________________________________________________<br><b>${locatNome}</b><br>LOCATÁRIO(A)</div>${fiadoresLines}<br><br><br><div style="text-align: center">TESTEMUNHAS:</div><br><div style="text-align: center">________________________________<br>Nome: JOSUÊNIA V. F. ALVES<br>CPF: 073.193.704-09</div><br><br><div style="text-align: center">________________________________<br>Nome:<br>CPF:</div>`;
+                const defaultAssinaturas = `<div style="text-align: justify">E por estarem, assim, justas e acordadas, assinam o presente instrumento em 02 (duas) vias de igual teor e forma e para um mesmo fim, juntamente com 02 (duas) testemunhas que a tudo estiveram presentes, para que surta os efeitos legais.</div><br><div style="text-align: center">João Pessoa, ${dataExtensoHoje}.</div><br><br>${locadoresSignature}<br><div style="text-align: center">_________________________________________________<br><b>${locatNome}</b><br>LOCATÁRIO(A)</div>${fiadoresLines}<br><br><br><div style="text-align: center">TESTEMUNHAS:</div><br><div style="text-align: center">________________________________<br>Nome: JOSUÊNIA V. F. ALVES<br>CPF: 073.193.704-09</div><br><br><div style="text-align: center">________________________________<br>Nome:<br>CPF:</div>`;
                 setAssinaturasText(defaultAssinaturas);
             }
 
@@ -761,7 +812,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                 'rf_p3_inicio', 'rf_p3_final', 'rf_p3_valor',
                 'tipo_garantia', 'fiadores_ids', 'caucao_quantidade', 'caucao_valor',
                 'data_vencimento', 'valor_condominio', 'tipo_pagamento_condominio',
-                'valor_total_aluguel_condominio'
+                'valor_total_aluguel_condominio', 'proprietarios_secundarios', 'impresso_no_contrato'
             ];
 
             if (selectedData) {

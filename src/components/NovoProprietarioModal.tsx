@@ -24,6 +24,8 @@ const maskCpfCnpj = (value: string) => {
     }
 };
 
+const maskCEP = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
+
 const maskTelefone = (value: string) => {
     let val = value.replace(/\D/g, "");
     if (val.length > 11) val = val.slice(0, 11);
@@ -192,8 +194,9 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
     };
 
     const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const cep = e.target.value.replace(/\D/g, "").slice(0, 8);
-        setFormData((p: any) => ({ ...p, cep }));
+        const val = maskCEP(e.target.value);
+        setFormData((p: any) => ({ ...p, cep: val }));
+        const cep = val.replace(/\D/g, "");
         if (cep.length === 8) {
             setSearchingCep(true);
             try {

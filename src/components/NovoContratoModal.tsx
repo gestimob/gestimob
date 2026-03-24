@@ -570,7 +570,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                         representanteText = locador.empresa_responsaveis.map((r: any) => {
                             const gender = r.sexo || 'Masculino';
                             const enderecoCompl = `${r.logradouro || ''}${r.numero ? ', n° ' + r.numero : ''}${r.complemento ? ' (' + r.complemento + ')' : ''}${r.bairro ? ', ' + r.bairro : ''}, ${r.cidade || ''} - ${r.estado || ''}${r.cep ? ', CEP ' + maskCEP(r.cep) : ''}`;
-                            return `<b>${r.nome}</b>, ${r.nacionalidade || (gender === 'Feminino' ? 'brasileira' : 'brasileiro')}, ${r.estado_civil || 'estado civil não informado'}, ${adj(gender, 'portador', 'portadora')} do RG nº ${r.rg || 'N/A'} SSP/${r.orgao_emissor || 'N/A'} e ${adj(gender, 'inscrito', 'inscrita')} no CPF sob o nº ${maskCPF(r.cpf)}, ${adj(gender, 'residente e domiciliado', 'residente e domiciliada')} em ${enderecoCompl || 'Endereço não informado'}`;
+                            return `<b>${r.nome}</b>, ${r.nacionalidade || (gender === 'Feminino' ? 'brasileira' : 'brasileiro')}, ${r.estado_civil || 'estado civil não informado'}, ${adj(gender, 'portador', 'portadora')} do RG nº ${r.rg || 'N/A'} ${r.orgao_emissor || 'N/A'} e ${adj(gender, 'inscrito', 'inscrita')} no CPF sob o nº ${maskCPF(r.cpf)}, ${adj(gender, 'residente e domiciliado', 'residente e domiciliada')} em ${enderecoCompl || 'Endereço não informado'}`;
                         }).join(' e ');
                         if (locador.empresa_responsaveis.length > 1) representanteLabel = 'representantes legais';
                         representanteText = `, ${representanteLabel} ${representanteText}`;
@@ -592,7 +592,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                     const reps = locatObj.cliente_representantes.map((r: any) => {
                         const gender = r.sexo || 'Masculino';
                         const endereco = `${r.endereco_residencial || ''}${r.numero ? ', n° ' + r.numero : ''}${r.complemento ? ' (' + r.complemento + ')' : ''}${r.bairro ? ', ' + r.bairro : ''}, ${r.cidade || ''} - ${r.uf || ''}${r.cep ? ', CEP ' + maskCEP(r.cep) : ''}`;
-                        return `<b>${r.nome_completo}</b>, ${r.nacionalidade || (gender === 'Feminino' ? 'brasileira' : 'brasileiro')}, ${r.estado_civil || 'estado civil não informado'}, ${r.profissao || 'profissão não informada'}, ${adj(gender, 'portador', 'portadora')} do RG nº ${r.identidade || 'N/A'}, ${adj(gender, 'inscrito', 'inscrita')} no CPF sob o nº ${maskCPF(r.cpf)}, ${adj(gender, 'residente e domiciliado', 'residente e domiciliada')} em ${endereco}`;
+                        return `<b>${r.nome_completo}</b>, ${r.nacionalidade || (gender === 'Feminino' ? 'brasileira' : 'brasileiro')}, ${r.estado_civil || 'estado civil não informado'}, ${r.profissao || 'profissão não informada'}, ${adj(gender, 'portador', 'portadora')} do RG nº ${r.rg || r.identidade || 'N/A'} ${r.orgao_emissor || ''}, ${adj(gender, 'inscrito', 'inscrita')} no CPF sob o nº ${maskCPF(r.cpf)}, ${adj(gender, 'residente e domiciliado', 'residente e domiciliada')} em ${endereco}`;
                     }).join(' e ');
                     const repLabel = locatObj.cliente_representantes.length > 1 ? 'pelos seus representantes' : 'pelo seu representante';
                     locatRepText = `, neste ato representada ${repLabel} ${reps}`;
@@ -621,7 +621,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                 const reps = f.cliente_representantes.map((r: any) => {
                                     const gender = r.sexo || 'Masculino';
                                     const rAddress = `${r.endereco_residencial || ''}${r.numero ? ', n° ' + r.numero : ''}${r.complemento ? ' (' + r.complemento + ')' : ''}${r.bairro ? ', ' + r.bairro : ''}, ${r.cidade || ''} - ${r.uf || ''}${r.cep ? ', CEP ' + maskCEP(r.cep) : ''}`;
-                                    return `<b>${r.nome_completo}</b>, ${r.nacionalidade || (gender === 'Feminino' ? 'brasileira' : 'brasileiro')}, ${r.estado_civil || 'estado civil não informado'}, ${r.profissao || 'profissão não informada'}, ${adj(gender, 'portador', 'portadora')} do RG nº ${r.identidade || 'N/A'}, ${adj(gender, 'inscrito', 'inscrita')} no CPF sob o nº ${maskCPF(r.cpf)}, ${adj(gender, 'residente e domiciliado', 'residente e domiciliada')} em ${rAddress}`;
+                                    return `<b>${r.nome_completo}</b>, ${r.nacionalidade || (gender === 'Feminino' ? 'brasileira' : 'brasileiro')}, ${r.estado_civil || 'estado civil não informado'}, ${r.profissao || 'profissão não informada'}, ${adj(gender, 'portador', 'portadora')} do RG nº ${r.rg || r.identidade || 'N/A'} ${r.orgao_emissor || ''}, ${adj(gender, 'inscrito', 'inscrita')} no CPF sob o nº ${maskCPF(r.cpf)}, ${adj(gender, 'residente e domiciliado', 'residente e domiciliada')} em ${rAddress}`;
                                 }).join(' e ');
                                 const repLabel = f.cliente_representantes.length > 1 ? 'pelos seus representantes' : 'pelo seu representante';
                                 fRepText = `, neste ato representada ${repLabel} ${reps}`;

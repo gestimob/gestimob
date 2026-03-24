@@ -59,6 +59,8 @@ const CurrencyInput = ({ label, value, onChange, colSpan = "", readOnly = false,
     );
 };
 
+const maskCEP = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
+
 const initialFormState = {
     codigo_interno: "", tipo: "Apartamento", status: "Disponível", tipo_aluguel: "Residencial",
     area_m2: 0, quartos: 0, suites: 0, banheiros: 0, vagas: 0, andar_imovel: "", valor_aluguel: 0, valor_condominio: 0,
@@ -154,37 +156,31 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
         if (props.data) setProprietarios(props.data);
     }
 
-    const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const cepVal = value.replace(/\D/g, "");
-        if (cepVal.length > 8) return;
-        let formattedCep = cepVal;
-        if (cepVal.length > 5) formattedCep = cepVal.substring(0, 5) + "-" + cepVal.substring(5, 8);
-
-        setFormData((prev: any) => ({ ...prev, cep: formattedCep }));
+    const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = maskCEP(e.target.value);
+        setFormData((prev: any) => ({ ...prev, cep: val }));
+        const cepVal = val.replace(/\D/g, "");
 
         if (cepVal.length === 8) {
-            (async () => {
-                setSearchingCep(true);
-                try {
-                    const res = await fetch(`https://viacep.com.br/ws/${cepVal}/json/`);
-                    const data = await res.json();
-                    if (!data.erro) {
-                        setFormData((prev: any) => ({
-                            ...prev,
-                            logradouro: data.logradouro,
-                            bairro: data.bairro,
-                            cidade: data.localidade,
-                            estado: data.uf,
-                            endereco: `${data.logradouro}, ${prev.numero || ''} - ${data.bairro}, ${data.localidade} - ${data.uf}`
-                        }));
-                    }
-                } catch (err) {
-                    console.error(err);
-                } finally {
-                    setSearchingCep(false);
+            setSearchingCep(true);
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${cepVal}/json/`);
+                const data = await res.json();
+                if (!data.erro) {
+                    setFormData((prev: any) => ({
+                        ...prev,
+                        logradouro: data.logradouro,
+                        bairro: data.bairro,
+                        cidade: data.localidade,
+                        estado: data.uf,
+                        endereco: `${data.logradouro}, ${prev.numero || ''} - ${data.bairro}, ${data.localidade} - ${data.uf}`
+                    }));
                 }
-            })();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setSearchingCep(false);
+            }
         }
     };
 

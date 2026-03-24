@@ -15,8 +15,8 @@ function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-const maskCpfCnpj = (value: string) => {
-    const val = value.replace(/\D/g, "");
+const maskCpfCnpj = (v: string) => {
+    const val = v.replace(/\D/g, "");
     if (val.length <= 11) {
         return val.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
     } else {
@@ -24,26 +24,15 @@ const maskCpfCnpj = (value: string) => {
     }
 };
 
-const maskPhone = (value: string) => {
-    let val = value.replace(/\D/g, "");
-    if (!val) return "";
-    if (val.length <= 2) {
-        return `(${val}`;
-    }
-    if (val.length <= 6) {
-        return `(${val.slice(0, 2)}) ${val.slice(2)}`;
-    }
-    if (val.length <= 10) {
-        return `(${val.slice(0, 2)}) ${val.slice(2, 6)}-${val.slice(6)}`;
-    }
-    return `(${val.slice(0, 2)}) ${val.slice(2, 7)}-${val.slice(7, 11)}`;
+const maskPhone = (v: string) => {
+    let r = v.replace(/\D/g, "").slice(0, 11);
+    if (r.length > 10) return r.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+    if (r.length > 5) return r.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+    if (r.length > 2) return r.replace(/^(\d{2})(\d{0,5}).*/, "($1) $2");
+    return r.length ? `(${r}` : "";
 };
 
-const maskCEP = (value: string) => {
-    const val = value.replace(/\D/g, "");
-    if (val.length <= 5) return val;
-    return val.replace(/(\d{5})(\d{1,3})/, "$1-$2").slice(0, 9);
-};
+const maskCEP = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
 
 const formatBRL = (val: number | string) => {
     if (val === undefined || val === null) return "";
@@ -107,7 +96,7 @@ const Select = ({ label, value, onChange, options, colSpan = "col-span-1", requi
 const initialFormState = {
     codigo_interno: "", nome_completo: "", nome_fantasia: "", tipo: "PF", documento: "", email: "", telefone: "", celular: "",
     sexo: "", data_nascimento: "", tipo_identidade: "RG", rg: "", cnh: "", orgao_expedidor: "", cnh_orgao_expedidor: "", filiacao: "", naturalidade: "", nacionalidade: "",
-    estado_civil: "Solteiro", grau_instrucao: "", num_dependentes: 0, papel: "Locatário", status: "Ativo",
+    estado_civil: "Solteiro(a)", grau_instrucao: "", num_dependentes: 0, papel: "Locatário(a)", status: "Ativo",
     cep: "", logradouro: "", numero: "", complemento: "", bairro: "", cidade: "", estado: "",
     tipo_residencia: "", valor_aluguel: 0, tempo_residencia: "",
     profissao: "", atividade: "", empresa_trabalho: "", empresa_cnpj: "", cargo_funcao: "", data_admissao: "",
@@ -134,7 +123,26 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
     const [formData, setFormData] = useState<any>(initialFormState);
 
     const [representantes, setRepresentantes] = useState<any[]>([
-        { id: 'temp-' + Date.now(), nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio" }
+        { 
+            id: 'temp-' + Date.now(), 
+            nome_completo: "", 
+            cpf: "", 
+            rg: "", 
+            orgao_emissor: "",
+            cargo_funcao: "", 
+            ligacao_empresa: "Sócio(a)",
+            nacionalidade: "Brasileiro(a)",
+            estado_civil: "Solteiro(a)",
+            sexo: "Masculino",
+            celular: "",
+            email: "",
+            cep: "",
+            endereco_residencial: "",
+            numero: "",
+            bairro: "",
+            cidade: "",
+            uf: ""
+        }
     ]);
 
     const [docIdentidade, setDocIdentidade] = useState<File | null>(null);
@@ -147,7 +155,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
     const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
 
     const isPF = formData.tipo === 'PF';
-    const showConjugeTab = isPF && (formData.estado_civil === 'Casado' || formData.estado_civil === 'União estável');
+    const showConjugeTab = isPF && (formData.estado_civil === 'Casado(a)' || formData.estado_civil === 'União estável');
     const handleFileValidation = (file: File) => {
         const isPDF = file.type === 'application/pdf';
         const isJPG = file.type === 'image/jpeg' || file.type === 'image/jpg';
@@ -246,7 +254,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                     setSelfie(null);
                     setOcrResult(null);
                     setRepresentantes([
-                        { id: 'temp-' + Date.now(), nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio" }
+                        { id: 'temp-' + Date.now(), nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio(a)" }
                     ]);
                     setStep(1);
                     setActiveTab('basico');
@@ -266,8 +274,8 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                     setRepresentantes([
                         { 
                             id: 'temp-' + Date.now(), 
-                            nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio",
-                            sexo: "Masculino", nacionalidade: "Brasileiro", estado_civil: "Solteiro", profissao: "",
+                            nome_completo: "", cpf: "", rg: "", orgao_emissor: "", cargo_funcao: "", ligacao_empresa: "Sócio(a)",
+                            sexo: "Masculino", nacionalidade: "Brasileiro(a)", estado_civil: "Solteiro(a)", profissao: "",
                             email: "", celular: "", cep: "", endereco_residencial: "", numero: "", bairro: "", cidade: "", uf: "", complemento: ""
                         }
                     ]);
@@ -322,8 +330,8 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
     const addRepresentante = () => {
         setRepresentantes([...representantes, { 
             id: 'temp-' + Date.now(), 
-            nome_completo: "", cpf: "", rg: "", cargo_funcao: "", ligacao_empresa: "Sócio",
-            sexo: "Masculino", nacionalidade: "Brasileiro", estado_civil: "Solteiro", profissao: "",
+            nome_completo: "", cpf: "", rg: "", orgao_emissor: "", cargo_funcao: "", ligacao_empresa: "Sócio(a)",
+            sexo: "Masculino", nacionalidade: "Brasileiro(a)", estado_civil: "Solteiro(a)", profissao: "",
             email: "", celular: "", cep: "", endereco_residencial: "", numero: "", bairro: "", cidade: "", uf: "", complemento: ""
         }]);
     };
@@ -690,7 +698,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                     <Input label="Órgão" value={formData.orgao_expedidor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, orgao_expedidor: e.target.value })} colSpan="col-span-1" />
                                                                     <Input label="CNH" value={formData.cnh} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cnh: e.target.value })} colSpan="col-span-1" />
                                                                     <Input label="Órgão CNH" value={formData.cnh_orgao_expedidor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cnh_orgao_expedidor: e.target.value })} colSpan="col-span-1" />
-                                                                    <Select label="Estado Civil" value={formData.estado_civil} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, estado_civil: e.target.value })} options={[{ label: 'Solteiro', value: 'Solteiro' }, { label: 'Casado', value: 'Casado' }, { label: 'União estável', value: 'União estável' }, { label: 'Divorciado', value: 'Divorciado' }, { label: 'Viúvo', value: 'Viúvo' }]} colSpan="col-span-1" />
+                                                                    <Select label="Estado Civil" value={formData.estado_civil} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, estado_civil: e.target.value })} options={[{ label: 'Solteiro(a)', value: 'Solteiro(a)' }, { label: 'Casado(a)', value: 'Casado(a)' }, { label: 'União estável', value: 'União estável' }, { label: 'Divorciado(a)', value: 'Divorciado(a)' }, { label: 'Viúvo(a)', value: 'Viúvo(a)' }]} colSpan="col-span-1" />
                                                                     <Input label="N. Dependentes" value={formData.num_dependentes} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, num_dependentes: e.target.value })} type="number" colSpan="col-span-1" />
                                                                     <Input label="Naturalidade" value={formData.naturalidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, naturalidade: e.target.value })} colSpan="col-span-1" />
                                                                     <Input label="Nacionalidade" value={formData.nacionalidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nacionalidade: e.target.value })} colSpan="col-span-1" />
@@ -698,11 +706,11 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                 </>
                                                             )}
 
-                                                            <Input label="WhatsApp / Cel" value={formData.celular} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, celular: maskPhone(e.target.value) })} colSpan="col-span-1" />
-                                                            <Input label="Telefone Fixo" value={formData.telefone} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, telefone: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                            <Input label="Telefone Fixo" value={maskPhone(formData.telefone)} onChange={(e: any) => setFormData({ ...formData, telefone: e.target.value.replace(/\D/g, "") })} colSpan="col-span-1" placeholder="(00) 0000-0000" />
+                                                            <Input label="Celular / Whatsapp" value={maskPhone(formData.celular)} onChange={(e: any) => setFormData({ ...formData, celular: e.target.value.replace(/\D/g, "") })} colSpan="col-span-1" placeholder="(00) 00000-0000" />
                                                             <Input label="E-mail Principal" value={formData.email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })} type="email" colSpan="col-span-2 md:col-span-2" />
                                                             <Select label="Status" value={formData.status || 'Ativo'} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, status: e.target.value })} options={[{ label: 'Ativo', value: 'Ativo' }, { label: 'Inativo', value: 'Inativo' }]} colSpan="col-span-1" />
-                                                            <Select label="Papel Cliente" value={formData.papel || 'Locatário'} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, papel: e.target.value })} options={[{ label: 'Locatário', value: 'Locatário' }, { label: 'Locatário e Fiador', value: 'Locatário e Fiador' }, { label: 'Apenas Fiador', value: 'Apenas Fiador' }]} colSpan="col-span-1 md:col-span-1" />
+                                                            <Select label="Papel Cliente" value={formData.papel || 'Locatário(a)'} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, papel: e.target.value })} options={[{ label: 'Locatário(a)', value: 'Locatário(a)' }, { label: 'Locatário(a) e Fiador(a)', value: 'Locatário(a) e Fiador(a)' }, { label: 'Apenas Fiador(a)', value: 'Apenas Fiador(a)' }]} colSpan="col-span-1 md:col-span-1" />
                                                         </motion.div>
                                                     )}
 
@@ -719,21 +727,42 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                         
                                                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                                                                             <Input required label="Nome Completo" value={rep.nome_completo} onChange={e => { const r = [...representantes]; r[idx].nome_completo = e.target.value; setRepresentantes(r); }} colSpan="col-span-2 md:col-span-3" />
-                                                                            <Input required label="CPF" value={rep.cpf} onChange={e => { const r = [...representantes]; r[idx].cpf = maskCpfCnpj(e.target.value); setRepresentantes(r); }} colSpan="col-span-1 md:col-span-1" maxLength={14} />
-                                                                            
+                                                                            <Input required label="CPF" value={maskCpfCnpj(rep.cpf)} onChange={e => { const r = [...representantes]; r[idx].cpf = e.target.value.replace(/\D/g, ""); setRepresentantes(r); }} colSpan="col-span-1 md:col-span-1" maxLength={14} />
+                                                                             
+                                                                             <Input label="RG" value={rep.rg} onChange={e => { const r = [...representantes]; r[idx].rg = e.target.value; setRepresentantes(r); }} />
+                                                                             <Input label="Órgão Emissor" value={rep.orgao_emissor} onChange={e => { const r = [...representantes]; r[idx].orgao_emissor = e.target.value; setRepresentantes(r); }} placeholder="Ex: SSP/SP" />
+
                                                                             <Select required label="Sexo" value={rep.sexo} onChange={e => { const r = [...representantes]; r[idx].sexo = e.target.value; setRepresentantes(r); }} options={[{ label: 'Masculino', value: 'Masculino' }, { label: 'Feminino', value: 'Feminino' }]} />
-                                                                            <Select required label="Ligação" value={rep.ligacao_empresa} onChange={e => { const r = [...representantes]; r[idx].ligacao_empresa = e.target.value; setRepresentantes(r); }} options={[{ label: 'Sócio', value: 'Sócio' }, { label: 'Procurador', value: 'Procurador' }, { label: 'Diretor', value: 'Diretor' }]} />
+                                                                            <Select required label="Ligação" value={rep.ligacao_empresa} onChange={e => { const r = [...representantes]; r[idx].ligacao_empresa = e.target.value; setRepresentantes(r); }} options={[{ label: 'Sócio(a)', value: 'Sócio(a)' }, { label: 'Procurador(a)', value: 'Procurador(a)' }, { label: 'Diretor(a)', value: 'Diretor(a)' }]} />
                                                                             <Input label="Nacionalidade" value={rep.nacionalidade} onChange={e => { const r = [...representantes]; r[idx].nacionalidade = e.target.value; setRepresentantes(r); }} />
-                                                                            <Select label="Estado Civil" value={rep.estado_civil} onChange={e => { const r = [...representantes]; r[idx].estado_civil = e.target.value; setRepresentantes(r); }} options={[{ label: 'Solteiro', value: 'Solteiro' }, { label: 'Casado', value: 'Casado' }, { label: 'União estável', value: 'União estável' }, { label: 'Divorciado', value: 'Divorciado' }, { label: 'Viúvo', value: 'Viúvo' }]} />
+                                                                            <Select label="Estado Civil" value={rep.estado_civil} onChange={e => { const r = [...representantes]; r[idx].estado_civil = e.target.value; setRepresentantes(r); }} options={[{ label: 'Solteiro(a)', value: 'Solteiro(a)' }, { label: 'Casado(a)', value: 'Casado(a)' }, { label: 'União estável', value: 'União estável' }, { label: 'Divorciado(a)', value: 'Divorciado(a)' }, { label: 'Viúvo(a)', value: 'Viúvo(a)' }]} />
 
                                                                             <Input label="Profissão" value={rep.profissao} onChange={e => { const r = [...representantes]; r[idx].profissao = e.target.value; setRepresentantes(r); }} />
                                                                             <Input label="E-mail" value={rep.email} onChange={e => { const r = [...representantes]; r[idx].email = e.target.value; setRepresentantes(r); }} colSpan="col-span-2 md:col-span-2" />
-                                                                            <Input label="Contato" value={rep.celular} onChange={e => { const r = [...representantes]; r[idx].celular = maskPhone(e.target.value); setRepresentantes(r); }} />
+                                                                            <Input label="Contato" value={maskPhone(rep.celular)} onChange={e => { const r = [...representantes]; r[idx].celular = e.target.value.replace(/\D/g, ""); setRepresentantes(r); }} />
 
                                                                             <div className="col-span-1 md:col-span-1 space-y-2">
                                                                                 <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">CEP</label>
                                                                                 <div className="relative">
-                                                                                    <input value={rep.cep || ""} onChange={e => handleRepCepChange(idx, e.target.value)} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-xs outline-none focus:border-primary transition-all font-medium" maxLength={9} />
+                                                                                    <input value={maskCEP(rep.cep || "")} onChange={async e => {
+                                                                                        const val = e.target.value.replace(/\D/g, "").slice(0, 8);
+                                                                                        const r = [...representantes]; r[idx].cep = val; setRepresentantes(r);
+                                                                                        if (val.length === 8) {
+                                                                                            setSearchingRepCep(rep.id);
+                                                                                            try {
+                                                                                                const res = await fetch(`https://viacep.com.br/ws/${val}/json/`);
+                                                                                                const data = await res.json();
+                                                                                                if (!data.erro) {
+                                                                                                    const r = [...representantes];
+                                                                                                    r[idx].endereco_residencial = data.logradouro;
+                                                                                                    r[idx].bairro = data.bairro;
+                                                                                                    r[idx].cidade = data.localidade;
+                                                                                                    r[idx].uf = data.uf;
+                                                                                                    setRepresentantes(r);
+                                                                                                }
+                                                                                            } catch (e) { } finally { setSearchingRepCep(null); }
+                                                                                        }
+                                                                                    }} className="w-full bg-panel/50 border border-panel-border rounded-xl py-3 px-5 text-foreground text-xs outline-none focus:border-primary transition-all font-medium" maxLength={9} />
                                                                                     {searchingRepCep === rep.id && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary animate-spin" />}
                                                                                 </div>
                                                                             </div>
@@ -757,7 +786,9 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                         <motion.div key="pro" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                                                             <Input label="Profissão" value={formData.profissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, profissao: e.target.value })} colSpan="col-span-1" />
                                                             <Input label="Atividade" value={formData.atividade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, atividade: e.target.value })} colSpan="col-span-1 md:col-span-3" />
-                                                            <Input label="Empresa Atual" value={formData.empresa_trabalho} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, empresa_trabalho: e.target.value })} colSpan="col-span-2 md:col-span-3" />
+                                                            <Input label="Empresa Atual" value={formData.empresa_trabalho} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, empresa_trabalho: e.target.value })} colSpan="col-span-2 md:col-span-2" />
+                                                            <Input label="CNPJ Empresa" value={maskCpfCnpj(formData.empresa_cnpj)} onChange={(e: any) => setFormData({ ...formData, empresa_cnpj: e.target.value.replace(/\D/g, "") })} colSpan="col-span-1 md:col-span-1" placeholder="00.000.000/0000-00" />
+                                                            <Input label="Telefone RH" value={maskPhone(formData.telefone_rh)} onChange={(e: any) => setFormData({ ...formData, telefone_rh: e.target.value.replace(/\D/g, "") })} colSpan="col-span-1 md:col-span-1" placeholder="(00) 0000-0000" />
                                                             <Input label="Cargo" value={formData.cargo_funcao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cargo_funcao: e.target.value })} colSpan="col-span-1" />
                                                             <Input label="Admissão" value={formData.data_admissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, data_admissao: e.target.value })} type="date" colSpan="col-span-1 md:col-span-1" />
                                                             <CurrencyInput label="Renda Principal (R$)" value={formData.renda_principal} onChange={(val: number) => setFormData({ ...formData, renda_principal: val })} colSpan="col-span-1" />
@@ -780,7 +811,7 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                             <Input label="Complemento" value={formData.complemento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, complemento: e.target.value })} colSpan="col-span-1 md:col-span-2" placeholder="Apto, Sala, Bloco..." />
                                                             <Input label="Bairro" value={formData.bairro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, bairro: e.target.value })} colSpan="col-span-1 md:col-span-2" />
                                                             <Input label="Cidade" value={formData.cidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cidade: e.target.value })} colSpan="col-span-1 md:col-span-2" />
-                                                            <Input label="Estado" value={formData.estado} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, estado: e.target.value })} colSpan="col-span-1" />
+                                                            <Input label="Estado" value={formData.estado} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, estado: e.target.value })} colSpan="col-span-1" maxLength={2} />
                                                             <Select label="Residência" value={formData.tipo_residencia} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, tipo_residencia: e.target.value })} colSpan="col-span-1 md:col-span-2" options={[{ label: '...', value: '' }, { label: 'Própria', value: 'Própria' }, { label: 'Alugada', value: 'Alugada' }, { label: 'Financiada', value: 'Financiada' }, { label: 'Com parentes', value: 'Com parentes' }]} />
                                                             {formData.tipo_residencia === 'Alugada' && <CurrencyInput label="Valor Aluguel" value={formData.valor_aluguel} onChange={(val: number) => setFormData({ ...formData, valor_aluguel: val })} colSpan="col-span-1 md:col-span-2" />}
                                                         </motion.div>
@@ -838,10 +869,10 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                                                             <Input label="Nome Cônjuge" value={formData.conjuge_nome} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_nome: e.target.value })} colSpan="col-span-2 md:col-span-3" />
                                                             <Input label="Nascimento" value={formData.conjuge_data_nascimento} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_data_nascimento: e.target.value })} type="date" colSpan="col-span-1 md:col-span-1" />
-                                                            <Input label="CPF Cônjuge" value={formData.conjuge_cpf} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_cpf: e.target.value })} colSpan="col-span-1" />
+                                                            <Input label="CPF Cônjuge" value={maskCpfCnpj(formData.conjuge_cpf)} onChange={(e: any) => setFormData({ ...formData, conjuge_cpf: e.target.value.replace(/\D/g, "") })} colSpan="col-span-1" placeholder="000.000.000-00" />
                                                             <Input label="Profissão" value={formData.conjuge_profissao} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_profissao: e.target.value })} colSpan="col-span-1" />
                                                             <CurrencyInput label="Renda Mensal" value={formData.conjuge_renda} onChange={(val: number) => setFormData({ ...formData, conjuge_renda: val })} colSpan="col-span-1" />
-                                                            <Input label="WhatsApp" value={formData.conjuge_celular} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, conjuge_celular: maskPhone(e.target.value) })} colSpan="col-span-1" />
+                                                            <Input label="WhatsApp" value={maskPhone(formData.conjuge_celular)} onChange={(e: any) => setFormData({ ...formData, conjuge_celular: e.target.value.replace(/\D/g, "") })} colSpan="col-span-1" placeholder="(00) 00000-0000" />
                                                         </motion.div>
                                                     )}
 

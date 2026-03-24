@@ -15,6 +15,17 @@ function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
+const maskCEP = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
+const maskCPF = (v: string) => v.replace(/\D/g, "").slice(0, 11).replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+const maskCNPJ = (v: string) => v.replace(/\D/g, "").slice(0, 14).replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+const maskPhone = (v: string) => {
+    let r = v.replace(/\D/g, "").slice(0, 11);
+    if (r.length > 10) return r.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+    if (r.length > 5) return r.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+    if (r.length > 2) return r.replace(/^(\d{2})(\d{0,5}).*/, "($1) $2");
+    return r.length ? `(${r}` : "";
+};
+
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -78,6 +89,9 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
             arquivo: null as File | null,
             selfie: null as File | null,
             selfie_url: null,
+            contato: '',
+            email: '',
+            sexo: 'Masculino',
             isNew: true
         }
     ]);
@@ -273,31 +287,27 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
         };
 
         initForm();
-    }, [initialData, isOpen]);
+    }, [isOpen, initialData]);
 
     const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const cep = e.target.value.replace(/\D/g, "").slice(0, 8);
-        setFormData((prev: any) => ({ ...prev, cep }));
-
-        if (cep.length === 8) {
+        const val = maskCEP(e.target.value);
+        setFormData((prev: any) => ({ ...prev, cep: val }));
+        const cleanCep = val.replace(/\D/g, "");
+        if (cleanCep.length === 8) {
             setSearchingCep(true);
             try {
-                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                const data = await response.json();
+                const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+                const data = await res.json();
                 if (!data.erro) {
                     setFormData((prev: any) => ({
                         ...prev,
-                        logradouro: data.logradouro || "",
-                        bairro: data.bairro || "",
-                        cidade: data.localidade || "",
-                        estado: data.uf || ""
+                        logradouro: data.logradouro,
+                        bairro: data.bairro,
+                        cidade: data.localidade,
+                        estado: data.uf
                     }));
                 }
-            } catch (error) {
-                console.error("Erro CEP:", error);
-            } finally {
-                setSearchingCep(false);
-            }
+            } catch (err) { } finally { setSearchingCep(false); }
         }
     };
 
@@ -533,7 +543,10 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                     cidade: resp.cidade,
                     estado: resp.estado,
                     documento_url: publicUrl,
-                    selfie_url: selfieUrl
+                    selfie_url: selfieUrl,
+                    contato: resp.contato,
+                    email: resp.email,
+                    sexo: resp.sexo
                 };
 
                 if (resp.isNew) {
@@ -657,27 +670,7 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                     </div>
                                                     <Input label="Nome Fantasia" value={formData.nome_fantasia} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nome_fantasia: e.target.value })} placeholder="Ex: Minha Imobiliária" required colSpan="col-span-1" />
                                                     <Input label="Razão Social" value={formData.razao_social} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, razao_social: e.target.value })} placeholder="Ex: Gestão Imob Ltda" required colSpan="col-span-1" />
-                                                    <div className="space-y-3 col-span-1">
-                                                        <label className="text-[10px] font-black text-text-dim uppercase tracking-[0.2em]">CNPJ Oficial</label>
-                                                        <input
-                                                            required
-                                                            value={(() => {
-                                                                const v = (formData.cnpj || '').replace(/\D/g, '');
-                                                                if (v.length <= 2) return v;
-                                                                if (v.length <= 5) return `${v.slice(0, 2)}.${v.slice(2)}`;
-                                                                if (v.length <= 8) return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5)}`;
-                                                                if (v.length <= 12) return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5, 8)}/${v.slice(8)}`;
-                                                                return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5, 8)}/${v.slice(8, 12)}-${v.slice(12, 14)}`;
-                                                            })()}
-                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                                const val = e.target.value.replace(/\D/g, "").slice(0, 14);
-                                                                setFormData({ ...formData, cnpj: val });
-                                                            }}
-                                                            className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-4 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium"
-                                                            placeholder="00.000.000/0001-00"
-                                                        />
-                                                    </div>
-
+                                                    <Input label="CNPJ Oficial" value={maskCNPJ(formData.cnpj)} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cnpj: maskCNPJ(e.target.value) })} placeholder="00.000.000/0001-00" required colSpan="col-span-1" />
 
 
                                                     <div className="col-span-2 space-y-3 mt-4">
@@ -745,7 +738,7 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                     updated[index].nome = e.target.value;
                                                                     setResponsaveis(updated);
                                                                 }} colSpan="col-span-2 md:col-span-6" required />
-                                                                <Input label="CPF" value={resp.cpf ? resp.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : ''} onChange={(e: any) => {
+                                                                <Input label="CPF" value={maskCPF(resp.cpf)} onChange={(e: any) => {
                                                                     const val = e.target.value.replace(/\D/g, "").slice(0, 11);
                                                                     const updated = [...responsaveis];
                                                                     updated[index].cpf = val;
@@ -786,8 +779,37 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                     </select>
                                                                 </div>
 
+                                                                <div className="col-span-2 md:col-span-3 space-y-3">
+                                                                    <label className="text-[10px] font-black text-text-dim uppercase tracking-widest">Sexo</label>
+                                                                    <select
+                                                                        value={resp.sexo || "Masculino"}
+                                                                        onChange={(e) => {
+                                                                            const updated = [...responsaveis];
+                                                                            updated[index].sexo = e.target.value;
+                                                                            setResponsaveis(updated);
+                                                                        }}
+                                                                        className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-xl py-3 px-4 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none cursor-pointer"
+                                                                    >
+                                                                        <option value="Masculino" className="bg-[#121212] text-white">Masculino</option>
+                                                                        <option value="Feminino" className="bg-[#121212] text-white">Feminino</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <Input label="Telefone / Contato" value={maskPhone(resp.contato || '')} onChange={(e: any) => {
+                                                                    const updated = [...responsaveis];
+                                                                    updated[index].contato = e.target.value;
+                                                                    setResponsaveis(updated);
+                                                                }} colSpan="col-span-2 md:col-span-3" placeholder="(00) 00000-0000" />
+
+                                                                <Input label="E-mail" value={resp.email || ''} onChange={(e: any) => {
+                                                                    const updated = [...responsaveis];
+                                                                    updated[index].email = e.target.value;
+                                                                    setResponsaveis(updated);
+                                                                }} colSpan="col-span-2 md:col-span-3" placeholder="email@exemplo.com" />
+
                                                                 <div className="col-span-6 border-t border-panel-border pt-6 mt-2 relative">
                                                                     <h5 className="text-[10px] font-black text-primary uppercase tracking-widest absolute -top-2 bg-background pr-2">Endereço Residencial</h5>
+
                                                                 </div>
 
                                                                 <div className="col-span-2 md:col-span-2 space-y-3">

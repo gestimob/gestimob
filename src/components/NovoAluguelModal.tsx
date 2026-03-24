@@ -606,7 +606,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
 
                                 <Input disabled={isReadOnly} label="Data de Criação" type="date" value={formData.created_at} onChange={(e: any) => setFormData({ ...formData, created_at: e.target.value })} />
 
-                                <Select required disabled={isReadOnly} label="Cliente (Locatário)" value={formData.cliente_id} onChange={(e: any) => setFormData({ ...formData, cliente_id: e.target.value })} options={[{ label: 'Selecione um cliente...', value: '' }, ...clientes.filter(c => c.papel !== 'Apenas Fiador').map(c => ({ label: c.nome_completo, value: c.id }))]} colSpan="col-span-1" />
+                                <Select required disabled={isReadOnly} label="Cliente (Locatário(a))" value={formData.cliente_id} onChange={(e: any) => setFormData({ ...formData, cliente_id: e.target.value })} options={[{ label: 'Selecione um(a) cliente...', value: '' }, ...clientes.filter(c => c.papel !== 'Apenas Fiador(a)').map(c => ({ label: c.nome_completo, value: c.id }))]} colSpan="col-span-1" />
 
                                 {formData.proprietarios_secundarios && formData.proprietarios_secundarios.length > 0 ? (
                                     <div className="col-span-1 border border-panel-border rounded-2xl p-4 bg-black/5 dark:bg-white/5 space-y-3">
@@ -839,7 +839,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                                 disabled={isReadOnly}
                                                 checked={formData.tipo_garantia === "Fiador"}
                                                 onChange={() => setFormData({ ...formData, tipo_garantia: "Fiador" })} />
-                                            <span className="text-sm font-bold text-foreground">Fiador(es)</span>
+                                            <span className="text-sm font-bold text-foreground">Fiador(a)</span>
                                         </label>
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input type="radio" className="accent-primary w-4 h-4 cursor-pointer"

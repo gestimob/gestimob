@@ -14,7 +14,7 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
     if (!cliente) return null;
 
     const isPF = cliente.tipo === 'PF';
-    const isMarried = isPF && (cliente.estado_civil === 'Casado' || cliente.estado_civil === 'União estável');
+    const isMarried = isPF && (cliente.estado_civil === 'Casado(a)' || cliente.estado_civil === 'União estável');
     const isPF_local = cliente.tipo === 'PF';
 
     const formatId = (val: string, type: string) => {

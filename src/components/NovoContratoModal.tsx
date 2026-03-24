@@ -593,8 +593,10 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                     const repLabel = locatObj.cliente_representantes.length > 1 ? 'pelos seus representantes' : 'pelo seu representante';
                     locatRepText = `, neste ato representada ${repLabel} ${reps}`;
                 }
+                
+                const locatSedeText = locatObj.tipo === 'PJ' ? 'com sede' : 'residente e domiciliado';
 
-                const locatText = `<div style="text-align: justify"><b>1.2 – LOCATÁRIO(A):</b> Como <b>LOCATÁRIO(A)</b>, forma pela qual será doravante, no presente instrumento, abreviadamente designado, <b>${locatObj.nome_completo || 'N/A'}</b>, inscrito no CPF/CNPJ sob o nº ${maskDocumento(locatObj.documento || 'N/A')}, residente e domiciliado em ${locatAddress || 'Endereço não informado'}${locatRepText}. Contato ${locatObj.telefone || ''}, e-mail: ${locatObj.email || ''}</div>`;
+                const locatText = `<div style="text-align: justify"><b>1.2 – LOCATÁRIO(A):</b> Como <b>LOCATÁRIO(A)</b>, forma pela qual será doravante, no presente instrumento, abreviadamente designado, <b>${locatObj.nome_completo || 'N/A'}</b>, inscrito no CPF/CNPJ sob o nº ${maskDocumento(locatObj.documento || 'N/A')}, ${locatSedeText} em ${locatAddress || 'Endereço não informado'}${locatRepText}. Contato ${locatObj.telefone || ''}, e-mail: ${locatObj.email || ''}</div>`;
 
                 let fiadText = "";
                 if (selected.tipo_garantia === "Fiador") {

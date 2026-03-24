@@ -298,7 +298,7 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
             }
 
             delete finalData.tipo_proprietario_principal;
-            delete finalData.impresso_no_contrato; // Not a DB column, used for UI only
+            // delete finalData.impresso_no_contrato; // Now it's a DB column
 
             if (finalData.proprietarios_secundarios) {
                 finalData.proprietarios_secundarios = finalData.proprietarios_secundarios.filter((p: any) => p.id && String(p.id).trim() !== "");
@@ -448,8 +448,8 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                                                                 </h4>
                                                                 <div className="space-y-3">
                                                                     {/* Primary Owner Checkbox */}
-                                                                    <label className="flex items-center gap-3 p-3 bg-background border border-panel-border rounded-xl cursor-not-allowed opacity-80">
-                                                                        <input type="checkbox" checked={true} disabled className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
+                                                                    <label className="flex items-center gap-3 p-3 bg-background border border-panel-border rounded-xl cursor-pointer hover:border-primary transition-all">
+                                                                        <input type="checkbox" checked={formData.impresso_no_contrato !== false} onChange={(e) => setFormData({ ...formData, impresso_no_contrato: e.target.checked })} className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
                                                                         <span className="text-xs font-bold text-foreground truncate">
                                                                             {(formData.tipo_proprietario_principal === "PF" 
                                                                                 ? proprietarios.find(p => p.id === formData.proprietario_id)?.nome_completo 

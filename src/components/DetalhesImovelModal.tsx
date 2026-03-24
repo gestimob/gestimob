@@ -37,12 +37,26 @@ export function DetalhesImovelModal({ isOpen, imovel, onClose }: ModalProps) {
 
             if (pfIds.length > 0) {
                 const { data: pfData } = await supabase.from('proprietarios').select('id, nome_completo').in('id', pfIds);
-                if (pfData) results = [...results, ...pfData.map(p => ({ ...p, display_name: p.nome_completo, tipo: 'PF' }))];
+                if (pfData) {
+                    results = [...results, ...pfData.map(p => ({
+                        ...p,
+                        display_name: p.nome_completo,
+                        tipo: 'PF',
+                        no_contrato: secondaryList.find((s: any) => s.id === p.id)?.no_contrato
+                    }))];
+                }
             }
 
             if (pjIds.length > 0) {
                 const { data: pjData } = await supabase.from('empresas').select('id, nome_fantasia').in('id', pjIds);
-                if (pjData) results = [...results, ...pjData.map(p => ({ ...p, display_name: p.nome_fantasia, tipo: 'PJ' }))];
+                if (pjData) {
+                    results = [...results, ...pjData.map(p => ({
+                        ...p,
+                        display_name: p.nome_fantasia,
+                        tipo: 'PJ',
+                        no_contrato: secondaryList.find((s: any) => s.id === p.id)?.no_contrato
+                    }))];
+                }
             }
 
             setProprietariosSec(results);
@@ -330,7 +344,12 @@ export function DetalhesImovelModal({ isOpen, imovel, onClose }: ModalProps) {
                                             {imovel.empresas?.nome_fantasia && (
                                                 <div className="space-y-2">
                                                     <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Proprietário (PJ)</p>
-                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3">
+                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3 relative group">
+                                                        {imovel.impresso_no_contrato !== false && (
+                                                            <div className="absolute -top-2 -right-2 bg-primary/10 text-primary border border-primary/20 p-1.5 rounded-full shadow-sm z-10" title="Impresso no Contrato">
+                                                                <FileText className="w-3.5 h-3.5" />
+                                                            </div>
+                                                        )}
                                                         <Building2 className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" />
                                                         <p className="text-xs sm:text-sm font-bold text-foreground truncate">{imovel.empresas.nome_fantasia}</p>
                                                     </div>
@@ -341,7 +360,12 @@ export function DetalhesImovelModal({ isOpen, imovel, onClose }: ModalProps) {
                                             {imovel.proprietarios?.nome_completo && (
                                                 <div className="space-y-2">
                                                     <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Proprietário (PF)</p>
-                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3">
+                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3 relative group">
+                                                        {imovel.impresso_no_contrato !== false && (
+                                                            <div className="absolute -top-2 -right-2 bg-primary/10 text-primary border border-primary/20 p-1.5 rounded-full shadow-sm z-10" title="Impresso no Contrato">
+                                                                <FileText className="w-3.5 h-3.5" />
+                                                            </div>
+                                                        )}
                                                         <User className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" />
                                                         <p className="text-xs sm:text-sm font-bold text-foreground truncate">{imovel.proprietarios.nome_completo}</p>
                                                     </div>
@@ -352,7 +376,12 @@ export function DetalhesImovelModal({ isOpen, imovel, onClose }: ModalProps) {
                                             {proprietariosSec.map((sec, idx) => (
                                                 <div key={idx} className="space-y-2">
                                                     <p className="text-[9px] sm:text-[10px] font-black text-accent uppercase tracking-widest">Proprietário ({sec.tipo})</p>
-                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3">
+                                                    <div className="bg-background border border-panel-border rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 shadow-sm flex items-center gap-3 relative group">
+                                                        {sec.no_contrato !== false && (
+                                                            <div className="absolute -top-2 -right-2 bg-primary/10 text-primary border border-primary/20 p-1.5 rounded-full shadow-sm z-10" title="Impresso no Contrato">
+                                                                <FileText className="w-3.5 h-3.5" />
+                                                            </div>
+                                                        )}
                                                         {sec.tipo === 'PJ' ? <Building2 className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" /> : <User className="w-4 sm:w-5 h-4 sm:h-5 text-accent shrink-0" />}
                                                         <p className="text-xs sm:text-sm font-bold text-foreground truncate">{sec.display_name}</p>
                                                     </div>

@@ -408,7 +408,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
 
                                                 <Input required label="Documento (CPF/CNPJ)" value={formData.documento} onChange={handleIdInput} maxLength={18} placeholder="000.000.000-00" colSpan="col-span-1" />
 
-                                                <Input label="Telefone / Whatsapp" value={formData.telefone} onChange={handleTelInput} placeholder="(00) 00000-0000" maxLength={15} colSpan="col-span-1" />
+                                                <Input label="Telefone / Whatsapp" value={maskTelefone(formData.telefone)} onChange={handleTelInput} placeholder="(00) 00000-0000" maxLength={15} colSpan="col-span-1" />
 
                                                 <Input label="E-mail" value={formData.email} onChange={(e: any) => setFormData({ ...formData, email: e.target.value })} type="email" colSpan="col-span-2" />
                                             </motion.div>
@@ -419,7 +419,7 @@ export function NovoProprietarioModal({ isOpen, onClose, onSuccess, initialData 
                                                 <div className="col-span-2 md:col-span-2 space-y-2">
                                                     <label className="text-[10px] font-black text-text-dim uppercase tracking-widest ml-1">CEP *</label>
                                                     <div className="relative">
-                                                        <input required value={formData.cep || ""} onChange={handleCepChange} placeholder="00000-000" maxLength={9}
+                                                        <input required value={maskCEP(formData.cep || "")} onChange={handleCepChange} placeholder="00000-000" maxLength={9}
                                                             className="w-full bg-black/5 dark:bg-white/5 border border-panel-border rounded-lg h-9 px-4 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium" />
                                                         {searchingCep && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary animate-spin" />}
                                                     </div>

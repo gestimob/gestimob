@@ -408,7 +408,7 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                                                     </div>
                                                     <div className="space-y-1">
                                                         <p className="text-[10px] font-medium text-text-dim uppercase">Telefone Contato</p>
-                                                        <p className="text-sm font-bold text-foreground tracking-tight">{cliente.pessoa_contato_tel || "---"}</p>
+                                                        <p className="text-sm font-bold text-foreground tracking-tight">{formatPhone(cliente.pessoa_contato_tel)}</p>
                                                     </div>
                                                 </>
                                             )}
@@ -438,7 +438,7 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                                             </div>
                                             <div className="space-y-1">
                                                 <p className="text-[10px] font-medium text-text-dim uppercase">Telefone Fixo</p>
-                                                <p className="text-sm font-bold text-foreground tracking-tight">{cliente.telefone || "---"}</p>
+                                                <p className="text-sm font-bold text-foreground tracking-tight">{formatPhone(cliente.telefone)}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -530,7 +530,7 @@ export function DetalhesClienteModal({ isOpen, onClose, cliente }: DetailsModalP
                                             </div>
                                             <div className="space-y-1">
                                                 <p className="text-[10px] font-medium text-text-dim uppercase">Telefone RH</p>
-                                                <p className="text-sm font-bold text-foreground tracking-tight">{cliente.telefone_rh || "---"}</p>
+                                                <p className="text-sm font-bold text-foreground tracking-tight">{formatPhone(cliente.telefone_rh)}</p>
                                             </div>
                                             <div className="space-y-1">
                                                 <p className="text-[10px] font-medium text-text-dim uppercase">Renda Principal</p>

@@ -64,8 +64,7 @@ const initialFormState = {
     area_m2: 0, quartos: 0, suites: 0, banheiros: 0, vagas: 0, andar_imovel: "", valor_aluguel: 0, valor_condominio: 0,
     cep: "", endereco: "", logradouro: "", numero: "", complemento: "", bairro: "", cidade: "", estado: "",
     inscricao_iptu: "", iptu_vencimento: "", iptu_pdf_url: "", num_energisa: "", num_cagepa: "", num_matricula: "", arquivo_matricula_url: "",
-    empresa_id: "", proprietario_id: "", fotos_urls: [], tipo_proprietario_principal: "PF", proprietarios_secundarios: [],
-    impresso_no_contrato: true // Proprietário principal sempre true
+    empresa_id: "", proprietario_id: "", fotos_urls: [], tipo_proprietario_principal: "PF", proprietarios_secundarios: []
 };
 
 export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: ModalProps) {
@@ -433,49 +432,14 @@ export function NovoImovelModal({ isOpen, onClose, onSuccess, initialData }: Mod
                                                                         </button>
                                                                     </div>
                                                                 ))}
-                                                                <button type="button" onClick={() => setFormData({ ...formData, proprietarios_secundarios: [...(formData.proprietarios_secundarios || []), { id: '', tipo: 'PF', no_contrato: true }] })}
+                                                                <button type="button" onClick={() => setFormData({ ...formData, proprietarios_secundarios: [...(formData.proprietarios_secundarios || []), { id: '', tipo: 'PF' }] })}
                                                                     className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors flex items-center gap-2 mt-2">
                                                                     + Adicionar Proprietário
                                                                 </button>
                                                             </div>
                                                         </div>
 
-                                                        {/* Right Side: Contract Selection */}
-                                                        <div className="w-full lg:w-80 shrink-0">
-                                                            <div className="bg-black/5 dark:bg-white/5 border border-panel-border rounded-2xl p-6 h-full">
-                                                                <h4 className="text-[10px] font-black text-accent uppercase tracking-widest mb-4 flex items-center gap-2">
-                                                                    <FileText className="w-4 h-4 text-primary" /> Impresso no Contrato:
-                                                                </h4>
-                                                                <div className="space-y-3">
-                                                                    {/* Primary Owner Checkbox */}
-                                                                    <label className="flex items-center gap-3 p-3 bg-background border border-panel-border rounded-xl cursor-pointer hover:border-primary transition-all">
-                                                                        <input type="checkbox" checked={formData.impresso_no_contrato !== false} onChange={(e) => setFormData({ ...formData, impresso_no_contrato: e.target.checked })} className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
-                                                                        <span className="text-xs font-bold text-foreground truncate">
-                                                                            {(formData.tipo_proprietario_principal === "PF" 
-                                                                                ? proprietarios.find(p => p.id === formData.proprietario_id)?.nome_completo 
-                                                                                : empresas.find(e => e.id === formData.empresa_id)?.nome_fantasia) || 'Proprietário Principal'}
-                                                                        </span>
-                                                                    </label>
-
-                                                                    {/* Secondary Owners Checkboxes */}
-                                                                    {(formData.proprietarios_secundarios || []).map((sec: any, idx: number) => {
-                                                                        const name = (sec.tipo === "PF" ? proprietarios : empresas).find(p => p.id === sec.id)?.nome_completo || (sec.tipo === "PF" ? proprietarios : empresas).find(p => p.id === sec.id)?.nome_fantasia || 'Novo Proprietário';
-                                                                        return (
-                                                                            <label key={`contract-${idx}`} className="flex items-center gap-3 p-3 bg-background border border-panel-border rounded-xl cursor-pointer hover:border-primary transition-all">
-                                                                                <input type="checkbox" checked={sec.no_contrato !== false} onChange={(e) => {
-                                                                                    const newSec = [...formData.proprietarios_secundarios];
-                                                                                    newSec[idx].no_contrato = e.target.checked;
-                                                                                    setFormData({ ...formData, proprietarios_secundarios: newSec });
-                                                                                }} className="w-4 h-4 rounded border-panel-border text-primary focus:ring-primary bg-transparent" />
-                                                                                <span className="text-xs font-bold text-foreground truncate">{name}</span>
-                                                                            </label>
-                                                                        );
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                     </div>
-
                                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-10 border-t border-panel-border pt-10">
                                                         <Input label="Nome / Identificação do Imóvel" value={formData.nome_identificacao} onChange={(e: any) => setFormData({ ...formData, nome_identificacao: e.target.value })} colSpan="col-span-2 md:col-span-4" placeholder="Ex: Apto 101 Beira Mar, Galpão Logístico..." />
                                                         <Select label="Tipo de Imóvel" value={formData.tipo} onChange={(e: any) => setFormData({ ...formData, tipo: e.target.value })} options={[{ label: 'Apartamento', value: 'Apartamento' }, { label: 'Casa', value: 'Casa' }, { label: 'Comercial', value: 'Comercial' }, { label: 'Terreno', value: 'Terreno' }, { label: 'Galpão', value: 'Galpão' }]} colSpan="col-span-1 md:col-span-2" />

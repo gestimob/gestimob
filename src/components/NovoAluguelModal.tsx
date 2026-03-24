@@ -213,7 +213,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
         if (c.data) setClientes(c.data);
         if (i.data) setImoveis(initialData && initialData.imoveis ? [initialData.imoveis, ...i.data.filter(x => x.id !== initialData.imovel_id)] : i.data);
         if (p.data) setProprietarios(p.data);
-        if (e.data) setEmpresas(e.data.map(x => ({ id: x.id, nome_completo: x.nome_fantasia })));
+        if (e.data) setEmpresas(e.data.map(x => ({ ...x, nome_completo: x.nome_fantasia })));
     }
 
     // Função auxiliar para adicionar meses a uma data (formato yyyy-mm-dd)

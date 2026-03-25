@@ -142,7 +142,7 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                 .from('empresas')
                 .select('codigo')
                 .not('codigo', 'is', null)
-                .order('created_at', { ascending: false })
+                .order('codigo', { ascending: false })
                 .limit(1);
 
             if (error) throw error;
@@ -455,9 +455,28 @@ export function NovaEmpresaModal({ isOpen, onClose, onSuccess, initialData }: Mo
                 const { error } = await supabase.from('empresas').update(finalData).eq('id', initialData.id);
                 if (error) throw error;
             } else {
-                const { data, error } = await supabase.from('empresas').insert([finalData]).select().single();
-                if (error) throw error;
-                empresaId = data.id;
+                let inserted = false;
+                let retries = 3;
+
+                while (!inserted && retries > 0) {
+                    const freshCode = await fetchNextCode();
+                    finalData.codigo = freshCode;
+
+                    const { data, error } = await supabase.from('empresas').insert([finalData]).select().single();
+
+                    if (error) {
+                        if (error.code === '23505') {
+                            retries--;
+                            if (retries === 0) throw error;
+                            await new Promise(r => setTimeout(r, 400));
+                            continue;
+                        }
+                        throw error;
+                    }
+
+                    empresaId = data.id;
+                    inserted = true;
+                }
             }
 
             // 2. Upload do Contrato Social

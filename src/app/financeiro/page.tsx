@@ -107,7 +107,7 @@ function FinanceiroContent() {
 
             const { data: transacoesData, error: transError } = await supabase
                 .from('transacoes')
-                .select('*, contratos(status)')
+                .select('*, contratos(status, imovel_id, cliente_id, imoveis(nome_identificacao, endereco), clientes(documento))')
                 .order('created_at', { ascending: false });
             if (transError) throw transError;
 
@@ -162,18 +162,18 @@ function FinanceiroContent() {
 
         const valorJuros = valorPago > parcela.valor ? valorPago - parcela.valor : 0;
         const novoStatus = valorJuros > 0 ? 'Pago e Juros' : 'Pago';
+        const hoje = new Date().toISOString().slice(0, 10);
 
         const { error } = await supabase
             .from('parcelas')
-            .update({ valor_pago: valorPago, valor_juros: valorJuros, status: novoStatus })
+            .update({ valor_pago: valorPago, valor_juros: valorJuros, status: novoStatus, data_pagamento: hoje })
             .eq('id', parcela.id);
 
         if (!error) {
-            // Atualizar local
             setParcelas(prev => ({
                 ...prev,
                 [parcela.transacao_id]: prev[parcela.transacao_id].map(p =>
-                    p.id === parcela.id ? { ...p, valor_pago: valorPago, valor_juros: valorJuros, status: novoStatus } : p
+                    p.id === parcela.id ? { ...p, valor_pago: valorPago, valor_juros: valorJuros, status: novoStatus, data_pagamento: hoje } : p
                 )
             }));
         }
@@ -182,13 +182,13 @@ function FinanceiroContent() {
     const handleDesmarcarPago = async (parcela: any) => {
         const { error } = await supabase
             .from('parcelas')
-            .update({ valor_pago: null, valor_juros: null, status: 'A Vencer' })
+            .update({ valor_pago: null, valor_juros: null, status: 'A Vencer', data_pagamento: null })
             .eq('id', parcela.id);
         if (!error) {
             setParcelas(prev => ({
                 ...prev,
                 [parcela.transacao_id]: prev[parcela.transacao_id].map(p =>
-                    p.id === parcela.id ? { ...p, valor_pago: null, valor_juros: null, status: 'A Vencer' } : p
+                    p.id === parcela.id ? { ...p, valor_pago: null, valor_juros: null, status: 'A Vencer', data_pagamento: null } : p
                 )
             }));
         }
@@ -326,11 +326,6 @@ function FinanceiroContent() {
     });
 
     const handleExportPDF = () => {
-        if (selectedTransacoes.size === 0 && selectedParcelas.size === 0) {
-            alert('Selecione pelo menos uma transação ou parcela para exportar.');
-            return;
-        }
-
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const printWindow = window.open('', '_blank');
         if (!printWindow) {
@@ -340,31 +335,40 @@ function FinanceiroContent() {
 
         let total = 0;
         let rows = '';
+        const filterLabel = statusFilter !== 'Todos os Status' ? ` (Filtro: ${statusFilter})` : '';
 
         filteredTransacoes.forEach(t => {
             let trWritten = false;
             const ps = parcelas[t.id] || [];
-            ps.forEach(p => {
-                if (selectedTransacoes.has(t.id) || selectedParcelas.has(p.id)) {
-                    if (!trWritten) {
-                        rows += `<tr><td colspan="7" style="background:#f5f5f5; font-weight:bold;">Transação ${t.codigo_transacao} - ${t.locatario_nome || '-'}</td></tr>`;
-                        trWritten = true;
-                    }
-                    total += parseFloat(p.valor_pago || '0');
-                    rows += `
-                        <tr>
-                            <td>${t.codigo_transacao}</td>
-                            <td>${p.numero_parcela}/${t.quantidade_parcelas}</td>
-                            <td>${t.locatario_nome || '---'}</td>
-                            <td style="text-align:center">${getParcelaStatusAtual(p)}</td>
-                            <td style="text-align:center">${formatDate(p.data_vencimento)}</td>
-                            <td style="text-align:right">${formatBRL(p.valor || 0)}</td>
-                            <td style="text-align:right">${p.valor_pago ? formatBRL(p.valor_pago) : '---'}</td>
-                        </tr>
-                    `;
+            const filteredPs = ps.filter(p => {
+                const statusAtual = getParcelaStatusAtual(p);
+                return statusFilter === 'Todos os Status' || statusAtual === statusFilter;
+            });
+            filteredPs.forEach(p => {
+                if (!trWritten) {
+                    rows += `<tr><td colspan="7" style="background:#f5f5f5; font-weight:bold;">Transação ${t.codigo_transacao} - ${t.locatario_nome || '-'}</td></tr>`;
+                    trWritten = true;
                 }
+                total += parseFloat(p.valor_pago || '0');
+                rows += `
+                    <tr>
+                        <td>${t.codigo_transacao}</td>
+                        <td>${p.numero_parcela}/${t.quantidade_parcelas}</td>
+                        <td>${t.locatario_nome || '---'}</td>
+                        <td style="text-align:center">${getParcelaStatusAtual(p)}</td>
+                        <td style="text-align:center">${formatDate(p.data_vencimento)}</td>
+                        <td style="text-align:right">${formatBRL(p.valor || 0)}</td>
+                        <td style="text-align:right">${p.valor_pago ? formatBRL(p.valor_pago) : '---'}</td>
+                    </tr>
+                `;
             });
         });
+
+        if (!rows) {
+            alert('Nenhuma parcela encontrada com o filtro ativo.');
+            printWindow.close();
+            return;
+        }
 
         printWindow.document.write(`
             <!DOCTYPE html>
@@ -372,14 +376,15 @@ function FinanceiroContent() {
             <style>
                 @page { size: A4 portrait; margin: 15mm; }
                 body { font-family: Arial, sans-serif; font-size: 10px; color: #111; }
-                h2 { text-align: center; margin-bottom: 15px; font-size: 14px; }
+                h2 { text-align: center; margin-bottom: 5px; font-size: 14px; }
+                .subtitle { text-align: center; font-size: 10px; color: #666; margin-bottom: 15px; }
                 table { width: 100%; border-collapse: collapse; margin-bottom: 20px;}
                 th { background: #222; color: white; padding: 6px 10px; text-align: left; font-size: 10px; text-transform: uppercase; }
                 td { padding: 6px 10px; border-bottom: 1px solid #ddd; font-size: 10px; vertical-align: top; }
                 .info { text-align: right; font-size: 10px; color: #999; margin-bottom: 10px; }
             </style>
             </head><body>
-                <h2>Relatório Financeiro</h2>
+                <h2>Relatório Financeiro${filterLabel}</h2>
                 <p class="info">${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}</p>
                 <table>
                     <thead>
@@ -408,30 +413,34 @@ function FinanceiroContent() {
     };
 
     const handleExportExcel = () => {
-        if (selectedTransacoes.size === 0 && selectedParcelas.size === 0) {
-            alert('Selecione pelo menos uma transação ou parcela para exportar.');
-            return;
-        }
-
         const dataToExport: any[] = [];
         filteredTransacoes.forEach(t => {
             const ps = parcelas[t.id] || [];
-            ps.forEach(p => {
-                if (selectedTransacoes.has(t.id) || selectedParcelas.has(p.id)) {
-                    dataToExport.push({
-                        'Transação': t.codigo_transacao || '',
-                        'Contrato': t.contrato_codigo || '',
-                        'Locatário': t.locatario_nome || '',
-                        'Parcela': `${p.numero_parcela}/${t.quantidade_parcelas}`,
-                        'Vencimento': p.data_vencimento ? new Date(p.data_vencimento).toLocaleDateString('pt-BR') : '',
-                        'Status': getParcelaStatusAtual(p),
-                        'Valor': `R$ ${Number(p.valor || 0).toFixed(2).replace('.', ',')}`,
-                        'Valor Pago': p.valor_pago ? `R$ ${Number(p.valor_pago || 0).toFixed(2).replace('.', ',')}` : '',
-                        'Juros': p.valor_juros ? `R$ ${Number(p.valor_juros || 0).toFixed(2).replace('.', ',')}` : '',
-                    });
-                }
+            const filteredPs = ps.filter(p => {
+                const statusAtual = getParcelaStatusAtual(p);
+                return statusFilter === 'Todos os Status' || statusAtual === statusFilter;
+            });
+            filteredPs.forEach(p => {
+                const imovelInfo = t.contratos?.imoveis;
+                const imovelNome = imovelInfo?.nome_identificacao || imovelInfo?.endereco || '';
+                const cpfCnpj = t.contratos?.clientes?.documento || '';
+
+                dataToExport.push({
+                    'Data Vencimento': p.data_vencimento ? new Date(p.data_vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                    'Locatário(a)': t.locatario_nome || '',
+                    'Imóvel': imovelNome,
+                    'Valor Recebido': p.valor_pago ? `R$ ${Number(p.valor_pago).toFixed(2).replace('.', ',')}` : '',
+                    'CPF/CNPJ': cpfCnpj,
+                    'Data Pagamento': p.data_pagamento ? new Date(p.data_pagamento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                    'Conta Contrato': t.contrato_codigo || '',
+                });
             });
         });
+
+        if (dataToExport.length === 0) {
+            alert('Nenhuma parcela encontrada com o filtro ativo.');
+            return;
+        }
 
         const ws = XLSX.utils.json_to_sheet(dataToExport);
         const wb = XLSX.utils.book_new();
@@ -467,8 +476,6 @@ function FinanceiroContent() {
                         >
                             <option>Todos os Status</option>
                             <option>A Vencer</option>
-                            <option>Pago</option>
-                            <option>Pago e Juros</option>
                             <option>Vencido</option>
                         </select>
                         <div className="w-px h-5 bg-panel-border" />
@@ -620,7 +627,7 @@ function FinanceiroContent() {
                                         >
                                             <div className="ml-6 mr-2 mt-1 mb-3 space-y-1.5 border-l-2 border-primary/20 pl-4">
                                                 {/* Parcelas Header */}
-                                                <div className="grid grid-cols-[40px_2fr_1.5fr_1fr_1fr_2fr_1fr_80px] gap-3 px-4 py-2 label-premium text-[8px] text-accent items-center">
+                                                <div className="grid grid-cols-[40px_2fr_1.5fr_1fr_1fr_2fr_80px] gap-3 px-4 py-2 label-premium text-[8px] text-accent items-center">
                                                     <div className="flex justify-center items-center">
                                                         <input
                                                             type="checkbox"
@@ -645,7 +652,6 @@ function FinanceiroContent() {
                                                     <span>Status</span>
                                                     <span>Valor</span>
                                                     <span>Pagamento</span>
-                                                    <span>Juros</span>
                                                     <span className="text-center">Boleto</span>
                                                 </div>
 
@@ -815,7 +821,7 @@ function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, 
         <div
             id={`parcela-${parcela.id}`}
             className={cn(
-                "grid grid-cols-[40px_2fr_1.5fr_1fr_1fr_2fr_1fr_80px] gap-3 items-center px-4 py-3 rounded-xl border transition-all",
+                "grid grid-cols-[40px_2fr_1.5fr_1fr_1fr_2fr_80px] gap-3 items-center px-4 py-3 rounded-xl border transition-all",
                 isHighlighted ? "ring-2 ring-primary bg-primary/5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)] animate-pulse-subtle" :
                     isPago ? "bg-emerald-500/10 dark:bg-accent/5 border-emerald-500/20 dark:border-accent/10" :
                         statusAtual === 'Vencido' ? "bg-rose-500/5 border-rose-500/10" :
@@ -852,14 +858,17 @@ function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, 
                     <span className="text-[10px] font-bold text-accent">Pago</span>
                 </label>
                 {showPago && !isPago && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1" onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()}>
                         <span className="text-[10px] font-bold text-accent">R$</span>
                         <input type="text" value={valorInput}
                             onChange={e => setValorInput(e.target.value)}
-                            className="w-24 h-7 px-2 bg-background border border-panel-border rounded-lg text-xs font-bold text-foreground outline-none focus:border-primary"
+                            onClick={e => e.stopPropagation()}
+                            onFocus={e => e.stopPropagation()}
+                            className="w-24 h-7 px-2 bg-background border border-panel-border rounded-lg text-xs font-bold text-foreground outline-none focus:border-primary relative z-10"
                             placeholder="0,00"
+                            autoComplete="off"
                         />
-                        <button type="button" onClick={handleConfirmarPago}
+                        <button type="button" onClick={(e) => { e.stopPropagation(); handleConfirmarPago(); }}
                             className="h-7 px-2 bg-accent text-white text-[9px] font-black uppercase rounded-lg hover:bg-emerald-600 transition-all">
                             OK
                         </button>
@@ -867,15 +876,6 @@ function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, 
                 )}
                 {isPago && (
                     <span className="text-[10px] font-bold text-accent">{formatBRL(parcela.valor_pago || 0)}</span>
-                )}
-            </div>
-
-            {/* Juros */}
-            <div>
-                {parcela.valor_juros > 0 ? (
-                    <span className="text-xs font-black text-amber-500">{formatBRL(parcela.valor_juros)}</span>
-                ) : (
-                    <span className="text-xs text-accent">---</span>
                 )}
             </div>
 

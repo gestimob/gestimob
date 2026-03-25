@@ -73,6 +73,7 @@ function FinanceiroContent() {
     const [isDetalhesModalOpen, setIsDetalhesModalOpen] = useState(false);
     const [dataPagDe, setDataPagDe] = useState('');
     const [dataPagAte, setDataPagAte] = useState('');
+    const [isExportExcelMenuOpen, setIsExportExcelMenuOpen] = useState(false);
 
     // Modal de pagamento
     const [pagoModalOpen, setPagoModalOpen] = useState(false);
@@ -445,7 +446,7 @@ function FinanceiroContent() {
         }, 300);
     };
 
-    const handleExportExcel = () => {
+    const handleExportExcel = (tipo: 'contabil' | 'geral' = 'contabil') => {
         const dataToExport: any[] = [];
         filteredTransacoes.forEach(t => {
             const ps = parcelas[t.id] || [];
@@ -463,31 +464,47 @@ function FinanceiroContent() {
             filteredPs.forEach(p => {
                 const imovelInfo = t.contratos?.imoveis;
                 const imovelNome = imovelInfo?.nome_identificacao || imovelInfo?.endereco || '';
-                const cpfCnpj = t.contratos?.clientes?.documento || '';
+                
+                if (tipo === 'contabil') {
+                    const cpfCnpj = t.contratos?.clientes?.documento || '';
 
-                // Extrair conta bancária do texto da cláusula 7.2 (preco_locacao)
-                let contaBancaria = '';
-                const precoText = t.contratos?.preco_locacao || '';
-                const bancoMatch = precoText.match(/CONTA CORRENTE DO BANCO\s+(.+?)(?:\.|<)/i);
-                if (bancoMatch) {
-                    const tempDiv = typeof document !== 'undefined' ? document.createElement('div') : null;
-                    if (tempDiv) {
-                        tempDiv.innerHTML = bancoMatch[1];
-                        contaBancaria = (tempDiv.textContent || tempDiv.innerText || '').trim();
-                    } else {
-                        contaBancaria = bancoMatch[1].replace(/<[^>]*>/g, '').trim();
+                    // Extrair conta bancária do texto da cláusula 7.2 (preco_locacao)
+                    let contaBancaria = '';
+                    const precoText = t.contratos?.preco_locacao || '';
+                    const bancoMatch = precoText.match(/CONTA CORRENTE DO BANCO\s+(.+?)(?:\.|<)/i);
+                    if (bancoMatch) {
+                        const tempDiv = typeof document !== 'undefined' ? document.createElement('div') : null;
+                        if (tempDiv) {
+                            tempDiv.innerHTML = bancoMatch[1];
+                            contaBancaria = (tempDiv.textContent || tempDiv.innerText || '').trim();
+                        } else {
+                            contaBancaria = bancoMatch[1].replace(/<[^>]*>/g, '').trim();
+                        }
                     }
-                }
 
-                dataToExport.push({
-                    'Data Vencimento': p.data_vencimento ? new Date(p.data_vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
-                    'Locatário(a)': t.locatario_nome || '',
-                    'Imóvel': imovelNome,
-                    'Valor Recebido': p.valor_pago ? `R$ ${Number(p.valor_pago).toFixed(2).replace('.', ',')}` : '',
-                    'CPF/CNPJ': cpfCnpj,
-                    'Data Pagamento': p.data_pagamento ? new Date(p.data_pagamento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
-                    'Conta Contrato': contaBancaria,
-                });
+                    dataToExport.push({
+                        'Data Vencimento': p.data_vencimento ? new Date(p.data_vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                        'Locatário(a)': t.locatario_nome || '',
+                        'Imóvel': imovelNome,
+                        'Valor Recebido': p.valor_pago ? `R$ ${Number(p.valor_pago).toFixed(2).replace('.', ',')}` : '',
+                        'CPF/CNPJ': cpfCnpj,
+                        'Data Pagamento': p.data_pagamento ? new Date(p.data_pagamento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                        'Conta Contrato': contaBancaria,
+                    });
+                } else {
+                    // Exportação Geral
+                    dataToExport.push({
+                        'Transação': t.codigo_transacao || '',
+                        'Parcela': `${p.numero_parcela}/${t.quantidade_parcelas}`,
+                        'Locatário(a)': t.locatario_nome || '',
+                        'Imóvel': imovelNome,
+                        'Status': getParcelaStatusAtual(p),
+                        'Vencimento': p.data_vencimento ? new Date(p.data_vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
+                        'Valor Previsto': p.valor ? `R$ ${Number(p.valor).toFixed(2).replace('.', ',')}` : '',
+                        'Valor Recebido': p.valor_pago ? `R$ ${Number(p.valor_pago).toFixed(2).replace('.', ',')}` : '',
+                        'Data Pagamento': p.data_pagamento ? new Date(p.data_pagamento + 'T00:00:00').toLocaleDateString('pt-BR') : ''
+                    });
+                }
             });
         });
 
@@ -583,12 +600,39 @@ function FinanceiroContent() {
                         >
                             <FileText className="w-3.5 h-3.5" /> Gerar PDF
                         </button>
-                        <button
-                            onClick={handleExportExcel}
-                            className="h-9 px-3 flex items-center gap-2 rounded-lg border border-panel-border bg-transparent text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all shrink-0"
-                        >
-                            <Download className="w-3.5 h-3.5 text-accent" /> Export Excel
-                        </button>
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsExportExcelMenuOpen(!isExportExcelMenuOpen)}
+                                className="h-9 px-3 flex items-center gap-2 rounded-lg border border-panel-border bg-transparent text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all shrink-0"
+                            >
+                                <Download className="w-3.5 h-3.5 text-accent" /> Export Excel <ChevronDown className="w-3 h-3 text-accent ml-1" />
+                            </button>
+                            
+                            <AnimatePresence>
+                                {isExportExcelMenuOpen && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 5 }}
+                                        transition={{ duration: 0.15 }}
+                                        className="absolute right-0 top-full mt-2 w-48 bg-panel border border-panel-border rounded-xl shadow-lg py-2 z-50 overflow-hidden"
+                                    >
+                                        <button 
+                                            onClick={() => { setIsExportExcelMenuOpen(false); handleExportExcel('contabil'); }}
+                                            className="w-full text-left px-4 py-2 hover:bg-black/5 dark:hover:bg-white/5 text-[12px] font-medium text-foreground transition-colors"
+                                        >
+                                            Modelo Contábil
+                                        </button>
+                                        <button 
+                                            onClick={() => { setIsExportExcelMenuOpen(false); handleExportExcel('geral'); }}
+                                            className="w-full text-left px-4 py-2 hover:bg-black/5 dark:hover:bg-white/5 text-[12px] font-medium text-foreground transition-colors"
+                                        >
+                                            Exportação Geral
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 </div>
 

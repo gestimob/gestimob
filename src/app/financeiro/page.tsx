@@ -71,6 +71,14 @@ function FinanceiroContent() {
     const [selectedParcelas, setSelectedParcelas] = useState<Set<string>>(new Set());
     const [selectedTransacaoForModal, setSelectedTransacaoForModal] = useState<any>(null);
     const [isDetalhesModalOpen, setIsDetalhesModalOpen] = useState(false);
+    const [dataPagDe, setDataPagDe] = useState('');
+    const [dataPagAte, setDataPagAte] = useState('');
+
+    // Modal de pagamento
+    const [pagoModalOpen, setPagoModalOpen] = useState(false);
+    const [pagoModalParcela, setPagoModalParcela] = useState<any>(null);
+    const [pagoModalValor, setPagoModalValor] = useState('');
+    const [pagoModalData, setPagoModalData] = useState('');
 
     useEffect(() => {
         fetchTransacoes();
@@ -156,24 +164,24 @@ function FinanceiroContent() {
         });
     };
 
-    const handleMarcarPago = async (parcela: any, valorPagoStr: string) => {
+    const handleMarcarPago = async (parcela: any, valorPagoStr: string, dataPagamento: string) => {
         const valorPago = parseFloat(valorPagoStr.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
         if (valorPago <= 0) return;
 
         const valorJuros = valorPago > parcela.valor ? valorPago - parcela.valor : 0;
         const novoStatus = valorJuros > 0 ? 'Pago e Juros' : 'Pago';
-        const hoje = new Date().toISOString().slice(0, 10);
+        const dataPag = dataPagamento || new Date().toISOString().slice(0, 10);
 
         const { error } = await supabase
             .from('parcelas')
-            .update({ valor_pago: valorPago, valor_juros: valorJuros, status: novoStatus, data_pagamento: hoje })
+            .update({ valor_pago: valorPago, valor_juros: valorJuros, status: novoStatus, data_pagamento: dataPag })
             .eq('id', parcela.id);
 
         if (!error) {
             setParcelas(prev => ({
                 ...prev,
                 [parcela.transacao_id]: prev[parcela.transacao_id].map(p =>
-                    p.id === parcela.id ? { ...p, valor_pago: valorPago, valor_juros: valorJuros, status: novoStatus, data_pagamento: hoje } : p
+                    p.id === parcela.id ? { ...p, valor_pago: valorPago, valor_juros: valorJuros, status: novoStatus, data_pagamento: dataPag } : p
                 )
             }));
         }
@@ -305,24 +313,35 @@ function FinanceiroContent() {
             (t.locatario_nome?.toLowerCase() || '').includes(term);
 
         let hasMatchingParcela = true;
-        if (statusFilter !== "Todos os Status" || term) {
+        if (statusFilter !== "Todos os Status" || term || dataPagDe || dataPagAte) {
             const ps = parcelas[t.id] || [];
             if (ps.length > 0) {
                 hasMatchingParcela = ps.some(p => {
                     const statusAtual = getParcelaStatusAtual(p);
-                    const mathcesStatusInner = statusFilter === "Todos os Status" || 
+                    const matchesStatusInner = statusFilter === "Todos os Status" || 
                         ((statusFilter === "Pago" || statusFilter === "Pago e Juros") 
                             ? (statusAtual === "Pago" || statusAtual === "Pago e Juros") 
                             : statusAtual === statusFilter);
                     const matchesSearchInner = term === "" ||
                         (p.numero_parcela && String(p.numero_parcela).includes(term)) ||
-                        matchesSearch; // if parent matches search, all parcelas match search 
-                    return mathcesStatusInner && matchesSearchInner;
+                        matchesSearch;
+                    // Filtro por data de pagamento
+                    let matchesDateRange = true;
+                    if (dataPagDe || dataPagAte) {
+                        const dp = p.data_pagamento || '';
+                        if (!dp) {
+                            matchesDateRange = false;
+                        } else {
+                            if (dataPagDe && dp < dataPagDe) matchesDateRange = false;
+                            if (dataPagAte && dp > dataPagAte) matchesDateRange = false;
+                        }
+                    }
+                    return matchesStatusInner && matchesSearchInner && matchesDateRange;
                 });
             }
         }
 
-        return (matchesSearch && statusFilter === "Todos os Status" && (!parcelas[t.id] || parcelas[t.id].length === 0)) || hasMatchingParcela;
+        return (matchesSearch && statusFilter === "Todos os Status" && !dataPagDe && !dataPagAte && (!parcelas[t.id] || parcelas[t.id].length === 0)) || hasMatchingParcela;
     });
 
     const handleExportPDF = () => {
@@ -493,6 +512,33 @@ function FinanceiroContent() {
                             <option>Pago</option>
                             <option>Vencido</option>
                         </select>
+                        <div className="w-px h-5 bg-panel-border" />
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold text-accent whitespace-nowrap">Pgto De:</span>
+                            <input
+                                type="date"
+                                value={dataPagDe}
+                                onChange={e => setDataPagDe(e.target.value)}
+                                className="h-9 px-2 rounded-lg border border-transparent hover:border-panel-border bg-transparent text-[12px] font-medium text-foreground focus:outline-none focus:border-primary transition-all cursor-pointer"
+                            />
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold text-accent whitespace-nowrap">Até:</span>
+                            <input
+                                type="date"
+                                value={dataPagAte}
+                                onChange={e => setDataPagAte(e.target.value)}
+                                className="h-9 px-2 rounded-lg border border-transparent hover:border-panel-border bg-transparent text-[12px] font-medium text-foreground focus:outline-none focus:border-primary transition-all cursor-pointer"
+                            />
+                        </div>
+                        {(dataPagDe || dataPagAte) && (
+                            <button
+                                onClick={() => { setDataPagDe(''); setDataPagAte(''); }}
+                                className="h-7 px-2 text-[9px] font-bold text-rose-400 hover:text-rose-300 transition-all"
+                            >
+                                Limpar
+                            </button>
+                        )}
                         <div className="w-px h-5 bg-panel-border" />
                         <button className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-accent hover:text-foreground transition-all shrink-0">
                             <Filter className="w-4 h-4" />
@@ -702,6 +748,12 @@ function FinanceiroContent() {
                                                             else n.delete(p.id);
                                                             setSelectedParcelas(n);
                                                         }}
+                                                        onOpenPagoModal={(p) => {
+                                                            setPagoModalParcela(p);
+                                                            setPagoModalValor(p.valor?.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0,00');
+                                                            setPagoModalData(new Date().toISOString().slice(0, 10));
+                                                            setPagoModalOpen(true);
+                                                        }}
                                                     />
                                                 ))}
 
@@ -719,6 +771,70 @@ function FinanceiroContent() {
                     </div>
                 )}
             </main>
+
+            {/* Modal de Pagamento */}
+            <AnimatePresence>
+                {pagoModalOpen && pagoModalParcela && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm" onClick={() => setPagoModalOpen(false)}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-panel border border-panel-border rounded-2xl p-6 w-full max-w-sm shadow-xl"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <h3 className="text-lg font-black text-foreground mb-1">Confirmar Pagamento</h3>
+                            <p className="text-sm font-medium text-accent mb-5">
+                                Parcela {pagoModalParcela.numero_parcela} — Vencimento: {formatDate(pagoModalParcela.data_vencimento)}
+                            </p>
+
+                            <div className="space-y-4">
+                                <div className="space-y-1.5">
+                                    <label className="label-premium text-[10px] text-accent">Valor Recebido (R$)</label>
+                                    <input
+                                        type="text"
+                                        value={pagoModalValor}
+                                        onChange={e => setPagoModalValor(e.target.value)}
+                                        className="w-full h-10 px-3 bg-background border border-panel-border rounded-xl text-sm font-bold text-foreground outline-none focus:border-primary transition-all"
+                                        placeholder="0,00"
+                                        autoComplete="off"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="label-premium text-[10px] text-accent">Data do Pagamento</label>
+                                    <input
+                                        type="date"
+                                        value={pagoModalData}
+                                        onChange={e => setPagoModalData(e.target.value)}
+                                        className="w-full h-10 px-3 bg-background border border-panel-border rounded-xl text-sm font-medium text-foreground outline-none focus:border-primary transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => setPagoModalOpen(false)}
+                                    className="flex-1 h-10 rounded-xl border border-panel-border text-sm font-bold text-accent hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        handleMarcarPago(pagoModalParcela, pagoModalValor, pagoModalData);
+                                        setPagoModalOpen(false);
+                                        setPagoModalParcela(null);
+                                    }}
+                                    className="flex-1 h-10 rounded-xl bg-emerald-600 text-white text-sm font-black hover:bg-emerald-700 transition-all"
+                                >
+                                    Confirmar
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             {/* Delete Transaction Password Modal */}
             <AnimatePresence>
@@ -800,13 +916,14 @@ function FinanceiroContent() {
 }
 
 // Componente de linha de parcela
-function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, onSelect, highlightId }: {
+function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, onSelect, highlightId, onOpenPagoModal }: {
     parcela: any; locatarioNome: string;
-    onPagar: (p: any, val: string) => void;
+    onPagar: (p: any, val: string, data: string) => void;
     onDesmarcar: (p: any) => void;
     isSelected: boolean;
     onSelect: (checked: boolean) => void;
     highlightId?: string | null;
+    onOpenPagoModal: (p: any) => void;
 }) {
     const [showPago, setShowPago] = useState(parcela.status === 'Pago' || parcela.status === 'Pago e Juros');
     const [valorInput, setValorInput] = useState('');
@@ -827,7 +944,7 @@ function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, 
     };
 
     const handleConfirmarPago = () => {
-        onPagar(parcela, valorInput);
+        onPagar(parcela, valorInput, '');
     };
 
     const isHighlighted = parcela.id === highlightId;
@@ -868,29 +985,12 @@ function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, 
                 </label>
                 <label className="flex items-center gap-1.5 cursor-pointer">
                     <input type="radio" name={`pago_${parcela.id}`} checked={showPago}
-                        onChange={() => handleChangePago(true)}
+                        onChange={() => { if (!isPago) onOpenPagoModal(parcela); }}
                         className="w-3 h-3 accent-emerald-500" disabled={isPago} />
                     <span className="text-[10px] font-bold text-accent">Pago</span>
                 </label>
-                {showPago && !isPago && (
-                    <div className="flex items-center gap-1" onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()}>
-                        <span className="text-[10px] font-bold text-accent">R$</span>
-                        <input type="text" value={valorInput}
-                            onChange={e => setValorInput(e.target.value)}
-                            onClick={e => e.stopPropagation()}
-                            onFocus={e => e.stopPropagation()}
-                            className="w-24 h-7 px-2 bg-background border border-panel-border rounded-lg text-xs font-bold text-foreground outline-none focus:border-primary relative z-10"
-                            placeholder="0,00"
-                            autoComplete="off"
-                        />
-                        <button type="button" onClick={(e) => { e.stopPropagation(); handleConfirmarPago(); }}
-                            className="h-7 px-2 bg-accent text-white text-[9px] font-black uppercase rounded-lg hover:bg-emerald-600 transition-all">
-                            OK
-                        </button>
-                    </div>
-                )}
                 {isPago && (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col items-center">
                         <span className="text-[10px] font-bold text-accent">{formatBRL(parcela.valor_pago || 0)}</span>
                         {parcela.data_pagamento && (
                             <span className="text-[8px] text-accent/70 font-medium">{formatDate(parcela.data_pagamento)}</span>

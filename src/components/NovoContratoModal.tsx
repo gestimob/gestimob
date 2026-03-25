@@ -449,8 +449,12 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
         setSelectedAluguelId(val);
         const selected = items.find(a => a.id === val);
         setSelectedData(selected || null);
-        if (selected && selected.contas_bancarias && Array.isArray(selected.contas_bancarias) && selected.contas_bancarias.length > 0) {
-            setSelectedBankAccounts(selected.contas_bancarias);
+        const currentBanks = selected && selected.contas_bancarias && Array.isArray(selected.contas_bancarias) && selected.contas_bancarias.length > 0 
+            ? selected.contas_bancarias 
+            : [];
+            
+        if (currentBanks.length > 0) {
+            setSelectedBankAccounts(currentBanks);
         } else {
             setSelectedBankAccounts([]);
         }
@@ -706,8 +710,8 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                     }
                 });
 
-                if (selectedBankAccounts.length > 0) {
-                    const bankLines = selectedBankAccounts.map(acc => {
+                if (currentBanks.length > 0) {
+                    const bankLines = currentBanks.map((acc: any) => {
                         const ownerPart = acc.ownerName ? ` em nome de ${acc.ownerName}` : ` em nome de ${locador.nome_completo || locador.nome_fantasia}`;
                         return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}${ownerPart}`;
                     }).join(" ou ");

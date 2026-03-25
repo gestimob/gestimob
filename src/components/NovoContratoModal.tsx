@@ -382,10 +382,11 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
         const locador = selected.proprietarios || selected.empresas || imovelObj.proprietarios || imovelObj.empresas || {};
 
         const bankLines = banks.map(acc => {
-            return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${acc.chave_pix}`;
+            const ownerPart = acc.ownerName ? ` em nome de ${acc.ownerName}` : ` em nome de ${locador.nome_completo || locador.nome_fantasia}`;
+            return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}${ownerPart}`;
         }).join(" ou ");
 
-        const bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLines} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
+        const bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos ${banks.length > 0 ? "no(s) " + bankLines : "na Conta Corrente do Banco em nome do LOCADOR"}.`;
 
         // Cláusula 7.5 - Garantia Caução (se aplicável)
         let garantiaClause = '';
@@ -676,22 +677,51 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                 const imovelObj = Array.isArray(rawImovel) ? rawImovel[0] : (rawImovel || {});
                 const locador = selected.proprietarios || selected.empresas || imovelObj.proprietarios || imovelObj.empresas || {};
 
-                let bankAccountText = "ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos na Conta Corrente do BANCO SICREDI 748 AG 2201 CONTA 39868-6 ou via PIX no CNPJ 07.869.501/0001-58 em no nome de RR IMOBILIÁRIA LTDA.";
+                let bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos na Conta Corrente do BANCO SICREDI 748 AG 2201 CONTA 39868-6 ou via PIX no CNPJ 07.869.501/0001-58 em no nome de RR IMOBILIÁRIA LTDA.`;
+
+                // Reunir todas as contas bancárias de todos os proprietários ativos
+                const allAccounts: any[] = [];
+                const activeOwnersForBanks: any[] = [];
+                if (selected.impresso_no_contrato !== false) {
+                    const primary = selected.proprietarios || selected.empresas || imovelObj.proprietarios || imovelObj.empresas || {};
+                    if (primary && (primary.nome_completo || primary.nome_fantasia || primary.razao_social)) {
+                        activeOwnersForBanks.push(primary);
+                    }
+                }
+                if (selected.proprietarios_secundarios && Array.isArray(selected.proprietarios_secundarios)) {
+                    selected.proprietarios_secundarios.forEach((sec: any) => {
+                        if (sec.no_contrato !== false) {
+                            const owner = (sec.tipo === 'PF' ? propsList : compsList).find(p => p.id === sec.id);
+                            if (owner) activeOwnersForBanks.push(owner);
+                        }
+                    });
+                }
+
+                activeOwnersForBanks.forEach(owner => {
+                    const ownerName = owner.nome_completo || owner.nome_fantasia || owner.razao_social || 'N/A';
+                    if (owner.dados_bancarios && Array.isArray(owner.dados_bancarios)) {
+                        owner.dados_bancarios.forEach((acc: any) => {
+                            allAccounts.push({ ...acc, ownerName, ownerId: owner.id });
+                        });
+                    }
+                });
 
                 if (selectedBankAccounts.length > 0) {
                     const bankLines = selectedBankAccounts.map(acc => {
-                        return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}`;
+                        const ownerPart = acc.ownerName ? ` em nome de ${acc.ownerName}` : ` em nome de ${locador.nome_completo || locador.nome_fantasia}`;
+                        return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}${ownerPart}`;
                     }).join(" ou ");
-                    bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos na Conta Corrente do Banco no(s) ${bankLines} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
-                } else if (locador.dados_bancarios && Array.isArray(locador.dados_bancarios) && locador.dados_bancarios.length > 0) {
-                    // Fallback para quando o aluguel não tem contas salvas (legado)
-                    if (locador.dados_bancarios.length === 1) {
-                        const acc = locador.dados_bancarios[0];
+                    bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLines}.`;
+                } else if (allAccounts.length > 0) {
+                    // Fallback para quando o aluguel não tem contas salvas no contrato
+                    if (allAccounts.length === 1) {
+                        const acc = allAccounts[0];
                         setSelectedBankAccounts([acc]);
-                        const bankLine = `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}`;
-                        bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos na Conta Corrente do Banco no(s) ${bankLine} em no nome de ${locador.nome_completo || locador.nome_fantasia}.`;
+                        const ownerPart = acc.ownerName ? ` em nome de ${acc.ownerName}` : ` em nome de ${locador.nome_completo || locador.nome_fantasia}`;
+                        const bankLine = `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}${ownerPart}`;
+                        bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLine}.`;
                     } else {
-                        setAvailableBankAccounts(locador.dados_bancarios);
+                        setAvailableBankAccounts(allAccounts);
                         setIsBankModalOpen(true);
                     }
                 }
@@ -1526,10 +1556,15 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                                 <button key={idx} onClick={() => { setSelectedBankAccounts([acc]); setIsBankModalOpen(false); }}
                                     className="w-full p-4 rounded-2xl border border-panel-border hover:border-primary transition-all text-left group bg-black/5 dark:bg-white/5">
                                     <div className="flex justify-between items-center mb-1">
-                                        <span className="text-[11px] font-black uppercase italic tracking-widest text-foreground">{acc.banco}</span>
-                                        <div className="w-4 h-4 rounded-full border border-panel-border group-hover:bg-primary" />
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[11px] font-black uppercase italic tracking-widest text-foreground">{acc.banco}</span>
+                                            {acc.ownerName && (
+                                                <span className="text-[9px] font-bold uppercase tracking-wider text-primary/70">{acc.ownerName}</span>
+                                            )}
+                                        </div>
+                                        <div className="w-4 h-4 rounded-full border border-panel-border group-hover:bg-primary shrink-0 ml-2" />
                                     </div>
-                                    <p className="text-[10px] text-text-dim font-bold uppercase tracking-widest leading-tight">AG {acc.agencia} • {acc.tipo_conta} {acc.conta}</p>
+                                    <p className="text-[10px] text-text-dim font-bold uppercase tracking-widest leading-tight mt-1.5">AG {acc.agencia} • {acc.tipo_conta} {acc.conta}</p>
                                 </button>
                             ))}
                         </div>

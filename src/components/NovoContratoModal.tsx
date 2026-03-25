@@ -773,37 +773,71 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                     });
                 }
 
-                const locadoresSignature = activeOwners.map(locador => {
-                    const locadorNome = locador.nome_completo || locador.nome_fantasia || locador.razao_social || 'N/A';
-                    return `<br><div style="text-align: center">________________________________________________<br><b>${locadorNome}</b><br>LOCADOR(A)</div>`;
-                }).join("");
+                // Helper: gera uma célula de assinatura
+                const sigCell = (nome: string, papel: string) =>
+                    `<td style="text-align: center; vertical-align: top; padding: 15px 10px; width: 50%;">________________________________<br><b>${nome}</b><br>${papel}</td>`;
+
+                // Locadores
+                const locadorNames = activeOwners.map(loc => loc.nome_completo || loc.nome_fantasia || loc.razao_social || 'N/A');
 
                 const locatId = selected.cliente_id;
                 const locatObj = clientsList.find((c: any) => c.id === locatId) || selected.clientes || {};
                 const locatNome = locatObj.nome_completo || 'N/A';
 
-                let fiadoresLines = "";
+                // Fiadores
+                let fiadoresObjs: any[] = [];
                 if (selected.tipo_garantia === "Fiador") {
-                    let fiadoresObjs: any[] = [];
                     if (locatObj.papel === 'Apenas Fiador' || locatObj.papel === 'Locatário e Fiador') fiadoresObjs.push(locatObj);
                     if (Array.isArray(selected.fiadores_ids) && selected.fiadores_ids.length > 0) {
                         const explicitFiadores = selected.fiadores_ids.map((id: string) => clientsList.find(c => c.id === id)).filter(Boolean);
                         fiadoresObjs = [...fiadoresObjs, ...explicitFiadores];
                     }
                     fiadoresObjs = fiadoresObjs.filter((f, index, self) => index === self.findIndex((t) => t.id === f.id));
-
-                    if (fiadoresObjs.length > 0) {
-                        fiadoresLines = fiadoresObjs.map((f: any) => {
-                            return `<br><div style="text-align: center">_________________________________________________<br><b>${f.nome_completo}</b><br>FIADOR(A)</div>`;
-                        }).join("");
-                    }
                 }
 
                 const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
                 const hoje = new Date();
                 const dataExtensoHoje = `${hoje.getDate().toString().padStart(2, '0')} de ${meses[hoje.getMonth()]} de ${hoje.getFullYear()}`;
 
-                const defaultAssinaturas = `<div style="text-align: justify">E por estarem, assim, justas e acordadas, assinam o presente instrumento em 02 (duas) vias de igual teor e forma e para um mesmo fim, juntamente com 02 (duas) testemunhas que a tudo estiveram presentes, para que surta os efeitos legais.</div><br><div style="text-align: center">João Pessoa, ${dataExtensoHoje}.</div><br><br>${locadoresSignature}<br><div style="text-align: center">_________________________________________________<br><b>${locatNome}</b><br>LOCATÁRIO(A)</div>${fiadoresLines}<br><br><br><div style="text-align: center">TESTEMUNHAS:</div><br><div style="text-align: center">________________________________<br>Nome: JOSUÊNIA V. F. ALVES<br>CPF: 073.193.704-09</div><br><br><div style="text-align: center">________________________________<br>Nome:<br>CPF:</div>`;
+                // Montar linhas lado a lado usando tabela HTML
+                let sigRows = '';
+
+                // Linha 1: Locador(es) + Locatário lado a lado
+                // Se houver mais de um locador, empilha locadores na coluna esquerda
+                if (locadorNames.length <= 1) {
+                    sigRows += `<tr>${sigCell(locadorNames[0] || 'N/A', 'LOCADOR(A)')}${sigCell(locatNome, 'LOCATÁRIO(A)')}</tr>`;
+                } else {
+                    // Primeiro locador + locatário
+                    sigRows += `<tr>${sigCell(locadorNames[0], 'LOCADOR(A)')}${sigCell(locatNome, 'LOCATÁRIO(A)')}</tr>`;
+                    // Demais locadores em pares
+                    for (let i = 1; i < locadorNames.length; i += 2) {
+                        if (i + 1 < locadorNames.length) {
+                            sigRows += `<tr>${sigCell(locadorNames[i], 'LOCADOR(A)')}${sigCell(locadorNames[i + 1], 'LOCADOR(A)')}</tr>`;
+                        } else {
+                            sigRows += `<tr>${sigCell(locadorNames[i], 'LOCADOR(A)')}<td></td></tr>`;
+                        }
+                    }
+                }
+
+                // Fiadores em pares lado a lado
+                if (fiadoresObjs.length > 0) {
+                    for (let i = 0; i < fiadoresObjs.length; i += 2) {
+                        const f1 = fiadoresObjs[i];
+                        const f2 = fiadoresObjs[i + 1];
+                        if (f2) {
+                            sigRows += `<tr>${sigCell(f1.nome_completo, 'FIADOR(A)')}${sigCell(f2.nome_completo, 'FIADOR(A)')}</tr>`;
+                        } else {
+                            sigRows += `<tr>${sigCell(f1.nome_completo, 'FIADOR(A)')}<td></td></tr>`;
+                        }
+                    }
+                }
+
+                // Testemunhas sempre lado a lado
+                sigRows += `<tr><td style="text-align: center; vertical-align: top; padding: 15px 10px; width: 50%;">________________________________<br>Nome: JOSUÊNIA V. F. ALVES<br>CPF: 073.193.704-09<br><b>TESTEMUNHA</b></td><td style="text-align: center; vertical-align: top; padding: 15px 10px; width: 50%;">________________________________<br>Nome:<br>CPF:<br><b>TESTEMUNHA</b></td></tr>`;
+
+                const signaturesTable = `<table style="width: 100%; border-collapse: collapse;">${sigRows}</table>`;
+
+                const defaultAssinaturas = `<div style="text-align: justify">E por estarem, assim, justas e acordadas, assinam o presente instrumento em 02 (duas) vias de igual teor e forma e para um mesmo fim, juntamente com 02 (duas) testemunhas que a tudo estiveram presentes, para que surta os efeitos legais.</div><br><div style="text-align: center">João Pessoa, ${dataExtensoHoje}.</div><br><br>${signaturesTable}`;
                 setAssinaturasText(defaultAssinaturas);
             }
 

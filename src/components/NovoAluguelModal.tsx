@@ -873,7 +873,7 @@ export function NovoAluguelModal({ isOpen, onClose, onSuccess, initialData, isRe
                                                         setFormData({ ...formData, fiadores_ids: newFiadores });
                                                     }} className="w-full h-11 bg-background border border-panel-border rounded-xl px-5 text-foreground text-[13px] outline-none focus:border-primary transition-all font-medium appearance-none">
                                                         <option value="">Selecione um fiador (mesmo banco de clientes)...</option>
-                                                        {clientes.filter((c: any) => c.papel === 'Apenas Fiador' || c.papel === 'Locatário e Fiador').map((c: any) => <option key={c.id} value={c.id}>{c.nome_completo}</option>)}
+                                                        {clientes.filter((c: any) => c.papel === 'Apenas Fiador(a)' || c.papel === 'Locatário(a) e Fiador(a)').map((c: any) => <option key={c.id} value={c.id}>{c.nome_completo}</option>)}
                                                     </select>
                                                 </div>
                                                 {!isReadOnly && (

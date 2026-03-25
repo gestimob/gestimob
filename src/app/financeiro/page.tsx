@@ -107,7 +107,7 @@ function FinanceiroContent() {
 
             const { data: transacoesData, error: transError } = await supabase
                 .from('transacoes')
-                .select('*, contratos(status, imovel_id, cliente_id, imoveis(nome_identificacao, endereco), clientes(documento))')
+                .select('*, contratos(status, preco_locacao, imovel_id, cliente_id, imoveis(nome_identificacao, endereco), clientes(documento))')
                 .order('created_at', { ascending: false });
             if (transError) throw transError;
 
@@ -425,6 +425,20 @@ function FinanceiroContent() {
                 const imovelNome = imovelInfo?.nome_identificacao || imovelInfo?.endereco || '';
                 const cpfCnpj = t.contratos?.clientes?.documento || '';
 
+                // Extrair conta bancária do texto da cláusula 7.2 (preco_locacao)
+                let contaBancaria = '';
+                const precoText = t.contratos?.preco_locacao || '';
+                const bancoMatch = precoText.match(/CONTA CORRENTE DO BANCO\s+(.+?)(?:\.|<)/i);
+                if (bancoMatch) {
+                    const tempDiv = typeof document !== 'undefined' ? document.createElement('div') : null;
+                    if (tempDiv) {
+                        tempDiv.innerHTML = bancoMatch[1];
+                        contaBancaria = (tempDiv.textContent || tempDiv.innerText || '').trim();
+                    } else {
+                        contaBancaria = bancoMatch[1].replace(/<[^>]*>/g, '').trim();
+                    }
+                }
+
                 dataToExport.push({
                     'Data Vencimento': p.data_vencimento ? new Date(p.data_vencimento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
                     'Locatário(a)': t.locatario_nome || '',
@@ -432,7 +446,7 @@ function FinanceiroContent() {
                     'Valor Recebido': p.valor_pago ? `R$ ${Number(p.valor_pago).toFixed(2).replace('.', ',')}` : '',
                     'CPF/CNPJ': cpfCnpj,
                     'Data Pagamento': p.data_pagamento ? new Date(p.data_pagamento + 'T00:00:00').toLocaleDateString('pt-BR') : '',
-                    'Conta Contrato': t.contrato_codigo || '',
+                    'Conta Contrato': contaBancaria,
                 });
             });
         });
@@ -476,6 +490,7 @@ function FinanceiroContent() {
                         >
                             <option>Todos os Status</option>
                             <option>A Vencer</option>
+                            <option>Pago</option>
                             <option>Vencido</option>
                         </select>
                         <div className="w-px h-5 bg-panel-border" />

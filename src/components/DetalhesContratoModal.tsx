@@ -215,7 +215,7 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                     <tbody>
                         <tr>
                             <td>
-                                ${!headerAllPages ? `<div class="contract-title-box-first-page" style="width: 55mm; float: right; font-weight: bold; font-size: 9.5pt; text-transform: uppercase; text-align: justify; line-height: 1.2; letter-spacing: 0.03em; margin: -25mm 0 15px 15px;">${instrumentoTexto || 'INSTRUMENTO PARTICULAR DE CONTRATO DE LOCAÇÃO'}</div>` : ''}
+                                ${!headerAllPages ? `<div style="display: flex; align-items: center; justify-content: flex-end; width: 100%; margin-top: -25mm; margin-bottom: 15px; min-height: 30mm; position: relative; pointer-events: none;"><div class="contract-title-box">${instrumentoTexto || 'INSTRUMENTO PARTICULAR DE CONTRATO DE LOCAÇÃO'}</div></div>` : ''}
                                 ${printContent.innerHTML}
                             </td>
                         </tr>

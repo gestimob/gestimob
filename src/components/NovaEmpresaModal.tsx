@@ -15,11 +15,11 @@ function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-const maskCEP = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
-const maskCPF = (v: string) => v.replace(/\D/g, "").slice(0, 11).replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-const maskCNPJ = (v: string) => v.replace(/\D/g, "").slice(0, 14).replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+const maskCEP = (v: string) => (v || "").replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
+const maskCPF = (v: string) => (v || "").replace(/\D/g, "").slice(0, 11).replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+const maskCNPJ = (v: string) => (v || "").replace(/\D/g, "").slice(0, 14).replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
 const maskPhone = (v: string) => {
-    let r = v.replace(/\D/g, "").slice(0, 11);
+    let r = (v || "").replace(/\D/g, "").slice(0, 11);
     if (r.length > 10) return r.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
     if (r.length > 5) return r.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
     if (r.length > 2) return r.replace(/^(\d{2})(\d{0,5}).*/, "($1) $2");

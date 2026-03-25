@@ -16,7 +16,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const maskCpfCnpj = (v: string) => {
-    const val = v.replace(/\D/g, "");
+    const val = (v || "").replace(/\D/g, "");
     if (val.length <= 11) {
         return val.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
     } else {
@@ -25,14 +25,14 @@ const maskCpfCnpj = (v: string) => {
 };
 
 const maskPhone = (v: string) => {
-    let r = v.replace(/\D/g, "").slice(0, 11);
+    let r = (v || "").replace(/\D/g, "").slice(0, 11);
     if (r.length > 10) return r.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
     if (r.length > 5) return r.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
     if (r.length > 2) return r.replace(/^(\d{2})(\d{0,5}).*/, "($1) $2");
     return r.length ? `(${r}` : "";
 };
 
-const maskCEP = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
+const maskCEP = (v: string) => (v || "").replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
 
 const formatBRL = (val: number | string) => {
     if (val === undefined || val === null) return "";

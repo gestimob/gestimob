@@ -386,7 +386,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
             return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}${ownerPart}`;
         }).join(" ou ");
 
-        const bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos ${banks.length > 0 ? "no(s) " + bankLines : "na Conta Corrente do Banco em nome do LOCADOR"}.`;
+        const bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósito na CONTA CORRENTE DO BANCO ${banks.length > 0 ? bankLines : "em nome do LOCADOR"}.`;
 
         // Cláusula 7.5 - Garantia Caução (se aplicável)
         let garantiaClause = '';
@@ -711,7 +711,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                         const ownerPart = acc.ownerName ? ` em nome de ${acc.ownerName}` : ` em nome de ${locador.nome_completo || locador.nome_fantasia}`;
                         return `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}${ownerPart}`;
                     }).join(" ou ");
-                    bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLines}.`;
+                    bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósito na CONTA CORRENTE DO BANCO ${bankLines}.`;
                 } else if (allAccounts.length > 0) {
                     // Fallback para quando o aluguel não tem contas salvas no contrato
                     if (allAccounts.length === 1) {
@@ -719,7 +719,7 @@ export function NovoContratoModal({ isOpen, onClose, onSuccess, initialData, isR
                         setSelectedBankAccounts([acc]);
                         const ownerPart = acc.ownerName ? ` em nome de ${acc.ownerName}` : ` em nome de ${locador.nome_completo || locador.nome_fantasia}`;
                         const bankLine = `${acc.banco} (Nº ${acc.num_banco}) AG ${acc.agencia} ${acc.tipo_conta === 'Poupança' ? 'CP' : 'CC'} ${acc.conta} ou via PIX na chave ${maskPIX(acc.chave_pix)}${ownerPart}`;
-                        bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósitos no(s) ${bankLine}.`;
+                        bankAccountText = `ao <b>LOCADOR(A)</b>, mediante quitação dos boletos bancários, sendo realizado todo dia ${diaPagamento < 10 ? '0' + diaPagamento : diaPagamento} (${diaExtenso}) de cada mês, fornecidos pela LOCADORA ou depósito na CONTA CORRENTE DO BANCO ${bankLine}.`;
                     } else {
                         setAvailableBankAccounts(allAccounts);
                         setIsBankModalOpen(true);

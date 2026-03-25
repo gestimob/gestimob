@@ -890,7 +890,12 @@ function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, 
                     </div>
                 )}
                 {isPago && (
-                    <span className="text-[10px] font-bold text-accent">{formatBRL(parcela.valor_pago || 0)}</span>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-accent">{formatBRL(parcela.valor_pago || 0)}</span>
+                        {parcela.data_pagamento && (
+                            <span className="text-[8px] text-accent/70 font-medium">{formatDate(parcela.data_pagamento)}</span>
+                        )}
+                    </div>
                 )}
             </div>
 

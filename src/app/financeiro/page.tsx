@@ -353,6 +353,7 @@ function FinanceiroContent() {
         }
 
         let total = 0;
+        let totalJuros = 0;
         let rows = '';
         const filterLabel = statusFilter !== 'Todos os Status' ? ` (Filtro: ${statusFilter})` : '';
 
@@ -375,7 +376,12 @@ function FinanceiroContent() {
                     rows += `<tr><td colspan="7" style="background:#f5f5f5; font-weight:bold;">Transação ${t.codigo_transacao} - ${t.locatario_nome || '-'}</td></tr>`;
                     trWritten = true;
                 }
-                total += parseFloat(p.valor_pago || '0');
+                const vp = parseFloat(p.valor_pago || '0');
+                const vBase = parseFloat(p.valor || '0');
+                if (vp > vBase) {
+                    totalJuros += (vp - vBase);
+                }
+                total += vp;
                 rows += `
                     <tr>
                         <td>${t.codigo_transacao}</td>
@@ -426,7 +432,8 @@ function FinanceiroContent() {
                     </thead>
                     <tbody>${rows}</tbody>
                 </table>
-                <h3 style="text-align:right; font-size: 10px;">Total: ${formatBRL(total)}</h3>
+                ${totalJuros > 0 ? `<h3 style="text-align:right; font-size: 10px; margin-bottom: 2px; color: #555;">Juros: ${formatBRL(totalJuros)}</h3>` : ''}
+                <h3 style="text-align:right; font-size: 11px; margin-top: 5px;">Total Geral: ${formatBRL(total)}</h3>
             </body></html>
         `);
         printWindow.document.close();

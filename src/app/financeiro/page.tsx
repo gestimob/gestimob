@@ -361,7 +361,14 @@ function FinanceiroContent() {
             const ps = parcelas[t.id] || [];
             const filteredPs = ps.filter(p => {
                 const statusAtual = getParcelaStatusAtual(p);
-                return statusFilter === 'Todos os Status' || statusAtual === statusFilter;
+                const matchesDateRange = (!dataPagDe || (p.data_pagamento && p.data_pagamento >= dataPagDe)) && 
+                                       (!dataPagAte || (p.data_pagamento && p.data_pagamento <= dataPagAte));
+
+                if (statusFilter === 'Todos os Status') return matchesDateRange;
+                if (statusFilter === 'Pago' || statusFilter === 'Pago e Juros') {
+                    return (statusAtual === 'Pago' || statusAtual === 'Pago e Juros') && matchesDateRange;
+                }
+                return statusAtual === statusFilter && matchesDateRange;
             });
             filteredPs.forEach(p => {
                 if (!trWritten) {
@@ -437,7 +444,14 @@ function FinanceiroContent() {
             const ps = parcelas[t.id] || [];
             const filteredPs = ps.filter(p => {
                 const statusAtual = getParcelaStatusAtual(p);
-                return statusFilter === 'Todos os Status' || statusAtual === statusFilter;
+                const matchesDateRange = (!dataPagDe || (p.data_pagamento && p.data_pagamento >= dataPagDe)) && 
+                                       (!dataPagAte || (p.data_pagamento && p.data_pagamento <= dataPagAte));
+
+                if (statusFilter === 'Todos os Status') return matchesDateRange;
+                if (statusFilter === 'Pago' || statusFilter === 'Pago e Juros') {
+                    return (statusAtual === 'Pago' || statusAtual === 'Pago e Juros') && matchesDateRange;
+                }
+                return statusAtual === statusFilter && matchesDateRange;
             });
             filteredPs.forEach(p => {
                 const imovelInfo = t.contratos?.imoveis;
@@ -970,10 +984,12 @@ function ParcelaRow({ parcela, locatarioNome, onPagar, onDesmarcar, isSelected, 
             </div>
             <span className="text-xs font-bold text-foreground truncate">{locatarioNome}</span>
             <span className="text-xs font-bold text-foreground">{formatDate(parcela.data_vencimento)}</span>
-            <span className={cn("label-premium text-[10px] px-2 py-1 rounded-lg text-center", getStatusStyle(statusAtual))}>
-                {statusAtual}
-            </span>
-            <span className="text-xs font-black text-foreground">{formatBRL(parcela.valor)}</span>
+            <div className="flex justify-center">
+                <span className={cn("label-premium text-[10px] px-2 py-1 rounded-lg text-center", getStatusStyle(statusAtual))}>
+                    {statusAtual}
+                </span>
+            </div>
+            <span className="text-xs font-black text-foreground text-center">{formatBRL(parcela.valor)}</span>
 
             {/* Controle de pagamento */}
             <div className="flex items-center gap-2">

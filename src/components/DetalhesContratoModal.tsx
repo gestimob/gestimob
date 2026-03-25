@@ -13,6 +13,7 @@ interface ModalProps {
 
 export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps) {
     const [config, setConfig] = useState<any>(null);
+    const [headerAllPages, setHeaderAllPages] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -201,9 +202,7 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                                     <div class="contract-logo-container">
                                         ${config?.logo_url ? `<img src="${config.logo_url}" alt="Logo" class="contract-logo-img" />` : ''}
                                     </div>
-                                    <div class="contract-title-box">
-                                        ${instrumentoTexto || 'INSTRUMENTO PARTICULAR DE CONTRATO DE LOCAÇÃO'}
-                                    </div>
+                                    ${headerAllPages ? `<div class="contract-title-box">${instrumentoTexto || 'INSTRUMENTO PARTICULAR DE CONTRATO DE LOCAÇÃO'}</div>` : ''}
                                 </div>
                             </td>
                         </tr>
@@ -215,7 +214,10 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                     </tfoot>
                     <tbody>
                         <tr>
-                            <td>${printContent.innerHTML}</td>
+                            <td>
+                                ${!headerAllPages ? `<div class="contract-title-box-first-page" style="width: 55mm; float: right; font-weight: bold; font-size: 9.5pt; text-transform: uppercase; text-align: justify; line-height: 1.2; letter-spacing: 0.03em; margin: -25mm 0 15px 15px;">${instrumentoTexto || 'INSTRUMENTO PARTICULAR DE CONTRATO DE LOCAÇÃO'}</div>` : ''}
+                                ${printContent.innerHTML}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -608,6 +610,10 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
                                         <ExternalLink className="w-4 h-4 shrink-0" /> <span className="hidden sm:inline">Ver Contrato Assinado</span>
                                     </a>
                                 )}
+                                <label className="hidden sm:flex items-center gap-2 bg-background border border-panel-border rounded-xl px-4 py-2.5 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-all shadow-sm select-none">
+                                    <input type="checkbox" checked={headerAllPages} onChange={(e) => setHeaderAllPages(e.target.checked)} className="w-3.5 h-3.5 rounded accent-primary" />
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-accent whitespace-nowrap">Cabeçalho em todas</span>
+                                </label>
                                 <button onClick={handlePrint} className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-background border border-panel-border text-foreground hover:bg-black/5 dark:hover:bg-white/5 px-4 sm:px-6 py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
                                     <Printer className="w-4 h-4" /> Imprimir
                                 </button>

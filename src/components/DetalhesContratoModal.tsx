@@ -584,41 +584,46 @@ export function DetalhesContratoModal({ isOpen, contrato, onClose }: ModalProps)
 
 
                         {/* Header UI */}
-                        <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-panel-border flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 bg-panel/30 dark:bg-white/5 backdrop-blur-md z-20 no-print">
-                            <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto">
-                                <button onClick={onClose} className="p-2 sm:px-4 sm:py-2 bg-background border border-panel-border rounded-xl flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all shadow-sm">
-                                    <ArrowLeft className="w-4 h-4 text-foreground" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground hidden sm:inline">Voltar</span>
+                        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-panel-border flex items-center justify-between gap-3 bg-panel/50 dark:bg-white/[0.03] backdrop-blur-md z-20 no-print">
+                            {/* Left: Voltar + Info */}
+                            <div className="flex items-center gap-3 min-w-0">
+                                <button onClick={onClose} className="h-9 px-3 bg-background/80 border border-panel-border rounded-lg flex items-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all shrink-0">
+                                    <ArrowLeft className="w-3.5 h-3.5 text-foreground" />
+                                    <span className="text-[9px] font-bold uppercase tracking-wider text-accent hidden sm:inline">Voltar</span>
                                 </button>
-                                <div className="min-w-0 flex-1 sm:flex-none">
-                                    <h1 className="text-base sm:text-2xl font-serif-premium font-bold tracking-tight text-foreground leading-tight truncate">
-                                        Contrato - {contrato.codigo_contrato || '-----'}
+                                <div className="min-w-0">
+                                    <h1 className="text-sm sm:text-base font-bold tracking-tight text-foreground leading-tight truncate">
+                                        {contrato.codigo_contrato || '-----'}
                                     </h1>
-                                    <p className="text-[7px] sm:text-[10px] text-accent font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mt-0.5 sm:mt-1 truncate opacity-80">
-                                        LOCATÁRIO: {locatarioNome}
+                                    <p className="text-[8px] text-accent/70 font-semibold uppercase tracking-[0.15em] truncate">
+                                        {locatarioNome}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-end">
+
+                            {/* Right: Actions */}
+                            <div className="flex items-center gap-2 shrink-0">
                                 {(contrato.status === 'Finalizado' || contrato.status === 'Em Vigência') && contrato.contrato_assinado_url && (
                                     <a
                                         href={contrato.contrato_assinado_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="btn-elite h-10 sm:h-auto px-3 sm:px-6 py-2 sm:py-2.5 flex items-center gap-2 bg-white/10 border-white/30 text-blue-400 text-[9px] sm:text-xs"
+                                        className="h-9 px-3 sm:px-4 flex items-center justify-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-all"
                                     >
-                                        <ExternalLink className="w-4 h-4 shrink-0" /> <span className="hidden sm:inline">Ver Contrato Assinado</span>
+                                        <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                                        <span className="text-[9px] font-bold uppercase tracking-wider whitespace-nowrap hidden sm:inline">Ver Contrato Assinado</span>
                                     </a>
                                 )}
-                                <label className="hidden sm:flex items-center gap-2 bg-background border border-panel-border rounded-xl px-4 py-2.5 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-all shadow-sm select-none">
-                                    <input type="checkbox" checked={headerAllPages} onChange={(e) => setHeaderAllPages(e.target.checked)} className="w-3.5 h-3.5 rounded accent-primary" />
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-accent whitespace-nowrap">Cabeçalho em todas</span>
+                                <label className="hidden sm:flex items-center gap-2 h-9 bg-background/80 border border-panel-border rounded-lg px-3 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-all select-none">
+                                    <input type="checkbox" checked={headerAllPages} onChange={(e) => setHeaderAllPages(e.target.checked)} className="w-3 h-3 rounded accent-primary" />
+                                    <span className="text-[8px] font-bold uppercase tracking-wider text-accent whitespace-nowrap">Cabeçalho em todas</span>
                                 </label>
-                                <button onClick={handlePrint} className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-background border border-panel-border text-foreground hover:bg-black/5 dark:hover:bg-white/5 px-4 sm:px-6 py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
-                                    <Printer className="w-4 h-4" /> Imprimir
+                                <button onClick={handlePrint} className="h-9 px-3 sm:px-4 flex items-center justify-center gap-2 bg-background/80 border border-panel-border text-foreground hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-all">
+                                    <Printer className="w-3.5 h-3.5" />
+                                    <span className="text-[9px] font-bold uppercase tracking-wider hidden sm:inline">Imprimir</span>
                                 </button>
-                                <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-panel-border text-accent hover:text-foreground shadow-sm shrink-0">
-                                    <X className="w-5 h-5" />
+                                <button onClick={onClose} className="h-9 w-9 flex items-center justify-center rounded-lg bg-background/80 border border-panel-border text-accent hover:text-foreground transition-all shrink-0">
+                                    <X className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>

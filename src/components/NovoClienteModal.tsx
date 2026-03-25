@@ -127,8 +127,8 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
             id: 'temp-' + Date.now(), 
             nome_completo: "", 
             cpf: "", 
-            rg: "", 
-            orgao_emissor: "",
+            identidade: "", 
+            orgao_expedidor: "",
             cargo_funcao: "", 
             ligacao_empresa: "Sócio(a)",
             nacionalidade: "Brasileiro(a)",
@@ -729,8 +729,8 @@ export function NovoClienteModal({ isOpen, onClose, onSuccess, initialData }: Mo
                                                                             <Input required label="Nome Completo" value={rep.nome_completo} onChange={e => { const r = [...representantes]; r[idx].nome_completo = e.target.value; setRepresentantes(r); }} colSpan="col-span-2 md:col-span-3" />
                                                                             <Input required label="CPF" value={maskCpfCnpj(rep.cpf)} onChange={e => { const r = [...representantes]; r[idx].cpf = e.target.value.replace(/\D/g, ""); setRepresentantes(r); }} colSpan="col-span-1 md:col-span-1" maxLength={14} />
                                                                              
-                                                                             <Input label="RG" value={rep.rg} onChange={e => { const r = [...representantes]; r[idx].rg = e.target.value; setRepresentantes(r); }} />
-                                                                             <Input label="Órgão Emissor" value={rep.orgao_emissor} onChange={e => { const r = [...representantes]; r[idx].orgao_emissor = e.target.value; setRepresentantes(r); }} placeholder="Ex: SSP/SP" />
+                                                                             <Input label="RG" value={rep.identidade} onChange={e => { const r = [...representantes]; r[idx].identidade = e.target.value; setRepresentantes(r); }} />
+                                                                             <Input label="Órgão Emissor" value={rep.orgao_expedidor} onChange={e => { const r = [...representantes]; r[idx].orgao_expedidor = e.target.value; setRepresentantes(r); }} placeholder="Ex: SSP/SP" />
 
                                                                             <Select required label="Sexo" value={rep.sexo} onChange={e => { const r = [...representantes]; r[idx].sexo = e.target.value; setRepresentantes(r); }} options={[{ label: 'Masculino', value: 'Masculino' }, { label: 'Feminino', value: 'Feminino' }]} />
                                                                             <Select required label="Ligação" value={rep.ligacao_empresa} onChange={e => { const r = [...representantes]; r[idx].ligacao_empresa = e.target.value; setRepresentantes(r); }} options={[{ label: 'Sócio(a)', value: 'Sócio(a)' }, { label: 'Procurador(a)', value: 'Procurador(a)' }, { label: 'Diretor(a)', value: 'Diretor(a)' }]} />
